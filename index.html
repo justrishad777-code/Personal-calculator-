@@ -282,5 +282,13 @@
     window.onload = init;
 </script>
 </body>
-</html>
+<script>
+    // Register Service Worker for Offline Support
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Offline Mode Ready!'))
+        .catch((err) => console.log('SW Error:', err));
+    }
+</script>
+    
     
