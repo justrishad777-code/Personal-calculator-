@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App Premium</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    
+    <meta name="theme-color" content="#000000">
     <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/gold-bars.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/gold-bars.png">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -187,6 +192,13 @@
 </div>
 
 <script>
+    // --- 2. SERVICE WORKER CONNECTION (এটি মিসিং ছিল) ---
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('SW Ready!'))
+        .catch((e) => console.log('SW Failed:', e));
+    }
+
     let cfg = { p22: 0.926, p21: 0.885 };
 
     function init() {
@@ -201,7 +213,6 @@
     function calc() {
         let s = parseFloat(document.getElementById('screenRate').value) || 0;
         
-        // 22K Calculation
         let mc22 = p('mc22'), dh22 = p('dh22'), cr22 = p('cr22'), mg22 = p('mg22'), w22 = p('w22');
         let r22 = ((s * 3.674 / 31.1035 * cfg.p22) + mc22) * dh22 * 11.664 + cr22 + mg22;
         let t22 = w22 > 0 ? r22 * (w22 / 11.664) : 0;
@@ -209,7 +220,6 @@
         document.getElementById('r22').value = Math.round(r22).toLocaleString('en-BD');
         document.getElementById('t22').value = t22.toLocaleString('en-BD', {minimumFractionDigits:2});
 
-        // 21K Calculation
         let mc21 = p('mc21'), dh21 = p('dh21'), cr21 = p('cr21'), mg21 = p('mg21'), w21 = p('w21');
         let r21 = ((s * 3.674 / 31.1035 * cfg.p21) + mc21) * dh21 * 11.664 + cr21 + mg21;
         let t21 = w21 > 0 ? r21 * (w21 / 11.664) : 0;
@@ -282,13 +292,4 @@
     window.onload = init;
 </script>
 </body>
-<script>
-    // Register Service Worker for Offline Support
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
-        .then(() => console.log('Offline Mode Ready!'))
-        .catch((err) => console.log('SW Error:', err));
-    }
-</script>
-    
-    
+</html>
