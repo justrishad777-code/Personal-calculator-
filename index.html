@@ -13,10 +13,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* --- PREMIUM DARK THEME --- */
+        /* --- DYNAMIC THEME ENGINE (CSS Variables) --- */
+        :root {
+            /* Default Premium Gold Theme */
+            --bg-body: #000000;
+            --bg-card: #111111;
+            --bg-input: #000000;
+            --border-color: #333333;
+            --text-main: #ffffff;
+            --text-sub: #888888;
+            --accent-color: #ffd700; /* Gold */
+            --accent-2: #2196f3; /* Blue */
+            --header-g1: #1a1a1a;
+            --header-g2: #050505;
+            --btn-bg: #28a745;
+            --btn-text: #ffffff;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            font-family: 'Segoe UI', sans-serif; background-color: #000; color: #fff; 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
             margin: 0; display: flex; justify-content: center; min-height: 100vh; 
         }
         .app-container { width: 100%; max-width: 450px; padding: 15px; display: flex; flex-direction: column; }
@@ -24,93 +42,105 @@
         /* HEADER */
         .header { 
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
-            background: linear-gradient(145deg, #1a1a1a, #111); padding: 10px 15px; 
-            border-radius: 15px; border: 1px solid #333; 
+            background: linear-gradient(145deg, var(--header-g1), var(--header-g2)); 
+            padding: 10px 15px; border-radius: 15px; border: 1px solid var(--border-color); 
         }
         .logo-area { display: flex; align-items: center; }
         .logo-area img { height: 35px; margin-right: 10px; }
         .logo-area h3 { 
             margin: 0; font-size: 18px; 
-            background: linear-gradient(to right, #ffd700, #ffb900); 
+            background: linear-gradient(to right, var(--accent-color), #ffb900); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
             text-transform: uppercase; letter-spacing: 1px; font-weight: 800; 
         }
-        .icon-btn { background: none; border: none; font-size: 22px; cursor: pointer; }
+        .icon-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--accent-color); }
 
         /* CARD */
-        .card { background-color: #111; padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; }
+        .card { background-color: var(--bg-card); padding: 15px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 15px; }
         
         /* INPUTS */
         .main-input { 
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #000; 
-            border: 2px solid #333; border-radius: 12px; font-size: 32px; 
-            color: #ffd700; text-align: center; font-weight: bold; outline: none;
+            width: 100%; padding: 15px; margin-bottom: 15px; 
+            background: var(--bg-input); border: 2px solid var(--border-color); 
+            border-radius: 12px; font-size: 32px; color: var(--accent-color); 
+            text-align: center; font-weight: bold; outline: none;
         }
-        .main-input:focus { border-color: #ffd700; }
+        .main-input:focus { border-color: var(--accent-color); }
 
         /* TABS */
-        .tab-box { display: flex; gap: 10px; margin-bottom: 20px; background: #1a1a1a; padding: 5px; border-radius: 30px; }
+        .tab-box { display: flex; gap: 10px; margin-bottom: 20px; background: var(--header-g1); padding: 5px; border-radius: 30px; }
         .t-btn { 
-            background: transparent; color: #888; border: none; padding: 12px; 
-            border-radius: 25px; font-size: 13px; font-weight: bold; flex: 1; 
+            background: transparent; color: var(--text-sub); border: none; padding: 12px; 
+            border-radius: 25px; font-size: 13px; font-weight: bold; flex: 1; transition: 0.3s;
         }
-        .t-btn.active { background: linear-gradient(90deg, #ffd700, #ff9800); color: #000; }
+        .t-btn.active { background: linear-gradient(90deg, var(--accent-color), #ff9800); color: #000; }
 
-        /* GRID */
+        /* GRID & INPUTS */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .small-input { 
-            width: 100%; padding: 12px; background: #080808; border: 1px solid #333; 
-            border-radius: 8px; color: #ccc; text-align: center; font-weight: 600; 
+            width: 100%; padding: 12px; background: #080808; 
+            border: 1px solid var(--border-color); border-radius: 8px; 
+            color: #ccc; text-align: center; font-weight: 600; 
         }
         .weight-input { 
-            width: 100%; padding: 15px; background: #252525; border: 1px solid #444; 
-            border-radius: 10px; color: #fff; text-align: center; font-size: 24px; font-weight: bold; 
+            width: 100%; padding: 15px; background: #252525; 
+            border: 1px solid var(--border-color); border-radius: 10px; 
+            color: #fff; text-align: center; font-size: 24px; font-weight: bold; 
         }
 
-        /* RESULT */
-        .row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-        .lbl { font-size: 12px; color: #777; }
-        .val { font-size: 14px; font-weight: bold; color: #fff; text-align: right; border:none; background:transparent; width:100px; }
-        .total { font-size: 26px; font-weight: bold; color: #ffd700; text-align: right; border:none; background:transparent; width:180px; }
-        
-        .section-22 { border-left: 4px solid #ffd700; padding-left: 10px; margin-bottom: 15px; }
-        .section-21 { border-left: 4px solid #2196f3; padding-left: 10px; margin-bottom: 15px; }
+        /* SECTIONS */
+        .section-22 { border-left: 4px solid var(--accent-color); padding-left: 10px; margin-bottom: 15px; }
+        .section-21 { border-left: 4px solid var(--accent-2); padding-left: 10px; margin-bottom: 15px; }
         .hidden { display: none; }
+        
+        .row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        .lbl { font-size: 12px; color: var(--text-sub); }
+        .val { font-size: 14px; font-weight: bold; color: var(--text-main); text-align: right; border:none; background:transparent; width:100px; }
+        .total { font-size: 26px; font-weight: bold; color: var(--accent-color); text-align: right; border:none; background:transparent; width:180px; }
 
         /* BUTTONS */
-        .btn-pdf { 
-            width: 100%; padding: 16px; background: linear-gradient(90deg, #28a745, #218838); 
-            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 20px; 
+        .btn-action { 
+            width: 100%; padding: 16px; background: var(--btn-bg); 
+            color: var(--btn-text); border: none; border-radius: 12px; 
+            font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer;
         }
-        .name-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #444; border-radius: 8px; color: #fff; }
+        .name-input { width: 100%; padding: 12px; margin-bottom: 10px; background: var(--header-g1); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); }
 
         /* MODAL */
-        #settingsModal, #converterPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99; padding: 20px; }
-        .close-btn { background: none; border: none; color: red; font-size: 24px; float: right; }
-        .set-row { margin-bottom: 15px; }
-        .set-row label { display: block; color: #888; margin-bottom: 5px; }
+        #adminPanel, #converterPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 200; padding: 20px; overflow-y: auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
         
-        /* PDF PRINT */
-        #pdfContent { display: none; background: white; color: #000; width: 595px; padding: 40px; font-family: 'Times New Roman'; }
+        /* COLOR GRID PICKER */
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .color-item { display: flex; flex-direction: column; gap: 5px; }
+        .color-item label { font-size: 11px; color: var(--text-sub); }
+        .color-picker { 
+            width: 100%; height: 45px; border: 1px solid #555; 
+            border-radius: 8px; background: none; cursor: pointer; padding: 0;
+        }
+
+        /* PDF */
+        #pdfContent { display: none; background: white; color: black; width: 595px; padding: 40px; font-family: 'Times New Roman'; }
         .pdf-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .pdf-table th { border-bottom: 2px solid #000; padding: 5px; }
-        .pdf-table td { border-bottom: 1px solid #ddd; padding: 8px; }
+        .pdf-table th { border-bottom: 2px solid #000; padding: 5px; text-align: right; }
+        .pdf-table td { border-bottom: 1px solid #ddd; padding: 8px; text-align: right; }
+        .text-left { text-align: left !important; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">
+    <div class="header" id="appHeader">
         <button class="icon-btn" onclick="openPage('converterPage')">🧮</button>
         <div class="logo-area">
             <img src="./logo.png" alt="Logo">
-            <h3>GOLD APP</h3>
+            <h3 id="appTitleDisplay">GOLD APP</h3>
         </div>
-        <button class="icon-btn" onclick="openPage('settingsModal')">⚙️</button>
+        <button class="icon-btn" onclick="openPage('adminPanel')">🎨</button>
     </div>
 
     <div class="card">
-        <label style="color:#666; font-size:12px; letter-spacing:1px;">SCREEN RATE</label>
+        <label class="lbl">SCREEN RATE</label>
         <input type="number" id="screenRate" class="main-input" placeholder="0.00" oninput="calc()">
 
         <div class="tab-box">
@@ -121,8 +151,8 @@
 
         <div id="sec22" class="section-22">
             <div class="row">
-                <span style="color:#ffd700; font-weight:bold;">22 Karat</span>
-                <small style="color:#888;" id="p22Display">92.6%</small>
+                <span style="color:var(--accent-color); font-weight:bold;">22 Karat</span> 
+                <small style="color:var(--text-sub);" id="p22Display">92.6%</small>
             </div>
             <div class="grid-2">
                 <input type="number" id="mc22" class="small-input" placeholder="MC" oninput="calc()">
@@ -131,14 +161,14 @@
                 <input type="number" id="mg22" class="small-input" placeholder="MG" oninput="calc()">
             </div>
             <input type="number" id="w22" class="weight-input" placeholder="Weight (g)" oninput="calc()">
-            <div class="row"><span class="lbl">Rate/Bhori</span> <input id="r22" class="val" readonly></div>
-            <div class="row"><span class="lbl">Total Tk</span> <input id="t22" class="total" readonly></div>
+            <div class="row"><span class="lbl">Rate</span> <input id="r22" class="val" readonly></div>
+            <div class="row"><span class="lbl">Total</span> <input id="t22" class="total" readonly></div>
         </div>
 
         <div id="sec21" class="section-21 hidden">
             <div class="row">
-                <span style="color:#2196f3; font-weight:bold;">21 Karat</span>
-                <small style="color:#888;" id="p21Display">88.5%</small>
+                <span style="color:var(--accent-2); font-weight:bold;">21 Karat</span> 
+                <small style="color:var(--text-sub);" id="p21Display">88.5%</small>
             </div>
             <div class="grid-2">
                 <input type="number" id="mc21" class="small-input" placeholder="MC" oninput="calc()">
@@ -147,45 +177,89 @@
                 <input type="number" id="mg21" class="small-input" placeholder="MG" oninput="calc()">
             </div>
             <input type="number" id="w21" class="weight-input" placeholder="Weight (g)" oninput="calc()">
-            <div class="row"><span class="lbl">Rate/Bhori</span> <input id="r21" class="val" readonly></div>
-            <div class="row"><span class="lbl">Total Tk</span> <input id="t21" class="total" style="color:#2196f3;" readonly></div>
+            <div class="row"><span class="lbl">Rate</span> <input id="r21" class="val" readonly></div>
+            <div class="row"><span class="lbl">Total</span> <input id="t21" class="total" style="color:var(--accent-2);" readonly></div>
         </div>
 
         <div style="background:#222; padding:15px; border-radius:10px; text-align:center; margin-top:10px;">
-            <small style="color:#aaa;">GRAND TOTAL</small>
-            <div id="grandTotal" style="font-size:32px; font-weight:bold; color:#fff;">0.00</div>
+            <small class="lbl">GRAND TOTAL</small>
+            <div id="grandTotal" style="font-size:32px; font-weight:bold; color:var(--text-main);">0.00</div>
         </div>
 
         <div style="margin-top:20px;">
             <input id="cName" class="name-input" placeholder="Customer Name">
             <input id="authName" class="name-input" placeholder="Authorized By">
         </div>
-        <button class="btn-pdf" onclick="genPDF()">DOWNLOAD INVOICE</button>
+        <button class="btn-action" onclick="genPDF()">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
-<div id="settingsModal">
-    <button class="close-btn" onclick="closePage('settingsModal')">✕</button>
-    <h2 style="color:#ffd700;">Settings</h2>
-    <div class="set-row"><label>22K Purity</label><input id="conf_p22" class="small-input" style="width:100%"></div>
-    <div class="set-row"><label>21K Purity</label><input id="conf_p21" class="small-input" style="width:100%"></div>
-    <button class="btn-pdf" onclick="saveConf()">SAVE</button>
+<div id="adminPanel">
+    <div class="admin-header">
+        <h2 style="color:var(--accent-color); margin:0;">App Customizer</h2>
+        <button onclick="closePage('adminPanel')" style="background:none; border:none; color:red; font-size:24px;">✕</button>
+    </div>
+
+    <div style="background:var(--bg-card); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border-color);">
+        <h4 style="color:var(--accent-color); margin-top:0;">⚙️ App Config</h4>
+        <label class="lbl">App Title</label>
+        <input id="cfg_title" class="small-input" style="width:100%; margin-bottom:10px;" oninput="updateLivePreview()">
+        
+        <div class="grid-2">
+            <div><label class="lbl">22K Purity</label><input type="number" id="cfg_p22" class="small-input"></div>
+            <div><label class="lbl">21K Purity</label><input type="number" id="cfg_p21" class="small-input"></div>
+        </div>
+        <div class="grid-2" style="margin-top:10px;">
+            <div><label class="lbl">Default MC</label><input id="cfg_mc" class="small-input"></div>
+            <div><label class="lbl">Default Dh</label><input id="cfg_dh" class="small-input"></div>
+        </div>
+    </div>
+
+    <div style="background:var(--bg-card); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border-color);">
+        <h4 style="color:var(--accent-color); margin-top:0;">🎨 Color Theme Engine</h4>
+        <p style="font-size:11px; color:#666;">Tap colors to open Wheel/Grid</p>
+        
+        <div class="color-grid">
+            <div class="color-item"><label>Body Background</label><input type="color" id="th_bg_body" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Card Background</label><input type="color" id="th_bg_card" class="color-picker" oninput="updateLivePreview()"></div>
+            
+            <div class="color-item"><label>Header Color 1</label><input type="color" id="th_header_g1" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Header Color 2</label><input type="color" id="th_header_g2" class="color-picker" oninput="updateLivePreview()"></div>
+
+            <div class="color-item"><label>Main Text</label><input type="color" id="th_text_main" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Sub Text</label><input type="color" id="th_text_sub" class="color-picker" oninput="updateLivePreview()"></div>
+
+            <div class="color-item"><label>Primary Gold (22K)</label><input type="color" id="th_accent" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Secondary Blue (21K)</label><input type="color" id="th_accent2" class="color-picker" oninput="updateLivePreview()"></div>
+            
+            <div class="color-item"><label>Input Background</label><input type="color" id="th_bg_input" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Border Color</label><input type="color" id="th_border" class="color-picker" oninput="updateLivePreview()"></div>
+
+            <div class="color-item"><label>Button Color</label><input type="color" id="th_btn_bg" class="color-picker" oninput="updateLivePreview()"></div>
+            <div class="color-item"><label>Button Text</label><input type="color" id="th_btn_text" class="color-picker" oninput="updateLivePreview()"></div>
+        </div>
+    </div>
+
+    <button class="btn-action" onclick="saveAllSettings()">💾 SAVE ALL CHANGES</button>
+    <button class="btn-action" style="background:#d32f2f; margin-top:10px;" onclick="resetToFactory()">⚠️ RESET TO DEFAULT</button>
 </div>
 
 <div id="converterPage">
-    <button class="close-btn" onclick="closePage('converterPage')">✕</button>
-    <h2 style="color:#ffd700;">Converter</h2>
+    <div class="admin-header">
+        <h2 style="color:var(--accent-color); margin:0;">Converter</h2>
+        <button onclick="closePage('converterPage')" style="background:none; border:none; color:red; font-size:24px;">✕</button>
+    </div>
     <input type="number" id="cv_g" class="main-input" placeholder="Gram" oninput="gToB()">
-    <div style="text-align:center; font-size:24px;">⇅</div>
+    <div style="text-align:center; font-size:24px; color:var(--text-main);">⇅</div>
     <input type="number" id="cv_b" class="main-input" placeholder="Bhori" oninput="bToG()">
-    <div id="cv_res" style="text-align:center; font-size:20px; color:#ffd700; margin-top:20px;"></div>
+    <div id="cv_res" style="text-align:center; font-size:20px; color:var(--accent-color); margin-top:20px;"></div>
 </div>
 
 <div id="pdfContent">
     <h1 style="text-align:center; border-bottom:2px solid #000;">INVOICE</h1>
     <p><strong>Customer:</strong> <span id="pCus"></span> <span style="float:right;"><strong>Date:</strong> <span id="pDate"></span></span></p>
     <table class="pdf-table">
-        <thead><tr><th>Item</th><th style="text-align:right">Weight</th><th style="text-align:right">Rate/Bhori</th><th style="text-align:right">Total</th></tr></thead>
+        <thead><tr><th class="text-left">Item</th><th>Weight</th><th>Rate</th><th>Total</th></tr></thead>
         <tbody id="pBody"></tbody>
     </table>
     <h3 style="text-align:right; margin-top:20px;">Total: <span id="pTotal"></span></h3>
@@ -196,100 +270,169 @@
 </div>
 
 <script>
-    // --- SERVICE WORKER CONNECTION ---
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
-        .then(() => console.log('SW Ready!'))
-        .catch((e) => console.log('SW Failed:', e));
-    }
+    if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(console.error);}
 
-    let cfg = { p22: 0.926, p21: 0.885 };
+    // DEFAULT DATA
+    const defData = {
+        title: "GOLD APP", p22: 0.926, p21: 0.885, mc: "", dh: "",
+        theme: {
+            "--bg-body": "#000000", "--bg-card": "#111111", "--bg-input": "#000000",
+            "--border-color": "#333333", "--text-main": "#ffffff", "--text-sub": "#888888",
+            "--accent-color": "#ffd700", "--accent-2": "#2196f3",
+            "--header-g1": "#1a1a1a", "--header-g2": "#050505",
+            "--btn-bg": "#28a745", "--btn-text": "#ffffff"
+        }
+    };
+    let data = JSON.parse(JSON.stringify(defData));
 
     function init() {
-        let s = localStorage.getItem('gold_cfg');
-        if(s) cfg = JSON.parse(s);
-        document.getElementById('conf_p22').value = cfg.p22;
-        document.getElementById('conf_p21').value = cfg.p21;
-        document.getElementById('p22Display').innerText = (cfg.p22*100).toFixed(1)+'%';
-        document.getElementById('p21Display').innerText = (cfg.p21*100).toFixed(1)+'%';
+        const saved = localStorage.getItem('gold_app_data');
+        if(saved) {
+            let s = JSON.parse(saved);
+            data = {...defData, ...s, theme: {...defData.theme, ...s.theme}};
+        }
+        applyData();
+        fillAdminInputs();
     }
 
+    function applyData() {
+        // Apply Texts & Values
+        document.getElementById('appTitleDisplay').innerText = data.title;
+        document.getElementById('p22Display').innerText = (data.p22*100).toFixed(1)+'%';
+        document.getElementById('p21Display').innerText = (data.p21*100).toFixed(1)+'%';
+        
+        // Apply CSS Variables (Colors)
+        const root = document.documentElement;
+        for (const [key, value] of Object.entries(data.theme)) {
+            root.style.setProperty(key, value);
+        }
+
+        // Auto-fill Inputs
+        if(!document.getElementById('mc22').value) document.getElementById('mc22').value = data.mc;
+        if(!document.getElementById('dh22').value) document.getElementById('dh22').value = data.dh;
+    }
+
+    function fillAdminInputs() {
+        document.getElementById('cfg_title').value = data.title;
+        document.getElementById('cfg_p22').value = data.p22;
+        document.getElementById('cfg_p21').value = data.p21;
+        document.getElementById('cfg_mc').value = data.mc;
+        document.getElementById('cfg_dh').value = data.dh;
+
+        // Fill Color Pickers
+        document.getElementById('th_bg_body').value = data.theme["--bg-body"];
+        document.getElementById('th_bg_card').value = data.theme["--bg-card"];
+        document.getElementById('th_header_g1').value = data.theme["--header-g1"];
+        document.getElementById('th_header_g2').value = data.theme["--header-g2"];
+        document.getElementById('th_text_main').value = data.theme["--text-main"];
+        document.getElementById('th_text_sub').value = data.theme["--text-sub"];
+        document.getElementById('th_accent').value = data.theme["--accent-color"];
+        document.getElementById('th_accent2').value = data.theme["--accent-2"];
+        document.getElementById('th_bg_input').value = data.theme["--bg-input"];
+        document.getElementById('th_border').value = data.theme["--border-color"];
+        document.getElementById('th_btn_bg').value = data.theme["--btn-bg"];
+        document.getElementById('th_btn_text').value = data.theme["--btn-text"];
+    }
+
+    // LIVE PREVIEW FUNCTION
+    function updateLivePreview() {
+        const root = document.documentElement;
+        
+        // Update Variables Live
+        root.style.setProperty("--bg-body", document.getElementById('th_bg_body').value);
+        root.style.setProperty("--bg-card", document.getElementById('th_bg_card').value);
+        root.style.setProperty("--header-g1", document.getElementById('th_header_g1').value);
+        root.style.setProperty("--header-g2", document.getElementById('th_header_g2').value);
+        root.style.setProperty("--text-main", document.getElementById('th_text_main').value);
+        root.style.setProperty("--text-sub", document.getElementById('th_text_sub').value);
+        root.style.setProperty("--accent-color", document.getElementById('th_accent').value);
+        root.style.setProperty("--accent-2", document.getElementById('th_accent2').value);
+        root.style.setProperty("--bg-input", document.getElementById('th_bg_input').value);
+        root.style.setProperty("--border-color", document.getElementById('th_border').value);
+        root.style.setProperty("--btn-bg", document.getElementById('th_btn_bg').value);
+        root.style.setProperty("--btn-text", document.getElementById('th_btn_text').value);
+
+        // Update Title Live
+        document.getElementById('appTitleDisplay').innerText = document.getElementById('cfg_title').value;
+    }
+
+    function saveAllSettings() {
+        data.title = document.getElementById('cfg_title').value;
+        data.p22 = parseFloat(document.getElementById('cfg_p22').value);
+        data.p21 = parseFloat(document.getElementById('cfg_p21').value);
+        data.mc = document.getElementById('cfg_mc').value;
+        data.dh = document.getElementById('cfg_dh').value;
+
+        // Save Colors
+        data.theme["--bg-body"] = document.getElementById('th_bg_body').value;
+        data.theme["--bg-card"] = document.getElementById('th_bg_card').value;
+        data.theme["--header-g1"] = document.getElementById('th_header_g1').value;
+        data.theme["--header-g2"] = document.getElementById('th_header_g2').value;
+        data.theme["--text-main"] = document.getElementById('th_text_main').value;
+        data.theme["--text-sub"] = document.getElementById('th_text_sub').value;
+        data.theme["--accent-color"] = document.getElementById('th_accent').value;
+        data.theme["--accent-2"] = document.getElementById('th_accent2').value;
+        data.theme["--bg-input"] = document.getElementById('th_bg_input').value;
+        data.theme["--border-color"] = document.getElementById('th_border').value;
+        data.theme["--btn-bg"] = document.getElementById('th_btn_bg').value;
+        data.theme["--btn-text"] = document.getElementById('th_btn_text').value;
+
+        localStorage.setItem('gold_app_data', JSON.stringify(data));
+        alert("Settings Saved!");
+        closePage('adminPanel');
+        calc();
+    }
+
+    function resetToFactory() {
+        if(confirm("Reset everything to default?")) {
+            localStorage.removeItem('gold_app_data');
+            location.reload();
+        }
+    }
+
+    // --- LOGIC ---
     function calc() {
-        let s = parseFloat(document.getElementById('screenRate').value) || 0;
-        
-        let mc22 = p('mc22'), dh22 = p('dh22'), cr22 = p('cr22'), mg22 = p('mg22'), w22 = p('w22');
-        let r22 = ((s * 3.674 / 31.1035 * cfg.p22) + mc22) * dh22 * 11.664 + cr22 + mg22;
+        let s = p('screenRate');
+        let mc22=p('mc22')||p('cfg_mc'), dh22=p('dh22')||p('cfg_dh'), cr22=p('cr22'), mg22=p('mg22'), w22=p('w22');
+        let r22 = ((s * 3.674 / 31.1035 * data.p22) + mc22) * dh22 * 11.664 + cr22 + mg22;
         let t22 = w22 > 0 ? r22 * (w22 / 11.664) : 0;
-        
         document.getElementById('r22').value = Math.round(r22).toLocaleString('en-BD');
         document.getElementById('t22').value = t22.toLocaleString('en-BD', {minimumFractionDigits:2});
 
-        let mc21 = p('mc21'), dh21 = p('dh21'), cr21 = p('cr21'), mg21 = p('mg21'), w21 = p('w21');
-        let r21 = ((s * 3.674 / 31.1035 * cfg.p21) + mc21) * dh21 * 11.664 + cr21 + mg21;
+        let mc21=p('mc21')||p('cfg_mc'), dh21=p('dh21')||p('cfg_dh'), cr21=p('cr21'), mg21=p('mg21'), w21=p('w21');
+        let r21 = ((s * 3.674 / 31.1035 * data.p21) + mc21) * dh21 * 11.664 + cr21 + mg21;
         let t21 = w21 > 0 ? r21 * (w21 / 11.664) : 0;
-
         document.getElementById('r21').value = Math.round(r21).toLocaleString('en-BD');
         document.getElementById('t21').value = t21.toLocaleString('en-BD', {minimumFractionDigits:2});
-
         document.getElementById('grandTotal').innerText = (t22 + t21).toLocaleString('en-BD', {minimumFractionDigits:2});
     }
 
     function p(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
     function setTab(m) {
-        document.getElementById('btn22').classList.remove('active');
-        document.getElementById('btn21').classList.remove('active');
-        document.getElementById('btnBoth').classList.remove('active');
-        document.getElementById('sec22').classList.remove('hidden');
-        document.getElementById('sec21').classList.remove('hidden');
-
+        document.getElementById('btn22').classList.remove('active'); document.getElementById('btn21').classList.remove('active'); document.getElementById('btnBoth').classList.remove('active');
+        document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden');
         if(m=='22') { document.getElementById('btn22').classList.add('active'); document.getElementById('sec21').classList.add('hidden'); }
         else if(m=='21') { document.getElementById('btn21').classList.add('active'); document.getElementById('sec22').classList.add('hidden'); }
         else { document.getElementById('btnBoth').classList.add('active'); }
     }
-
     function openPage(id) { document.getElementById(id).style.display = 'block'; }
     function closePage(id) { document.getElementById(id).style.display = 'none'; }
+    
+    // Converter
+    function gToB() { let g=p('cv_g'); if(g) fmt(g/11.664); }
+    function bToG() { let b=p('cv_b'); if(b) { document.getElementById('cv_g').value=(b*11.664).toFixed(3); fmt(b); } }
+    function fmt(b) { let v=Math.floor(b), rem=b-v, a=Math.floor(rem*16), r=((rem*16)-a)*6; document.getElementById('cv_res').innerText = `${v} Vori ${a} Ana ${r.toFixed(1)} Ratti`; }
 
-    function saveConf() {
-        cfg.p22 = parseFloat(document.getElementById('conf_p22').value);
-        cfg.p21 = parseFloat(document.getElementById('conf_p21').value);
-        localStorage.setItem('gold_cfg', JSON.stringify(cfg));
-        location.reload();
-    }
-
-    function gToB() {
-        let g = p('cv_g');
-        if(!g) return;
-        let b = g / 11.664;
-        fmt(b);
-    }
-    function bToG() {
-        let b = p('cv_b');
-        if(!b) return;
-        let g = b * 11.664;
-        document.getElementById('cv_g').value = g.toFixed(3);
-        fmt(b);
-    }
-    function fmt(b) {
-        let v = Math.floor(b), rem = b-v, a = Math.floor(rem*16), r = ((rem*16)-a)*6;
-        document.getElementById('cv_res').innerText = `${v} Vori ${a} Ana ${r.toFixed(1)} Ratti`;
-    }
-
+    // PDF
     function genPDF() {
-        let d = new Date();
-        document.getElementById('pDate').innerText = d.toLocaleDateString();
+        let d = new Date(); document.getElementById('pDate').innerText = d.toLocaleDateString();
         document.getElementById('pCus').innerText = document.getElementById('cName').value;
         document.getElementById('pTotal').innerText = document.getElementById('grandTotal').innerText;
-        
         let h = '';
-        if(p('w22')>0) h+= `<tr><td>22K Gold</td><td style="text-align:right">${p('w22')}g</td><td style="text-align:right">${document.getElementById('r22').value}</td><td style="text-align:right">${document.getElementById('t22').value}</td></tr>`;
-        if(p('w21')>0) h+= `<tr><td>21K Gold</td><td style="text-align:right">${p('w21')}g</td><td style="text-align:right">${document.getElementById('r21').value}</td><td style="text-align:right">${document.getElementById('t21').value}</td></tr>`;
-        
+        if(p('w22')>0) h+= `<tr><td class="text-left">22K Gold</td><td>${p('w22')}g</td><td>${document.getElementById('r22').value}</td><td>${document.getElementById('t22').value}</td></tr>`;
+        if(p('w21')>0) h+= `<tr><td class="text-left">21K Gold</td><td>${p('w21')}g</td><td>${document.getElementById('r21').value}</td><td>${document.getElementById('t21').value}</td></tr>`;
         document.getElementById('pBody').innerHTML = h;
-        
-        let el = document.getElementById('pdfContent');
-        el.style.display = 'block';
+        let el = document.getElementById('pdfContent'); el.style.display = 'block';
         html2pdf().set({margin:0.5, filename:'Invoice.pdf', image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'}}).from(el).save().then(()=> el.style.display='none');
     }
 
