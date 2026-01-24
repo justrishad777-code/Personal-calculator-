@@ -4,371 +4,283 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App Premium</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/gold-bars.png">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <script>
-        (function() {
-            try {
-                const STORE_KEY = 'gold_app_v21_final'; // New Key to clear old cache
-                const LOAD_FLAG = 'boot_flag_v21';
-                
-                // Emergency Reset via URL
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('reset')) {
-                    localStorage.removeItem(STORE_KEY);
-                    sessionStorage.removeItem(LOAD_FLAG);
-                    console.log("System Reset");
-                    return;
-                }
-
-                const savedCode = localStorage.getItem(STORE_KEY);
-                const hasJustLoaded = sessionStorage.getItem(LOAD_FLAG);
-
-                // Load custom code only if valid and not just loaded (prevents loops)
-                if (savedCode && savedCode.length > 500) {
-                    if (!hasJustLoaded) {
-                        sessionStorage.setItem(LOAD_FLAG, 'true');
-                        document.open();
-                        document.write(savedCode);
-                        document.close();
-                    } else {
-                        sessionStorage.removeItem(LOAD_FLAG); 
-                    }
-                }
-            } catch (e) { console.error("Loader Error", e); }
-        })();
-    </script>
-
     <style>
-        /* --- GLOBAL & MOBILE FIX --- */
+        /* --- PREMIUM DARK THEME --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: #000000; 
-            color: #fff; 
-            margin: 0; padding: 0; 
-            display: flex; justify-content: center; 
-            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif; background-color: #000; color: #fff; 
+            margin: 0; display: flex; justify-content: center; min-height: 100vh; 
         }
-        .app-container { 
-            width: 100%; 
-            max-width: 450px; /* Limits width on big screens */
-            padding: 15px; 
-            background: #000;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-        }
+        .app-container { width: 100%; max-width: 450px; padding: 15px; display: flex; flex-direction: column; }
         
         /* HEADER */
         .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 20px; 
-            background: linear-gradient(145deg, #1a1a1a, #111); 
-            padding: 12px 15px; 
-            border-radius: 15px; 
-            border: 1px solid #333; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
+            background: linear-gradient(145deg, #1a1a1a, #111); padding: 12px 15px; 
+            border-radius: 15px; border: 1px solid #333; 
         }
-        .icon-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #ffd700; padding: 5px; }
         .logo-area h3 { 
             margin: 0; font-size: 18px; 
             background: linear-gradient(to right, #ffd700, #ffb900); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
             text-transform: uppercase; letter-spacing: 1px; font-weight: 800; 
         }
+        .icon-btn { background: none; border: none; font-size: 22px; cursor: pointer; }
 
         /* CARD */
-        .calculator-card { 
-            background-color: #111; 
-            padding: 15px; 
-            border-radius: 20px; 
-            border: 1px solid #222; 
-            margin-bottom: 20px; 
-        }
-
-        /* MAIN INPUT */
+        .card { background-color: #111; padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; }
+        
+        /* INPUTS */
         .main-input { 
-            width: 100%; padding: 15px; margin-bottom: 20px; 
-            background: #000; border: 2px solid #333; 
-            border-radius: 12px; font-size: 32px; color: #ffd700; 
-            text-align: center; font-weight: bold; 
-            transition: border-color 0.3s;
+            width: 100%; padding: 15px; margin-bottom: 15px; background: #000; 
+            border: 2px solid #333; border-radius: 12px; font-size: 32px; 
+            color: #ffd700; text-align: center; font-weight: bold; outline: none;
         }
-        .main-input:focus { border-color: #ffd700; outline: none; }
+        .main-input:focus { border-color: #ffd700; }
 
         /* TABS */
         .tab-box { display: flex; gap: 10px; margin-bottom: 20px; background: #1a1a1a; padding: 5px; border-radius: 30px; }
         .t-btn { 
-            background: transparent; color: #888; border: none; 
-            padding: 12px; border-radius: 25px; 
-            font-size: 13px; font-weight: bold; cursor: pointer; flex: 1; transition: 0.3s; 
+            background: transparent; color: #888; border: none; padding: 12px; 
+            border-radius: 25px; font-size: 13px; font-weight: bold; flex: 1; 
         }
-        .t-btn.active { background: linear-gradient(90deg, #ffd700, #ff9800); color: #000; box-shadow: 0 2px 5px rgba(255,165,0,0.4); }
-        
-        /* SECTIONS */
-        .gold-section { 
-            background: #1a1a1a; padding: 15px; border-radius: 15px; 
-            margin-bottom: 15px; border: 1px solid #333; 
-            border-left: 5px solid #ff9800; 
-        }
-        .section-21k { border-left-color: #2196f3; }
-        .hidden { display: none; }
+        .t-btn.active { background: linear-gradient(90deg, #ffd700, #ff9800); color: #000; }
 
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        /* GRID */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .small-input { 
-            width: 100%; padding: 12px; background: #080808; 
-            border: 1px solid #333; border-radius: 8px; color: #ccc; 
-            text-align: center; font-weight: 600; 
+            width: 100%; padding: 12px; background: #080808; border: 1px solid #333; 
+            border-radius: 8px; color: #ccc; text-align: center; font-weight: 600; 
         }
         .weight-input { 
-            width: 100%; padding: 15px; background: #252525; 
-            border: 1px solid #444; border-radius: 10px; color: #fff; 
-            text-align: center; font-size: 24px; font-weight: bold; margin-top: 5px; 
+            width: 100%; padding: 15px; background: #252525; border: 1px solid #444; 
+            border-radius: 10px; color: #fff; text-align: center; font-size: 24px; font-weight: bold; 
         }
-        
-        /* RESULTS */
-        .result-wrapper { display: flex; align-items: center; justify-content: flex-end; margin-top: 10px; }
-        .rate-label { font-size: 12px; color: #777; margin-right: 5px; }
-        .price-label { font-size: 16px; font-weight: bold; color: #ff9800; margin-right: 5px; }
-        .section-21k .price-label { color: #2196f3; }
 
-        .editable-result { background: transparent; border: none; border-bottom: 1px dashed #555; color: #fff; font-weight: bold; font-size: 14px; text-align: right; width: 100px; padding: 2px; }
-        .editable-price { background: transparent; border: none; border-bottom: 1px dashed #ff9800; color: #ff9800; font-weight: bold; font-size: 26px; text-align: right; width: 170px; }
-        .section-21k .editable-price { color: #2196f3; border-bottom-color: #2196f3; }
-        .edit-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 14px; padding: 5px; }
-
-        /* GRAND TOTAL & BTN */
-        .grand-total-box { text-align: center; margin-top: 15px; padding: 20px; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; }
-        .grand-label { display: block; color: #aaa; font-size: 12px; margin-bottom: 5px; }
-        .editable-grand { background: transparent; border: none; border-bottom: 1px dashed #ffd700; color: #ffd700; font-size: 36px; font-weight: 800; text-align: center; width: 100%; }
+        /* RESULT */
+        .row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        .lbl { font-size: 12px; color: #777; }
+        .val { font-size: 14px; font-weight: bold; color: #fff; text-align: right; border:none; background:transparent; width:100px; }
+        .total { font-size: 26px; font-weight: bold; color: #ffd700; text-align: right; border:none; background:transparent; width:180px; }
         
-        .name-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #444; border-radius: 8px; color: #fff; box-sizing: border-box; }
-        .btn-pdf { width: 100%; padding: 16px; background: linear-gradient(90deg, #28a745, #218838); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .section-22 { border-left: 4px solid #ffd700; padding-left: 10px; margin-bottom: 15px; }
+        .section-21 { border-left: 4px solid #2196f3; padding-left: 10px; margin-bottom: 15px; }
+        .hidden { display: none; }
 
-        /* MODALS (Full Screen Mobile) */
-        #converterPage, #settingsModal, #devPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
-        
-        .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #333; max-width: 400px; margin: 0 auto; }
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .modal-title { color: #ffd700; margin: 0; font-size: 20px; }
-        
-        .code-editor { width: 100%; height: 250px; background: #000; color: #0f0; border: 1px solid #333; font-family: monospace; font-size: 11px; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-        .btn-save { width: 100%; padding: 14px; background: #2196f3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-reset { width: 100%; padding: 14px; background: #d32f2f; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* SETTINGS INPUTS */
-        .set-group { margin-bottom: 15px; }
-        .set-group label { display: block; color: #aaa; margin-bottom: 5px; }
-        .set-input { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; }
+        /* BUTTONS */
+        .btn-pdf { 
+            width: 100%; padding: 16px; background: linear-gradient(90deg, #28a745, #218838); 
+            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 20px; 
+        }
+        .name-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #444; border-radius: 8px; color: #fff; }
 
-        /* CONVERTER */
-        .conv-box { margin-bottom: 15px; }
-        .conv-input-stylish { width: 100%; background: #111; border: 2px solid #333; padding: 20px; color: #fff; font-size: 22px; text-align: center; border-radius: 15px; box-sizing: border-box; }
-        .conv-input-stylish:focus { border-color: #ffd700; outline: none; }
-        .swap-icon { text-align: center; font-size: 28px; color: #ffd700; margin: 10px 0; }
-        .result-box { text-align: center; font-size: 20px; color: #ffd700; font-weight: bold; padding: 20px; background: #1a1a1a; border-radius: 15px; border: 1px solid #444; margin-top: 20px; }
-
-        /* PDF TEMPLATE (FIXED WIDTH for A4) */
-        #pdfContent { display: none; background: white; color: #000; width: 600px; padding: 40px; font-family: 'Times New Roman', serif; box-sizing: border-box; }
-        .inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .inv-table th { border-bottom: 2px solid #000; padding: 8px; background: #eee; text-align: center; }
-        .inv-table td { border-bottom: 1px solid #ddd; padding: 8px; text-align: center; }
-        .text-left { text-align: left !important; }
-        .text-right { text-align: right !important; }
-        .sig-area { display: flex; justify-content: space-between; margin-top: 80px; }
-        .sig-box { text-align: center; width: 220px; }
-        .sig-name { font-weight: bold; font-size: 16px; margin-bottom: 5px; display: block; min-height: 20px; font-family: sans-serif; }
-        .sig-line { border-top: 1px solid #000; margin-top: 2px; }
+        /* MODAL */
+        #settingsModal, #converterPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99; padding: 20px; }
+        .close-btn { background: none; border: none; color: red; font-size: 24px; float: right; }
+        .set-row { margin-bottom: 15px; }
+        .set-row label { display: block; color: #888; margin-bottom: 5px; }
+        
+        /* PDF PRINT */
+        #pdfContent { display: none; background: white; color: #000; width: 595px; padding: 40px; font-family: 'Times New Roman'; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .pdf-table th { border-bottom: 2px solid #000; padding: 5px; }
+        .pdf-table td { border-bottom: 1px solid #ddd; padding: 8px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div class="header">
-        <button class="icon-btn" onclick="openConverter()">🧮</button>
-        <div class="logo-area">
-            <h3>GOLD APP PRO</h3>
-        </div>
-        <button class="icon-btn" onclick="openSettings()">⚙️</button>
+        <button class="icon-btn" onclick="openPage('converterPage')">🧮</button>
+        <div class="logo-area"><h3>GOLD APP</h3></div>
+        <button class="icon-btn" onclick="openPage('settingsModal')">⚙️</button>
     </div>
 
-    <div class="calculator-card">
-        <label style="color:#888; font-size:12px; text-transform: uppercase; letter-spacing: 1px;">Screen Rate (Base)</label>
-        <input type="number" id="screenInput" class="main-input" placeholder="0.00" oninput="calculate()">
+    <div class="card">
+        <label style="color:#666; font-size:12px; letter-spacing:1px;">SCREEN RATE</label>
+        <input type="number" id="screenRate" class="main-input" placeholder="0.00" oninput="calc()">
 
         <div class="tab-box">
-            <button class="t-btn active" id="btn-22" onclick="switchTab('22k')">22K Only</button>
-            <button class="t-btn" id="btn-21" onclick="switchTab('21k')">21K Only</button>
-            <button class="t-btn" id="btn-both" onclick="switchTab('both')">Both</button>
+            <button class="t-btn active" onclick="setTab('22')" id="btn22">22K</button>
+            <button class="t-btn" onclick="setTab('21')" id="btn21">21K</button>
+            <button class="t-btn" onclick="setTab('both')" id="btnBoth">Both</button>
         </div>
 
-        <div class="gold-section" id="sec_22">
-            <div class="gold-title" style="display:flex; justify-content:space-between; color:#ff9800; margin-bottom:10px;">
-                <span>22 Karat</span> <small id="purityDisplay22">92.6%</small>
+        <div id="sec22" class="section-22">
+            <div class="row">
+                <span style="color:#ffd700; font-weight:bold;">22 Karat</span>
+                <small style="color:#888;" id="p22Display">92.6%</small>
             </div>
-            <div class="settings-grid">
-                <input type="number" id="mc22" class="small-input" placeholder="MC" oninput="calculate()">
-                <input type="number" id="dh22" class="small-input" placeholder="Dh" oninput="calculate()">
-                <input type="number" id="cr22" class="small-input" placeholder="CR" oninput="calculate()">
-                <input type="number" id="mg22" class="small-input" placeholder="MG" oninput="calculate()">
+            <div class="grid-2">
+                <input type="number" id="mc22" class="small-input" placeholder="MC" oninput="calc()">
+                <input type="number" id="dh22" class="small-input" placeholder="Dh" oninput="calc()">
+                <input type="number" id="cr22" class="small-input" placeholder="CR" oninput="calc()">
+                <input type="number" id="mg22" class="small-input" placeholder="MG" oninput="calc()">
             </div>
-            <input type="number" id="gram22" class="weight-input" placeholder="Weight (gm)" oninput="calculate()">
-            <div class="result-wrapper">
-                <span class="rate-label">Rate:</span>
-                <input type="text" id="calcRate22" class="editable-result" readonly oninput="updateFromRate('22')">
-                <button class="edit-btn" onclick="unlockField('calcRate22')">🖊️</button>
-            </div>
-            <div class="result-wrapper">
-                <span class="price-label">Tk</span>
-                <input type="text" id="total22" class="editable-price" value="0.00" readonly oninput="updateFromTotal('22')">
-                <button class="edit-btn" onclick="unlockField('total22')">🖊️</button>
-            </div>
+            <input type="number" id="w22" class="weight-input" placeholder="Weight (g)" oninput="calc()">
+            <div class="row"><span class="lbl">Rate/Bhori</span> <input id="r22" class="val" readonly></div>
+            <div class="row"><span class="lbl">Total Tk</span> <input id="t22" class="total" readonly></div>
         </div>
 
-        <div class="gold-section section-21k" id="sec_21">
-            <div class="gold-title" style="display:flex; justify-content:space-between; color:#2196f3; margin-bottom:10px;">
-                <span>21 Karat</span> <small id="purityDisplay21">88.5%</small>
+        <div id="sec21" class="section-21 hidden">
+            <div class="row">
+                <span style="color:#2196f3; font-weight:bold;">21 Karat</span>
+                <small style="color:#888;" id="p21Display">88.5%</small>
             </div>
-            <div class="settings-grid">
-                <input type="number" id="mc21" class="small-input" placeholder="MC" oninput="calculate()">
-                <input type="number" id="dh21" class="small-input" placeholder="Dh" oninput="calculate()">
-                <input type="number" id="cr21" class="small-input" placeholder="CR" oninput="calculate()">
-                <input type="number" id="mg21" class="small-input" placeholder="MG" oninput="calculate()">
+            <div class="grid-2">
+                <input type="number" id="mc21" class="small-input" placeholder="MC" oninput="calc()">
+                <input type="number" id="dh21" class="small-input" placeholder="Dh" oninput="calc()">
+                <input type="number" id="cr21" class="small-input" placeholder="CR" oninput="calc()">
+                <input type="number" id="mg21" class="small-input" placeholder="MG" oninput="calc()">
             </div>
-            <input type="number" id="gram21" class="weight-input" placeholder="Weight (gm)" oninput="calculate()">
-            <div class="result-wrapper">
-                <span class="rate-label">Rate:</span>
-                <input type="text" id="calcRate21" class="editable-result" readonly oninput="updateFromRate('21')">
-                <button class="edit-btn" onclick="unlockField('calcRate21')">🖊️</button>
-            </div>
-            <div class="result-wrapper">
-                <span class="price-label">Tk</span>
-                <input type="text" id="total21" class="editable-price" value="0.00" readonly oninput="updateFromTotal('21')">
-                <button class="edit-btn" onclick="unlockField('total21')">🖊️</button>
-            </div>
+            <input type="number" id="w21" class="weight-input" placeholder="Weight (g)" oninput="calc()">
+            <div class="row"><span class="lbl">Rate/Bhori</span> <input id="r21" class="val" readonly></div>
+            <div class="row"><span class="lbl">Total Tk</span> <input id="t21" class="total" style="color:#2196f3;" readonly></div>
         </div>
 
-        <div class="grand-total-box">
-            <span class="grand-label">Grand Total</span>
-            <input type="text" id="grandTotalDisplay" class="editable-grand" value="0.00" readonly>
+        <div style="background:#222; padding:15px; border-radius:10px; text-align:center; margin-top:10px;">
+            <small style="color:#aaa;">GRAND TOTAL</small>
+            <div id="grandTotal" style="font-size:32px; font-weight:bold; color:#fff;">0.00</div>
         </div>
 
-        <div style="margin-top: 20px;">
-            <input type="text" id="customerName" class="name-input" placeholder="Customer Name">
-            <input type="text" id="authName" class="name-input" placeholder="Authorized By (Name)">
+        <div style="margin-top:20px;">
+            <input id="cName" class="name-input" placeholder="Customer Name">
+            <input id="authName" class="name-input" placeholder="Authorized By">
         </div>
-
-        <button class="btn-pdf" onclick="generatePDF()">DOWNLOAD INVOICE</button>
-    </div>
-</div>
-
-<div id="converterPage">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Unit Converter</h3>
-            <button onclick="closeConverter()" style="background:none; border:none; color:red; font-size:24px;">✕</button>
-        </div>
-        <div class="conv-box">
-            <input type="number" id="conv_gram" class="conv-input-stylish" placeholder="Gram" oninput="convertGramToBhori()">
-        </div>
-        <div class="swap-icon">⇅</div>
-        <div class="conv-box">
-            <input type="number" id="conv_bhori" class="conv-input-stylish" placeholder="Bhori" oninput="convertBhoriToGram()">
-        </div>
-        <div class="result-box" id="traditional_weight">0 Vori 0 Ana 0 Ratti</div>
+        <button class="btn-pdf" onclick="genPDF()">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
 <div id="settingsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Admin Settings</h3>
-            <button onclick="closeSettings()" style="background:none; border:none; color:red; font-size:24px;">✕</button>
-        </div>
-        <div class="set-group"><label>22K Purity</label><input type="number" id="set_p22" class="set-input"></div>
-        <div class="set-group"><label>21K Purity</label><input type="number" id="set_p21" class="set-input"></div>
-        <div class="set-group"><label>Def MC</label><input type="number" id="set_defMC" class="set-input"></div>
-        <div class="set-group"><label>Def Dh</label><input type="number" id="set_defDh" class="set-input"></div>
-        <button class="btn-save" onclick="saveSettings()">SAVE CONFIG</button>
-        
-        <button class="btn-reset" style="background:#333; margin-top:20px;" onclick="openDevPanel()">👨‍💻 DEVELOPER PANEL</button>
-    </div>
+    <button class="close-btn" onclick="closePage('settingsModal')">✕</button>
+    <h2 style="color:#ffd700;">Settings</h2>
+    <div class="set-row"><label>22K Purity</label><input id="conf_p22" class="small-input" style="width:100%"></div>
+    <div class="set-row"><label>21K Purity</label><input id="conf_p21" class="small-input" style="width:100%"></div>
+    <button class="btn-pdf" onclick="saveConf()">SAVE</button>
 </div>
 
-<div id="devPanel">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Developer Console</h3>
-            <button onclick="closeDevPanel()" style="background:none; border:none; color:red; font-size:24px;">✕</button>
-        </div>
-        <p style="color:#aaa; font-size:12px;">Paste new code below to update app instantly.</p>
-        <textarea id="newCodeArea" class="code-editor" placeholder="<html>...</html>"></textarea>
-        <button class="btn-save" style="background:#28a745;" onclick="installUpdate()">INSTALL UPDATE</button>
-        <button class="btn-reset" onclick="factoryReset()">FACTORY RESET</button>
-    </div>
+<div id="converterPage">
+    <button class="close-btn" onclick="closePage('converterPage')">✕</button>
+    <h2 style="color:#ffd700;">Converter</h2>
+    <input type="number" id="cv_g" class="main-input" placeholder="Gram" oninput="gToB()">
+    <div style="text-align:center; font-size:24px;">⇅</div>
+    <input type="number" id="cv_b" class="main-input" placeholder="Bhori" oninput="bToG()">
+    <div id="cv_res" style="text-align:center; font-size:20px; color:#ffd700; margin-top:20px;"></div>
 </div>
 
 <div id="pdfContent">
-    <h1 style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px;">INVOICE</h1>
-    <div style="display:flex; justify-content:space-between; margin-top:20px;">
-        <div><strong>Customer:</strong> <span id="pdfCustomer"></span></div>
-        <div><strong>Date:</strong> <span id="pdfDate"></span></div>
-    </div>
-    <table class="inv-table">
-        <thead>
-            <tr><th class="text-left">Item</th><th class="text-right">Weight</th><th class="text-right">Rate</th><th class="text-right">Total</th></tr>
-        </thead>
-        <tbody id="pdfTableBody"></tbody>
+    <h1 style="text-align:center; border-bottom:2px solid #000;">INVOICE</h1>
+    <p><strong>Customer:</strong> <span id="pCus"></span> <span style="float:right;"><strong>Date:</strong> <span id="pDate"></span></span></p>
+    <table class="pdf-table">
+        <thead><tr><th>Item</th><th style="text-align:right">Weight</th><th style="text-align:right">Rate/Bhori</th><th style="text-align:right">Total</th></tr></thead>
+        <tbody id="pBody"></tbody>
     </table>
-    <div style="text-align:right; margin-top:20px; font-size:18px; font-weight:bold; border-top:2px solid #000; padding-top:5px;">
-        Grand Total: Tk <span id="pdfGrandTotal"></span>
-    </div>
-    <div class="sig-area">
-        <div class="sig-box"><div class="sig-line"></div>Customer Signature</div>
-        <div class="sig-box">
-            <div class="sig-name" id="pdfAuthNameDisplay"></div>
-            <div class="sig-line"></div>Authorized By
-        </div>
+    <h3 style="text-align:right; margin-top:20px;">Total: <span id="pTotal"></span></h3>
+    <div style="margin-top:60px; display:flex; justify-content:space-between;">
+        <div style="border-top:1px solid #000; width:150px; text-align:center;">Signature</div>
+        <div style="border-top:1px solid #000; width:150px; text-align:center;">Authorized By</div>
     </div>
 </div>
 
 <script>
-    // CLEANER
-    if(localStorage.getItem('gold_app_master_v1')) localStorage.removeItem('gold_app_master_v1');
-    if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())) }
+    let cfg = { p22: 0.926, p21: 0.885 };
 
-    // --- CONFIG & LOGIC ---
-    let config = { p22: 0.926, p21: 0.885, defMC:'', defDh:'' };
-    
-    function loadConfig() {
-        const saved = localStorage.getItem('goldConfig_v21');
-        if(saved) config = JSON.parse(saved);
-        
-        document.getElementById('set_p22').value = config.p22;
-        document.getElementById('set_p21').value = config.p21;
-        document.getElementById('set_defMC').value = config.defMC || '';
-        document.getElementById('set_defDh').value = config.defDh || '';
-        
-        document.getElementById('purityDisplay22').innerText = (config.p22 * 100).toFixed(1) + "%";
-        document.getElementById('purityDisplay21').innerText = (config.p21 * 100).toFixed(1) + "%";
-
-        // Auto load defaults
-        if(config.defMC && !document.getElementById('mc22').value) document.getElementById('mc22').value = config.defMC;
-        if(config.defDh && !document.getElementById('dh22').value) document.getElementById('dh22').value = config.defDh;
-        
-        switchTab('22k');
-        calculate();
+    function init() {
+        let s = localStorage.getItem('gold_cfg');
+        if(s) cfg = JSON.parse(s);
+        document.getElementById('conf_p22').value = cfg.p22;
+        document.getElementById('conf_p21').value = cfg.p21;
+        document.getElementById('p22Display').innerText = (cfg.p22*100).toFixed(1)+'%';
+        document.getElementById('p21Display').innerText = (cfg.p21*100).toFixed(1)+'%';
     }
 
-    function switchTab(mode) {
-        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('sec_22').classList.remove('hidden');
-        document.getElementById('sec_21').classList.remove('hidden');
+    function calc() {
+        let s = parseFloat(document.getElementById('screenRate').value) || 0;
+        
+        // 22K Calculation
+        let mc22 = p('mc22'), dh22 = p('dh22'), cr22 = p('cr22'), mg22 = p('mg22'), w22 = p('w22');
+        let r22 = ((s * 3.674 / 31.1035 * cfg.p22) + mc22) * dh22 * 11.664 + cr22 + mg22;
+        let t22 = w22 > 0 ? r22 * (w22 / 11.664) : 0;
+        
+        document.getElementById('r22').value = Math.round(r22).toLocaleString('en-BD');
+        document.getElementById('t22').value = t22.toLocaleString('en-BD', {minimumFractionDigits:2});
 
-        if(mode === '22k') {
-            document.getElementById('btn-22').classList.add('activ
+        // 21K Calculation
+        let mc21 = p('mc21'), dh21 = p('dh21'), cr21 = p('cr21'), mg21 = p('mg21'), w21 = p('w21');
+        let r21 = ((s * 3.674 / 31.1035 * cfg.p21) + mc21) * dh21 * 11.664 + cr21 + mg21;
+        let t21 = w21 > 0 ? r21 * (w21 / 11.664) : 0;
+
+        document.getElementById('r21').value = Math.round(r21).toLocaleString('en-BD');
+        document.getElementById('t21').value = t21.toLocaleString('en-BD', {minimumFractionDigits:2});
+
+        document.getElementById('grandTotal').innerText = (t22 + t21).toLocaleString('en-BD', {minimumFractionDigits:2});
+    }
+
+    function p(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+    function setTab(m) {
+        document.getElementById('btn22').classList.remove('active');
+        document.getElementById('btn21').classList.remove('active');
+        document.getElementById('btnBoth').classList.remove('active');
+        document.getElementById('sec22').classList.remove('hidden');
+        document.getElementById('sec21').classList.remove('hidden');
+
+        if(m=='22') { document.getElementById('btn22').classList.add('active'); document.getElementById('sec21').classList.add('hidden'); }
+        else if(m=='21') { document.getElementById('btn21').classList.add('active'); document.getElementById('sec22').classList.add('hidden'); }
+        else { document.getElementById('btnBoth').classList.add('active'); }
+    }
+
+    function openPage(id) { document.getElementById(id).style.display = 'block'; }
+    function closePage(id) { document.getElementById(id).style.display = 'none'; }
+
+    function saveConf() {
+        cfg.p22 = parseFloat(document.getElementById('conf_p22').value);
+        cfg.p21 = parseFloat(document.getElementById('conf_p21').value);
+        localStorage.setItem('gold_cfg', JSON.stringify(cfg));
+        location.reload();
+    }
+
+    function gToB() {
+        let g = p('cv_g');
+        if(!g) return;
+        let b = g / 11.664;
+        fmt(b);
+    }
+    function bToG() {
+        let b = p('cv_b');
+        if(!b) return;
+        let g = b * 11.664;
+        document.getElementById('cv_g').value = g.toFixed(3);
+        fmt(b);
+    }
+    function fmt(b) {
+        let v = Math.floor(b), rem = b-v, a = Math.floor(rem*16), r = ((rem*16)-a)*6;
+        document.getElementById('cv_res').innerText = `${v} Vori ${a} Ana ${r.toFixed(1)} Ratti`;
+    }
+
+    function genPDF() {
+        let d = new Date();
+        document.getElementById('pDate').innerText = d.toLocaleDateString();
+        document.getElementById('pCus').innerText = document.getElementById('cName').value;
+        document.getElementById('pTotal').innerText = document.getElementById('grandTotal').innerText;
+        
+        let h = '';
+        if(p('w22')>0) h+= `<tr><td>22K Gold</td><td style="text-align:right">${p('w22')}g</td><td style="text-align:right">${document.getElementById('r22').value}</td><td style="text-align:right">${document.getElementById('t22').value}</td></tr>`;
+        if(p('w21')>0) h+= `<tr><td>21K Gold</td><td style="text-align:right">${p('w21')}g</td><td style="text-align:right">${document.getElementById('r21').value}</td><td style="text-align:right">${document.getElementById('t21').value}</td></tr>`;
+        
+        document.getElementById('pBody').innerHTML = h;
+        
+        let el = document.getElementById('pdfContent');
+        el.style.display = 'block';
+        html2pdf().set({margin:0.5, filename:'Invoice.pdf', image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'}}).from(el).save().then(()=> el.style.display='none');
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
+    
