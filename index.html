@@ -5,7 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App Premium</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="logo.png">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        (function() {
+            try {
+                const STORE_KEY = 'gold_app_v21_final'; // New Key to clear old cache
+                const LOAD_FLAG = 'boot_flag_v21';
+                
+                // Emergency Reset via URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('reset')) {
+                    localStorage.removeItem(STORE_KEY);
+                    sessionStorage.removeItem(LOAD_FLAG);
+                    console.log("System Reset");
+                    return;
+                }
+
+                const savedCode = localStorage.getItem(STORE_KEY);
+                const hasJustLoaded = sessionStorage.getItem(LOAD_FLAG);
+
+                // Load custom code only if valid and not just loaded (prevents loops)
+                if (savedCode && savedCode.length > 500) {
+                    if (!hasJustLoaded) {
+                        sessionStorage.setItem(LOAD_FLAG, 'true');
+                        document.open();
+                        document.write(savedCode);
+                        document.close();
+                    } else {
+                        sessionStorage.removeItem(LOAD_FLAG); 
+                    }
+                }
+            } catch (e) { console.error("Loader Error", e); }
+        })();
+    </script>
 
     <style>
         /* --- GLOBAL & MOBILE FIX --- */
@@ -20,7 +57,7 @@
         }
         .app-container { 
             width: 100%; 
-            max-width: 450px; 
+            max-width: 450px; /* Limits width on big screens */
             padding: 15px; 
             background: #000;
             min-height: 100vh;
@@ -114,13 +151,15 @@
         .btn-pdf { width: 100%; padding: 16px; background: linear-gradient(90deg, #28a745, #218838); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
         /* MODALS (Full Screen Mobile) */
-        #converterPage, #settingsModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        #converterPage, #settingsModal, #devPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         
         .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #333; max-width: 400px; margin: 0 auto; }
         .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .modal-title { color: #ffd700; margin: 0; font-size: 20px; }
         
+        .code-editor { width: 100%; height: 250px; background: #000; color: #0f0; border: 1px solid #333; font-family: monospace; font-size: 11px; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
         .btn-save { width: 100%; padding: 14px; background: #2196f3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-reset { width: 100%; padding: 14px; background: #d32f2f; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
         /* SETTINGS INPUTS */
         .set-group { margin-bottom: 15px; }
@@ -153,7 +192,7 @@
     <div class="header">
         <button class="icon-btn" onclick="openConverter()">🧮</button>
         <div class="logo-area">
-            <h3>GOLD APP PREMIUM</h3>
+            <h3>GOLD APP PRO</h3>
         </div>
         <button class="icon-btn" onclick="openSettings()">⚙️</button>
     </div>
@@ -251,11 +290,26 @@
             <h3 class="modal-title">Admin Settings</h3>
             <button onclick="closeSettings()" style="background:none; border:none; color:red; font-size:24px;">✕</button>
         </div>
-        <div class="set-group"><label>22K Purity</label><input type="number" id="set_p22" class="set-input" style="width:100%; padding:10px;"></div>
-        <div class="set-group"><label>21K Purity</label><input type="number" id="set_p21" class="set-input" style="width:100%; padding:10px;"></div>
-        <div class="set-group"><label>Def MC</label><input type="number" id="set_defMC" class="set-input" style="width:100%; padding:10px;"></div>
-        <div class="set-group"><label>Def Dh</label><input type="number" id="set_defDh" class="set-input" style="width:100%; padding:10px;"></div>
+        <div class="set-group"><label>22K Purity</label><input type="number" id="set_p22" class="set-input"></div>
+        <div class="set-group"><label>21K Purity</label><input type="number" id="set_p21" class="set-input"></div>
+        <div class="set-group"><label>Def MC</label><input type="number" id="set_defMC" class="set-input"></div>
+        <div class="set-group"><label>Def Dh</label><input type="number" id="set_defDh" class="set-input"></div>
         <button class="btn-save" onclick="saveSettings()">SAVE CONFIG</button>
+        
+        <button class="btn-reset" style="background:#333; margin-top:20px;" onclick="openDevPanel()">👨‍💻 DEVELOPER PANEL</button>
+    </div>
+</div>
+
+<div id="devPanel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Developer Console</h3>
+            <button onclick="closeDevPanel()" style="background:none; border:none; color:red; font-size:24px;">✕</button>
+        </div>
+        <p style="color:#aaa; font-size:12px;">Paste new code below to update app instantly.</p>
+        <textarea id="newCodeArea" class="code-editor" placeholder="<html>...</html>"></textarea>
+        <button class="btn-save" style="background:#28a745;" onclick="installUpdate()">INSTALL UPDATE</button>
+        <button class="btn-reset" onclick="factoryReset()">FACTORY RESET</button>
     </div>
 </div>
 
@@ -285,6 +339,7 @@
 
 <script>
     // CLEANER
+    if(localStorage.getItem('gold_app_master_v1')) localStorage.removeItem('gold_app_master_v1');
     if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())) }
 
     // --- CONFIG & LOGIC ---
@@ -302,6 +357,7 @@
         document.getElementById('purityDisplay22').innerText = (config.p22 * 100).toFixed(1) + "%";
         document.getElementById('purityDisplay21').innerText = (config.p21 * 100).toFixed(1) + "%";
 
+        // Auto load defaults
         if(config.defMC && !document.getElementById('mc22').value) document.getElementById('mc22').value = config.defMC;
         if(config.defDh && !document.getElementById('dh22').value) document.getElementById('dh22').value = config.defDh;
         
@@ -315,101 +371,4 @@
         document.getElementById('sec_21').classList.remove('hidden');
 
         if(mode === '22k') {
-            document.getElementById('btn-22').classList.add('active');
-            document.getElementById('sec_21').classList.add('hidden');
-        } else if(mode === '21k') {
-            document.getElementById('btn-21').classList.add('active');
-            document.getElementById('sec_22').classList.add('hidden');
-        } else {
-            document.getElementById('btn-both').classList.add('active');
-        }
-    }
-
-    function calculate() {
-        let s = parseFloat(document.getElementById('screenInput').value) || 0;
-        
-        // 22K
-        let mc22 = parseFloat(document.getElementById('mc22').value)||0, dh22 = parseFloat(document.getElementById('dh22').value)||0, cr22 = parseFloat(document.getElementById('cr22').value)||0, mg22 = parseFloat(document.getElementById('mg22').value)||0;
-        let w22 = parseFloat(document.getElementById('gram22').value)||0;
-        let rate22 = ((s * 3.674 / 31.1035 * config.p22) + mc22) * dh22 * 11.664 + cr22 + mg22;
-        let total22 = rate22 * (w22 / 11.664);
-        
-        document.getElementById('calcRate22').value = Math.round(rate22).toLocaleString('en-BD');
-        document.getElementById('total22').value = total22.toLocaleString('en-BD', {minimumFractionDigits: 2});
-
-        // 21K
-        let mc21 = parseFloat(document.getElementById('mc21').value)||0, dh21 = parseFloat(document.getElementById('dh21').value)||0, cr21 = parseFloat(document.getElementById('cr21').value)||0, mg21 = parseFloat(document.getElementById('mg21').value)||0;
-        let w21 = parseFloat(document.getElementById('gram21').value)||0;
-        let rate21 = ((s * 3.674 / 31.1035 * config.p21) + mc21) * dh21 * 11.664 + cr21 + mg21;
-        let total21 = rate21 * (w21 / 11.664);
-        
-        document.getElementById('calcRate21').value = Math.round(rate21).toLocaleString('en-BD');
-        document.getElementById('total21').value = total21.toLocaleString('en-BD', {minimumFractionDigits: 2});
-
-        document.getElementById('grandTotalDisplay').value = (total22 + total21).toLocaleString('en-BD', {minimumFractionDigits: 2});
-    }
-
-    function updateFromRate(k) {
-        let w = parseFloat(document.getElementById('gram'+k).value)||0;
-        if(!w) return;
-        let r = parseFloat(document.getElementById('calcRate'+k).value.replace(/,/g,''))||0;
-        document.getElementById('total'+k).value = (r * w / 11.664).toLocaleString('en-BD', {minimumFractionDigits: 2});
-        calculateGrand();
-    }
-    function updateFromTotal(k) {
-        let w = parseFloat(document.getElementById('gram'+k).value)||0;
-        if(!w) return;
-        let t = parseFloat(document.getElementById('total'+k).value.replace(/,/g,''))||0;
-        document.getElementById('calcRate'+k).value = Math.round(t / w * 11.664).toLocaleString('en-BD');
-        calculateGrand();
-    }
-    function calculateGrand() {
-        let t22 = parseFloat(document.getElementById('total22').value.replace(/,/g,''))||0;
-        let t21 = parseFloat(document.getElementById('total21').value.replace(/,/g,''))||0;
-        document.getElementById('grandTotalDisplay').value = (t22+t21).toLocaleString('en-BD', {minimumFractionDigits: 2});
-    }
-
-    function unlockField(id) { document.getElementById(id).readOnly = false; document.getElementById(id).focus(); }
-    function openConverter(){ document.getElementById('converterPage').style.display='block'; }
-    function closeConverter(){ document.getElementById('converterPage').style.display='none'; }
-    function openSettings(){ document.getElementById('settingsModal').style.display='block'; }
-    function closeSettings(){ document.getElementById('settingsModal').style.display='none'; }
-    
-    function convertGramToBhori() { let g = parseFloat(document.getElementById('conv_gram').value); if(isNaN(g)) return; let b = g/11.664; document.getElementById('traditional_weight').innerText = formatBhori(b); }
-    function convertBhoriToGram() { let b = parseFloat(document.getElementById('conv_bhori').value); if(isNaN(b)) return; let g = b*11.664; document.getElementById('traditional_weight').innerText = formatBhori(b); }
-    function formatBhori(b) { let v = Math.floor(b), rem = b-v, a = Math.floor(rem*16), r = ((rem*16)-a)*6; return `${v} Vori ${a} Ana ${r.toFixed(1)} Ratti`; }
-
-    function saveSettings() {
-        config.p22 = parseFloat(document.getElementById('set_p22').value);
-        config.p21 = parseFloat(document.getElementById('set_p21').value);
-        config.defMC = document.getElementById('set_defMC').value;
-        config.defDh = document.getElementById('set_defDh').value;
-        localStorage.setItem('goldConfig_v21', JSON.stringify(config));
-        loadConfig(); closeSettings();
-    }
-
-    function generatePDF() {
-        const d = new Date();
-        document.getElementById('pdfDate').innerText = d.toLocaleDateString();
-        document.getElementById('pdfCustomer').innerText = document.getElementById('customerName').value;
-        document.getElementById('pdfAuthNameDisplay').innerText = document.getElementById('authName').value;
-        document.getElementById('pdfGrandTotal').innerText = document.getElementById('grandTotalDisplay').value;
-
-        let html = '';
-        let w22 = document.getElementById('gram22').value;
-        if(w22 > 0) html += `<tr><td class="text-left">22K Gold</td><td class="text-right">${w22}g</td><td class="text-right">${document.getElementById('calcRate22').value}</td><td class="text-right">${document.getElementById('total22').value}</td></tr>`;
-        
-        let w21 = document.getElementById('gram21').value;
-        if(w21 > 0) html += `<tr><td class="text-left">21K Gold</td><td class="text-right">${w21}g</td><td class="text-right">${document.getElementById('calcRate21').value}</td><td class="text-right">${document.getElementById('total21').value}</td></tr>`;
-
-        document.getElementById('pdfTableBody').innerHTML = html;
-
-        let el = document.getElementById('pdfContent');
-        el.style.display = 'block';
-        html2pdf().set({ margin:0.5, filename:'Invoice.pdf', image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'} }).from(el).save().then(() => el.style.display='none');
-    }
-
-    window.onload = loadConfig;
-</script>
-</body>
-</html>
+            document.getElementById('btn-22').classList.add('activ
