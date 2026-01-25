@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App | Stable Version</title>
+    <title>Gold App | Final Stable</title>
     
     <style>
         :root {
             /* THEME VARIABLES */
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --glass-bg: rgba(20, 20, 20, 0.85); /* Increased opacity for performance */
+            --glass-bg: rgba(20, 20, 20, 0.85);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-            /* Removed heavy blur from root to prevent scrolling lag */
             
             --text-main: #ffffff;
             --text-sub: #b0b0b0;
@@ -45,7 +44,7 @@
         /* MENU */
         #menuPopup {
             display: none; position: absolute; top: 70px; left: 15px; width: 220px;
-            background: #1a1a25; /* Solid color for menu stability */
+            background: #1a1a25; 
             border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 15px; z-index: 3000;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-direction: column; gap: 12px;
         }
@@ -56,7 +55,7 @@
         }
         .menu-btn:active { background: var(--accent-active); color: #000; }
 
-        /* CARD - Optimized for PDF */
+        /* CARD */
         .card { 
             background: var(--glass-bg); 
             padding: 20px; border-radius: 25px; border: var(--glass-border); margin-bottom: 15px; 
@@ -99,16 +98,16 @@
             cursor: pointer; box-shadow: 0 5px 15px rgba(29, 185, 84, 0.5);
         }
 
-        /* KEYPAD - Optimized for No Lag */
+        /* KEYPAD */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
-            background: #12121a; /* Solid background prevents glass-lag on animation */
+            background: #12121a; 
             border-top: 1px solid rgba(255,255,255,0.2); border-radius: 35px 35px 0 0; padding: 20px 15px; 
             transition: bottom 0.2s ease-out; z-index: 5000; 
             box-shadow: 0 -10px 40px rgba(0, 150, 255, 0.15);
         }
         #customKeypad.show { bottom: 0; }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 5px; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 5px; }
         
         .k-btn {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
@@ -116,7 +115,7 @@
             cursor: pointer; user-select: none;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5), 0 0 20px rgba(0, 190, 255, 0.25);
         }
-        .k-btn:active { transform: scale(0.95); background: var(--accent-active); color: #000; box-shadow: 0 0 30px var(--accent-active); }
+        .k-btn:active { transform: scale(0.95); background: var(--accent-active); color: #000; border-color: #fff; box-shadow: 0 0 30px var(--accent-active); }
         
         .k-close { 
             grid-column: span 3; background: rgba(255, 80, 80, 0.15); border: 1px solid rgba(255, 80, 80, 0.4);
@@ -285,11 +284,11 @@
         } else calc();
     }
 
-    // FIXED BACKSPACE LOOP (NO FREEZE)
+    // --- FIX FOR FREEZING ---
+    // Added window listeners to stop loop even if finger slides off the button
     function setupBackspace() {
         const btn = document.getElementById('btn-back');
         const start = (e) => {
-            // No e.preventDefault to allow scrolling
             press('back');
             backDelay = setTimeout(() => {
                 backTimer = setInterval(() => { press('back'); }, 120); 
@@ -299,10 +298,11 @@
         
         btn.addEventListener('mousedown', start);
         btn.addEventListener('touchstart', start, {passive: true});
-        btn.addEventListener('mouseup', stop);
-        btn.addEventListener('touchend', stop);
-        btn.addEventListener('touchcancel', stop); // Fix for drag-off freeze
-        btn.addEventListener('mouseleave', stop);
+        
+        // CRITICAL FIX: Listen on WINDOW to catch lift anywhere
+        window.addEventListener('mouseup', stop);
+        window.addEventListener('touchend', stop);
+        window.addEventListener('touchcancel', stop);
     }
 
     function setTab(t) {
@@ -344,4 +344,65 @@
         let total22 = rate_per_bhori_22 * (w22_gm / 11.664);
         
         document.getElementById('r22').innerText = rate_per_bhori_22.toLocaleString(undefined, {maximumFractionDigits: 2});
-        document.getElementById('t22').innerText = total2
+        document.getElementById('t22').innerText = total22.toLocaleString(undefined,{minimumFractionDigits: 2});
+
+        let purity21 = 0.885;
+        let mc21 = parseFloat(document.getElementById('mc21').value) || 0;
+        let dh21 = parseFloat(document.getElementById('dh21').value) || 0;
+        let cr21 = parseFloat(document.getElementById('cr21').value) || 0;
+        let mg21 = parseFloat(document.getElementById('mg21').value) || 0;
+
+        let rate_per_bhori_21 = (((baseRate * 3.674 / 31.1035 * purity21) + mc21) * 11.664 * dh21) + cr21 + mg21;
+        let w21_gm = parseFloat(document.getElementById('w21').value) || 0;
+        let total21 = rate_per_bhori_21 * (w21_gm / 11.664);
+        
+        document.getElementById('r21').innerText = rate_per_bhori_21.toLocaleString(undefined, {maximumFractionDigits: 2});
+        document.getElementById('t21').innerText = total21.toLocaleString(undefined,{minimumFractionDigits: 2});
+
+        let grand = (document.getElementById('sec22').classList.contains('hidden')?0:total22) + (document.getElementById('sec21').classList.contains('hidden')?0:total21);
+        document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined,{minimumFractionDigits: 2});
+    }
+
+    function gToV() {
+        let g = parseFloat(document.getElementById('cv_g').value) || 0;
+        let tb = g / 11.664;
+        let v = Math.floor(tb), rem = tb - v, a = Math.floor(rem * 16), r = ((rem * 16) - a) * 6;
+        document.getElementById('res_v').value = v; document.getElementById('res_a').value = a; document.getElementById('res_r').value = r.toFixed(2);
+    }
+
+    function vToG() {
+        let v = parseFloat(document.getElementById('res_v').value) || 0, a = parseFloat(document.getElementById('res_a').value) || 0, r = parseFloat(document.getElementById('res_r').value) || 0;
+        document.getElementById('cv_g').value = ((v + (a/16) + (r/96)) * 11.664).toFixed(3);
+    }
+
+    function openP(id) { document.getElementById(id).style.display = 'block'; }
+    function closeP(id) { document.getElementById(id).style.display = 'none'; }
+
+    function genPDF(id, name) {
+        if (typeof html2pdf === 'undefined') {
+            alert('PDF Library loading... Please wait.');
+            return;
+        }
+        const btn = document.activeElement;
+        const originalText = btn.innerText;
+        btn.innerText = "PROCESSING...";
+        
+        const element = document.getElementById(id);
+        const opt = {
+            margin: 5,
+            filename: name,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#151520' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        html2pdf().set(opt).from(element).save()
+        .then(() => { btn.innerText = originalText; })
+        .catch(err => { 
+            alert("Error: " + err); 
+            btn.innerText = originalText; 
+        });
+    }
+</script>
+</body>
+</html>
