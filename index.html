@@ -3,201 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Pro | Ultimate Fixed Edition</title>
+    <title>Gold App | PDF Fixed</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
-            --bg-body: #050505;
-            --bg-card: rgba(25, 25, 25, 0.85);
-            --bg-input: rgba(0, 0, 0, 0.6);
-            --border-color: rgba(255, 255, 255, 0.12);
+            /* GLOSSY THEME VARIABLES */
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --glass-bg: rgba(20, 20, 20, 0.65);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --blur-effect: blur(15px);
+            
             --text-main: #ffffff;
-            --text-sub: #aaaaaa;
-            --color-22k: #ffd700;
-            --color-21k: #00a2ff;
-            --accent-color: #ff8c00;
-            --header-bg: rgba(20, 20, 20, 0.9);
-            --btn-bg: #1db954;
-            --glass-blur: blur(15px);
+            --text-sub: #b0b0b0;
+            --color-orange: #ff9f43; 
+            --color-blue: #0abde3; 
+            --color-golden: #ffd700;
+            --accent-active: var(--color-golden);
         }
-        html, body { height: 100%; width: 100%; overflow: hidden; position: fixed; margin: 0; background: #000; touch-action: none; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         
-        .app-container { 
-            width: 100%; max-width: 450px; height: 100%; padding: 15px; 
-            display: flex; flex-direction: column; overflow-y: auto;
-            touch-action: pan-y;
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-gradient); 
+            color: var(--text-main); 
+            margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
+            background-attachment: fixed;
         }
 
-        .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; background: var(--header-bg); border-radius: 10px; margin-bottom: 15px; }
-        .plus-btn { background: var(--accent-color); border: none; color: #000; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-        .logo-middle img { height: 30px; }
+        .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 350px; position: relative; }
+        
+        /* HEADER */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
+            background: var(--glass-bg); backdrop-filter: var(--blur-effect); -webkit-backdrop-filter: var(--blur-effect);
+            padding: 12px 15px; border-radius: 20px; border: var(--glass-border); box-shadow: var(--glass-shadow);
+            position: relative; z-index: 100;
+        }
+        .logo-area h3 { margin: 0; font-size: 18px; color: var(--accent-active); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        
+        /* POPUP MENU */
+        #menuPopup {
+            display: none;
+            position: absolute;
+            top: 70px; left: 15px; width: 220px;
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 15px; padding: 15px; z-index: 3000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            flex-direction: column; gap: 12px;
+            animation: popIn 0.2s ease-out;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 20px; backdrop-filter: var(--glass-blur); }
-        .main-title { font-size: 14px; color: var(--text-sub); margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
-        .big-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); color: #fff; border-radius: 12px; padding: 15px; font-size: 32px; text-align: center; margin-bottom: 10px; }
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.05); color: #fff;
+            padding: 12px; border-radius: 10px; border: none;
+            font-size: 15px; font-weight: 600; text-align: left;
+            display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .menu-btn:active { background: var(--accent-active); color: #000; }
 
-        .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: #111; z-index: 1000; padding: 20px; transition: 0.3s; }
-        .sidebar.active { left: 0; }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; }
-        .overlay.active { display: block; }
-        .menu-item { width: 100%; padding: 15px; background: none; border: none; color: #fff; text-align: left; font-size: 16px; border-bottom: 1px solid #222; }
+        /* CARD */
+        .card { 
+            background: var(--glass-bg); backdrop-filter: var(--blur-effect); -webkit-backdrop-filter: var(--blur-effect);
+            padding: 20px; border-radius: 25px; border: var(--glass-border); margin-bottom: 15px; box-shadow: var(--glass-shadow);
+        }
 
-        .page-section { display: none; }
-        .page-section.active { display: block; }
+        /* INPUTS */
+        .main-input { 
+            width: 100%; padding: 15px; margin-bottom: 15px; 
+            background: rgba(0, 0, 0, 0.3); border: var(--glass-border); 
+            border-radius: 15px; font-size: 32px; color: var(--accent-active); 
+            text-align: center; font-weight: bold; transition: 0.3s;
+        }
+        .main-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
 
-        #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1a1a1a; padding: 15px; transition: 0.3s; z-index: 2000; border-radius: 25px 25px 0 0; }
+        .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 30px; border: var(--glass-border); }
+        .t-btn { background: transparent; color: #aaa; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; transition: 0.3s; }
+        .t-btn.active-22 { background: var(--color-orange); color: #000; box-shadow: 0 0 20px var(--color-orange); }
+        .t-btn.active-21 { background: var(--color-blue); color: #fff; box-shadow: 0 0 20px var(--color-blue); }
+        .t-btn.active-both { background: var(--color-golden); color: #000; box-shadow: 0 0 20px var(--color-golden); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .small-input { 
+            width: 100%; padding: 14px; background: rgba(0, 0, 0, 0.3); 
+            border: var(--glass-border); border-radius: 12px; 
+            color: #fff; text-align: center; font-weight: bold; transition: 0.3s;
+        }
+        .small-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 15px var(--accent-active); }
+
+        .weight-input { 
+            width: 100%; padding: 18px; background: rgba(0, 0, 0, 0.5); 
+            border: var(--glass-border); border-radius: 15px; 
+            color: #fff; text-align: center; font-size: 26px; font-weight: bold; 
+        }
+        .weight-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+        .sec-22 { border-left: 4px solid var(--color-orange); padding-left: 15px; margin-bottom: 20px; }
+        .sec-21 { border-left: 4px solid var(--color-blue); padding-left: 15px; margin-bottom: 20px; }
+        .hidden { display: none; }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 15px; }
+        
+        .btn-action { 
+            width: 100%; padding: 16px; 
+            background: linear-gradient(135deg, #1db954, #1aa34a); 
+            color: #fff; border: none; border-radius: 15px; 
+            font-size: 16px; font-weight: bold; margin-top: 15px; 
+            cursor: pointer; box-shadow: 0 0 25px rgba(29, 185, 84, 0.6);
+        }
+
+        /* --- ULTRA GLOW KEYPAD --- */
+        #customKeypad {
+            position: fixed; bottom: -100%; left: 0; width: 100%;
+            background: rgba(18, 18, 28, 0.98); 
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 35px 35px 0 0;
+            padding: 20px 15px; 
+            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000; 
+            box-shadow: 0 -10px 60px rgba(0, 150, 255, 0.2);
+        }
         #customKeypad.show { bottom: 0; }
-        .key-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .key-btn { flex: 1; height: 60px; border-radius: 12px; border: none; background: #333; color: #fff; font-size: 22px; font-weight: bold; }
         
-        .tab-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .t-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #444; background: #222; color: #fff; }
-        .t-btn.active { background: var(--accent-color); color: #000; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 5px; }
+        
+        .k-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff; font-size: 28px; font-weight: 700;
+            padding: 18px 0; border-radius: 22px;
+            transition: all 0.15s ease-in-out; cursor: pointer;
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.5), 
+                0 0 25px rgba(0, 190, 255, 0.35), 
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            text-shadow: 0 0 10px rgba(255,255,255,0.6);
+        }
+        
+        .k-btn:active { 
+            transform: scale(0.92);
+            background: var(--accent-active); 
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 40px var(--accent-active);
+        }
+        
+        .k-close { 
+            grid-column: span 3; 
+            background: rgba(255, 80, 80, 0.15);
+            border: 1px solid rgba(255, 80, 80, 0.4);
+            color: #ff8080; font-size: 16px; padding: 12px; margin-bottom: 10px;
+            box-shadow: 0 0 25px rgba(255, 80, 80, 0.25);
+            text-shadow: 0 0 10px rgba(255, 80, 80, 0.6);
+        }
+
+        /* MODALS */
+        #calculatorPage, #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-gradient); z-index: 1000; padding: 20px; overflow-y: auto; }
+        
+        .conv-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border: var(--glass-border); }
+        .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
+        .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="init()">
 
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebar">
-    <div style="color:var(--accent-color); font-weight:800; margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px;">GOLD TOOLS</div>
-    <button class="menu-item" onclick="switchPage('converter')">⚖️ Weight Converter</button>
-    <button class="menu-item" onclick="switchPage('gRateW')">🧮 Price Calculator</button>
+<div class="app-container">
+    <div class="header">
+        <button onclick="toggleMenu()" style="background:var(--color-orange); border:none; width:40px; height:40px; border-radius:10px; color:#000; font-size:24px; font-weight:bold; cursor:pointer; box-shadow: 0 0 20px var(--color-orange);">+</button>
+        <h3 id="appTitle">GOLD APP</h3>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div id="menuPopup">
+        <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()">
+            <span style="font-size:20px;">🧮</span> Price Calculator
+        </button>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
+        <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()">
+            <span style="font-size:20px;">⚙️</span> Settings
+        </button>
+    </div>
+
+    <div class="card" id="main-content" style="text-align:center;">
+        <h4 style="color:var(--color-orange); margin-bottom:15px; letter-spacing:2px; text-shadow:0 0 15px rgba(255,159,67,0.6);">WEIGHT CONVERTER</h4>
+        <input type="text" inputmode="none" readonly id="cv_g" class="main-input num-field" placeholder="Grams" onclick="focusField(this)">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin:20px 0;">
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_v" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Vori</span></div>
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_a" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ana</span></div>
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_r" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ratti</span></div>
+        </div>
+        <button class="btn-action" onclick="genPDF('main-content', 'Weight_Report.pdf')">DOWNLOAD REPORT</button>
+    </div>
 </div>
 
-<div class="app-container" id="appMain">
+<div id="calculatorPage">
     <div class="header">
-        <button class="plus-btn" onclick="toggleSidebar()">+</button>
-        <div class="logo-middle"><img src="./logo.png" alt="Logo"></div>
+        <button onclick="closeP('calculatorPage')" style="background:var(--color-orange); color:#000; width:40px; height:40px; border-radius:12px; font-weight:bold; border:none; box-shadow: 0 0 20px var(--color-orange);">✕</button>
+        <h3 style="color:var(--accent-active); margin:0; text-shadow: 0 0 15px var(--accent-active);">CALCULATOR</h3>
+        <div></div>
     </div>
+    
+    <div class="card" id="calc-content">
+        <label style="font-size:11px; color:#bbb; text-transform:uppercase; letter-spacing:1px;">Screen Rate (Input Your Rate)</label>
+        <input type="text" inputmode="none" readonly id="screenRate" class="main-input num-field" placeholder="0.00" onclick="focusField(this)">
 
-    <div id="page_converter" class="page-section active">
-        <div class="card">
-            <div class="main-title">WEIGHT CONVERTER (GRAMS)</div>
-            <input type="text" id="gramInput" class="big-input use-keypad" placeholder="0.00" readonly>
-            <div style="text-align:center; color:var(--accent-color); margin:10px 0; font-size:24px;">⇅</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                <div style="text-align:center;"><input id="bhoriInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Vori" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 11.664g</div></div>
-                <div style="text-align:center;"><input id="anaInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Ana" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.729g</div></div>
-                <div style="text-align:center;"><input id="rattiInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Ratti" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.121g</div></div>
-            </div>
+        <div class="tab-box">
+            <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
+            <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
+            <button class="t-btn active-both" id="bBoth" onclick="setTab('both')">Both</button>
         </div>
-    </div>
 
-    <div id="page_gRateW" class="page-section">
-        <div class="card">
-            <div class="main-title">GRAM RATE (BDT)</div>
-            <input type="text" id="screenRate" class="big-input use-keypad" placeholder="Rate/g" readonly>
-            
-            <div id="sec22">
-                <div style="color:var(--color-22k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">22K WEIGHT (G)</div>
-                <input type="text" id="w22" class="big-input use-keypad" style="font-size:26px;" placeholder="0.00" readonly>
-                <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-22k);"><span>Total:</span> <b id="t22">0.00</b></div>
+        <div id="sec22" class="sec-22">
+            <div class="row"><span style="color:var(--color-orange); font-weight:bold;">22 Karat (92.6%)</span></div>
+            <div class="grid-2">
+                <input type="text" inputmode="none" readonly id="mc22" class="small-input num-field" placeholder="MC" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="dh22" class="small-input num-field" placeholder="Dh" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="cr22" class="small-input num-field" placeholder="CR" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mg22" class="small-input num-field" placeholder="MG" onclick="focusField(this)">
             </div>
-
-            <div id="sec21" style="margin-top:15px; border-top:1px dashed #444; padding-top:15px;">
-                <div style="color:var(--color-21k); font-weight:bold;">21K WEIGHT (G)</div>
-                <input type="text" id="w21" class="big-input use-keypad" style="font-size:24px;" placeholder="0.00" readonly>
-                <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-21k);"><span>Total:</span> <b id="t21">0.00</b></div>
-            </div>
-
-            <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:15px; border-radius:18px; text-align:center;">
-                <div style="font-size:12px; color:#aaa;">GRAND TOTAL</div>
-                <div id="grandTotal" style="font-size:38px; font-weight:bold; color:#fff;">0.00</div>
-            </div>
+            <input type="text" inputmode="none" readonly id="w22" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
+            <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:#fff;">0.00</span></div>
+            <div class="row"><span style="color:var(--color-orange); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--color-orange); text-shadow:0 0 20px rgba(255,159,67,0.6);">0.00</span></div>
         </div>
+
+        <div id="sec21" class="sec-21 hidden">
+            <div class="row"><span style="color:var(--color-blue); font-weight:bold;">21 Karat (88.5%)</span></div>
+            <div class="grid-2">
+                <input type="text" inputmode="none" readonly id="mc21" class="small-input num-field" placeholder="MC" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="dh21" class="small-input num-field" placeholder="Dh" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="cr21" class="small-input num-field" placeholder="CR" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mg21" class="small-input num-field" placeholder="MG" onclick="focusField(this)">
+            </div>
+            <input type="text" inputmode="none" readonly id="w21" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
+            <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:#fff;">0.00</span></div>
+            <div class="row"><span style="color:var(--color-blue); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--color-blue); text-shadow:0 0 20px rgba(10,189,227,0.6);">0.00</span></div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:15px; text-align:center; border:var(--glass-border);">
+            <div id="grandTotal" style="font-size:36px; font-weight:900; color:#fff;">0.00</div>
+        </div>
+
+        <div style="margin-top:20px;">
+            <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Customer Name">
+            <input id="authName" style="width:100%; padding:12px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Authorized By">
+        </div>
+        <button class="btn-action" onclick="genPDF('calc-content', 'Invoice.pdf')">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
 <div id="customKeypad">
-    <div class="key-row">
-        <button class="key-btn" onclick="pressKey('1')">1</button>
-        <button class="key-btn" onclick="pressKey('2')">2</button>
-        <button class="key-btn" onclick="pressKey('3')">3</button>
+    <button class="k-btn k-close" onclick="closeKeypad()">Done ▼</button>
+    <div class="keypad-grid">
+        <button class="k-btn" onclick="press('1')">1</button>
+        <button class="k-btn" onclick="press('2')">2</button>
+        <button class="k-btn" onclick="press('3')">3</button>
+        <button class="k-btn" onclick="press('4')">4</button>
+        <button class="k-btn" onclick="press('5')">5</button>
+        <button class="k-btn" onclick="press('6')">6</button>
+        <button class="k-btn" onclick="press('7')">7</button>
+        <button class="k-btn" onclick="press('8')">8</button>
+        <button class="k-btn" onclick="press('9')">9</button>
+        <button class="k-btn" onclick="press('.')">.</button>
+        <button class="k-btn" onclick="press('0')">0</button>
+        <button class="k-btn" id="btn-back" style="color:#ff6b6b;">⌫</button>
     </div>
-    <div class="key-row">
-        <button class="key-btn" onclick="pressKey('4')">4</button>
-        <button class="key-btn" onclick="pressKey('5')">5</button>
-        <button class="key-btn" onclick="pressKey('6')">6</button>
+</div>
+
+<div id="adminPanel">
+    <div class="admin-header">
+        <h2 style="color:var(--color-golden); margin:0;">Admin Settings</h2>
+        <button onclick="closeP('adminPanel')" style="background:none; border:none; color:red; font-size:30px;">✕</button>
     </div>
-    <div class="key-row">
-        <button class="key-btn" onclick="pressKey('7')">7</button>
-        <button class="key-btn" onclick="pressKey('8')">8</button>
-        <button class="key-btn" onclick="pressKey('9')">9</button>
+    <div class="card">
+        <label class="lbl">App Title</label>
+        <input id="cfg_title" class="small-input" style="width:100%; margin-bottom:15px;" oninput="document.getElementById('appTitle').innerText=this.value">
     </div>
-    <div class="key-row">
-        <button class="key-btn" onclick="pressKey('.')">.</button>
-        <button class="key-btn" onclick="pressKey('0')">0</button>
-        <button class="key-btn" style="color:#ff4444" onclick="pressKey('BS')">⌫</button>
-    </div>
-    <button class="key-btn" style="width:100%; background:var(--accent-color); color:#000; margin-top:10px;" onclick="closeKeypad()">DONE ▼</button>
+    <button class="btn-action">SAVE SETTINGS</button>
 </div>
 
 <script>
-let activeInput = null;
+    let activeInput = null;
+    let backTimer, backDelay;
 
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.getElementById('overlay').classList.toggle('active');
-}
+    function init() { setTab('both'); setupBackspace(); }
 
-function switchPage(p) {
-    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-    document.getElementById('page_' + p).classList.add('active');
-    toggleSidebar();
-}
-
-function initApp() {
-    document.querySelectorAll('.use-keypad').forEach(input => {
-        input.addEventListener('click', function() {
-            activeInput = this;
-            document.getElementById('customKeypad').classList.add('show');
-        });
-    });
-}
-
-function pressKey(key) {
-    if (!activeInput) return;
-    
-    let current = activeInput.value;
-    if (key === 'BS') {
-        activeInput.value = current.slice(0, -1);
-    } else {
-        if (key === '.' && current.includes('.')) return;
-        activeInput.value = current + key;
-    }
-    calculateAll();
-}
-
-function closeKeypad() {
-    document.getElementById('customKeypad').classList.remove('show');
-    activeInput = null;
-}
-
-function calculateAll() {
-    // Weight Converter Logic
-    const grams = parseFloat(document.getElementById('gramInput').value) || 0;
-    if (activeInput && activeInput.id === 'gramInput') {
-        document.getElementById('bhoriInput').value = (grams / 11.664).toFixed(3);
-        document.getElementById('anaInput').value = (grams / 0.729).toFixed(3);
-        document.getElementById('rattiInput').value = (grams / 0.121).toFixed(3);
+    function toggleMenu() {
+        const menu = document.getElementById('menuPopup');
+        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    // Price Calculator Logic
-    const rate = parseFloat(document.getElementById('screenRate').value) || 0;
-    const w22 = parseFloat(document.getElementById('w22').value) || 0;
-    const w21 = parseFloat(document.getElementById('w21').value) || 0;
+    function focusField(el) {
+        if(activeInput) activeInput.classList.remove('active-field');
+        activeInput = el;
+        activeInput.classList.add('active-field');
+        document.getElementById('customKeypad').classList.add('show');
+        document.querySelector('.app-container').style.paddingBottom = "400px";
+        document.getElementById('menuPopup').style.display = 'none';
+    }
 
-    const total22 = rate * w22;
-    const total21 = (rate * 0.95) * w21; // Example: 21K is 95% of 22K rate
+    function closeKeypad() {
+        document.getElementById('customKeypad').classList.remove('show');
+        if(activeInput) activeInput.classList.remove('active-field');
+        document.querySelector('.app-container').style.paddingBottom = "15px";
+    }
 
-    document.getElementById('t22').innerText = total22.toLocaleString();
-    document.getElementById('t21').innerText = total21.toLocaleString();
-    document.getElementById('grandTotal').innerText = (total22 + total21).toLocaleString();
-}
-</script>
+    function press(key) {
+        if(!activeInput) return;
+        if(key === 'back') activeInput.value = activeInput.value.slice(0, -1);
+        else {
+            if(key === '.' && activeInput.value.includes('.')) return;
+            activeInput.value += key;
+        }
+        if(activeInput.id.startsWith('res_') || activeInput.id === 'cv_g') {
+            if(activeInput.id === 'cv_g') gToV(); else vToG();
+        } else calc();
+    }
 
-</body>
-</html>
+    function setupBackspace() {
+        const btn = document.getElementById('btn-back');
+        const start = (e) => {
+            if(e.cancelable) e.preventDefault();
+            press('back');
+            backDelay = setTimeout(() => {
+                backTimer = setInterval(() => { press('back'); }, 100);
+            }, 500);
+        };
+        const stop = () => { clearTimeout(backDelay); clearInterval(backTimer); };
+        btn.addEventListener('mousedown', start);
+        btn.addEventListener('touchstart', start);
+        btn.addEventListener('mouseup', stop);
+        btn.addEventListener('touchend', stop);
+        btn.addEventListener('mouseleave', stop);
+    }
+
+    function setTab(t) {
+        document.getElementById('b22').className = 't-btn';
+        document.getElementById('b21').className = 't-btn';
+        document.getElementById('bBoth').className = 't-btn';
+        document.getElementById('sec22').classList.add('hidden');
+        document.getElementById('sec21').classList.add('hidden');
+        const root = document.documentElement;
+
+        if(t === '22') {
+            document.getElementById('b22').classList.add('active-22');
+            document.getElementById('sec22').classList.remove('hidden');
+            root.style.setProperty('--accent-active', 'var(--color-orange)');
+        } else if(t === '21') {
+            document.getElementById('b21').classList.add('active-21');
+            document.getElementById('sec21').classList.remove('hidden');
+            root.style.setProperty('--accent-active', 'var(--color-blue)');
+        } else {
+            document.getElementById('bBoth').classList.add('active-both');
+            document.getElementById('
