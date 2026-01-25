@@ -265,4 +265,73 @@
         
         const container = document.getElementById('pdf-generator-container');
         const title = document.getElementById('appTitle').innerText;
-        const da
+        const date = new Date().toLocaleString();
+
+        let html = '';
+        if(type === 'converter') {
+            html = `
+            <div style="font-family:Helvetica, sans-serif; padding:40px; color:#000;">
+                <h2 style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px;">${title}</h2>
+                <p style="text-align:center; color:#555; font-size:12px;">Conversion Report | ${date}</p>
+                <table style="width:100%; border:1px solid #ccc; border-collapse:collapse; margin-top:20px;">
+                    <tr style="background:#eee;"><th style="padding:10px; border:1px solid #ccc;">Unit</th><th style="padding:10px; border:1px solid #ccc;">Value</th></tr>
+                    <tr><td style="padding:10px; border:1px solid #ccc;">Grams</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #ccc;">Vori</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #ccc;">Ana</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #ccc;">Ratti</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
+                </table>
+            </div>`;
+        } else {
+            const c = document.getElementById('cName').value || 'Walk-in Customer';
+            const a = document.getElementById('authName').value || 'Admin';
+            html = `
+            <div style="font-family:Helvetica, sans-serif; padding:40px; color:#000;">
+                <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:15px; margin-bottom:20px;">
+                    <h1 style="margin:0; font-size:24px;">${title}</h1>
+                    <p style="margin:5px 0 0; font-size:14px;">SALES INVOICE</p>
+                    <p style="font-size:12px; color:#666;">Date: ${date}</p>
+                </div>
+                <p><strong>Customer:</strong> ${c}</p>
+                <table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
+                    <thead style="background:#f0f0f0; font-weight:bold;">
+                        <tr>
+                            <td style="padding:8px; border:1px solid #999;">Description</td>
+                            <td style="padding:8px; border:1px solid #999;">Weight (gm)</td>
+                            <td style="padding:8px; border:1px solid #999;">Rate/Bhori</td>
+                            <td style="padding:8px; border:1px solid #999; text-align:right;">Amount</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px; border:1px solid #999;">22K Gold (92.6%)</td>
+                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('w22').value}</td>
+                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('r22').innerText}</td>
+                            <td style="padding:8px; border:1px solid #999; text-align:right;">${document.getElementById('t22').innerText}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px; border:1px solid #999;">21K Gold (88.5%)</td>
+                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('w21').value}</td>
+                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('r21').innerText}</td>
+                            <td style="padding:8px; border:1px solid #999; text-align:right;">${document.getElementById('t21').innerText}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 style="text-align:right; margin-top:20px;">TOTAL: ${document.getElementById('grandTotal').innerText} BDT</h3>
+                <div style="margin-top:60px; display:flex; justify-content:space-between;">
+                    <div style="border-top:1px solid #000; padding-top:5px; width:40%; text-align:center;">Customer Signature</div>
+                    <div style="border-top:1px solid #000; padding-top:5px; width:40%; text-align:center;">${a} (Authorized)</div>
+                </div>
+            </div>`;
+        }
+
+        container.innerHTML = html;
+
+        // Force a tiny delay to ensure DOM update
+        setTimeout(() => {
+            const opt = { margin: 0, filename: type + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(container).save().then(()=>{ btn.innerText=org; }).catch(e=>{ alert('Error'); btn.innerText=org; });
+        }, 100);
+    }
+</script>
+</body>
+</html>
