@@ -24,115 +24,180 @@
         html, body { height: 100%; width: 100%; overflow: hidden; position: fixed; margin: 0; background: #000; touch-action: none; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; }
+        
         .app-container { 
             width: 100%; max-width: 450px; height: 100%; padding: 15px; 
             display: flex; flex-direction: column; overflow-y: auto;
-            transition: padding-bottom 0.3s ease;
             touch-action: pan-y;
         }
-        .app-container.keypad-active { padding-bottom: 420px; }
+
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; background: var(--header-bg); border-radius: 10px; margin-bottom: 15px; }
+        .plus-btn { background: var(--accent-color); border: none; color: #000; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+        .logo-middle img { height: 30px; }
+
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 20px; backdrop-filter: var(--glass-blur); }
+        .main-title { font-size: 14px; color: var(--text-sub); margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
+        .big-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); color: #fff; border-radius: 12px; padding: 15px; font-size: 32px; text-align: center; margin-bottom: 10px; }
+
+        .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: #111; z-index: 1000; padding: 20px; transition: 0.3s; }
+        .sidebar.active { left: 0; }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; }
+        .overlay.active { display: block; }
+        .menu-item { width: 100%; padding: 15px; background: none; border: none; color: #fff; text-align: left; font-size: 16px; border-bottom: 1px solid #222; }
+
         .page-section { display: none; }
         .page-section.active { display: block; }
+
+        #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1a1a1a; padding: 15px; transition: 0.3s; z-index: 2000; border-radius: 25px 25px 0 0; }
+        #customKeypad.show { bottom: 0; }
+        .key-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .key-btn { flex: 1; height: 60px; border-radius: 12px; border: none; background: #333; color: #fff; font-size: 22px; font-weight: bold; }
+        
+        .tab-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .t-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #444; background: #222; color: #fff; }
+        .t-btn.active { background: var(--accent-color); color: #000; }
     </style>
 </head>
 <body onload="initApp()">
 
-<div class="overlay" id="overlay" onclick="window.toggleSidebar()"></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
     <div style="color:var(--accent-color); font-weight:800; margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px;">GOLD TOOLS</div>
-    <button class="menu-item" onclick="window.switchPage('converter')">⚖️ Weight Converter</button>
-    <button class="menu-item" onclick="window.switchPage('gRateW')">🧮 Price Calculator</button>
-    <div style="margin-top: auto;"><button class="menu-item" onclick="window.openAdmin()">🎨 Theme Settings</button></div>
+    <button class="menu-item" onclick="switchPage('converter')">⚖️ Weight Converter</button>
+    <button class="menu-item" onclick="switchPage('gRateW')">🧮 Price Calculator</button>
 </div>
 
 <div class="app-container" id="appMain">
-    <div class="header"><button class="plus-btn" onclick="window.toggleSidebar()">+</button><div class="logo-middle"><img src="./logo.png" alt="Logo"></div></div>
+    <div class="header">
+        <button class="plus-btn" onclick="toggleSidebar()">+</button>
+        <div class="logo-middle"><img src="./logo.png" alt="Logo"></div>
+    </div>
 
     <div id="page_converter" class="page-section active">
         <div class="card">
-            <div class="main-title">WEIGHT CONVERTER</div>
-            <input type="text" id="gramInput" class="big-input use-keypad" inputmode="none" placeholder="0.00" readonly>
+            <div class="main-title">WEIGHT CONVERTER (GRAMS)</div>
+            <input type="text" id="gramInput" class="big-input use-keypad" placeholder="0.00" readonly>
             <div style="text-align:center; color:var(--accent-color); margin:10px 0; font-size:24px;">⇅</div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                <div style="text-align:center;"><input id="bhoriInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Vori" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 11.664g</div></div>
-                <div style="text-align:center;"><input id="anaInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Ana" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.729g</div></div>
-                <div style="text-align:center;"><input id="rattiInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Ratti" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.121g</div></div>
+                <div style="text-align:center;"><input id="bhoriInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Vori" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 11.664g</div></div>
+                <div style="text-align:center;"><input id="anaInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Ana" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.729g</div></div>
+                <div style="text-align:center;"><input id="rattiInput" class="big-input use-keypad" style="font-size:18px;" placeholder="Ratti" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.121g</div></div>
             </div>
-            <button class="t-btn" style="width:100%; margin-top:15px; background:var(--btn-bg); color:white; border:none; height:50px; border-radius:15px;" onclick="window.genConverterPDF()">DOWNLOAD PDF</button>
         </div>
     </div>
 
     <div id="page_gRateW" class="page-section">
         <div class="card">
-            <div class="main-title">PRICE CALCULATOR</div>
-            <input type="text" id="screenRate" class="big-input use-keypad" inputmode="none" placeholder="0.00" readonly>
-            <div class="tab-group">
-                <button id="btn22" class="t-btn" onclick="window.setTab('22')">22K</button>
-                <button id="btn21" class="t-btn" onclick="window.setTab('21')">21K</button>
-                <button id="btnBoth" class="t-btn active" onclick="window.setTab('both')">BOTH</button>
-            </div>
+            <div class="main-title">GRAM RATE (BDT)</div>
+            <input type="text" id="screenRate" class="big-input use-keypad" placeholder="Rate/g" readonly>
+            
             <div id="sec22">
-                <div style="color:var(--color-22k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">22K GOLD <span id="p22Display">92.6%</span></div>
-                <input type="text" id="w22" class="big-input use-keypad" inputmode="none" style="font-size:26px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
+                <div style="color:var(--color-22k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">22K WEIGHT (G)</div>
+                <input type="text" id="w22" class="big-input use-keypad" style="font-size:26px;" placeholder="0.00" readonly>
                 <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-22k);"><span>Total:</span> <b id="t22">0.00</b></div>
             </div>
+
             <div id="sec21" style="margin-top:15px; border-top:1px dashed #444; padding-top:15px;">
-                <div style="color:var(--color-21k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">21K GOLD <span id="p21Display">88.5%</span></div>
-                <input type="text" id="w21" class="big-input use-keypad" inputmode="none" style="font-size:24px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
+                <div style="color:var(--color-21k); font-weight:bold;">21K WEIGHT (G)</div>
+                <input type="text" id="w21" class="big-input use-keypad" style="font-size:24px;" placeholder="0.00" readonly>
                 <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-21k);"><span>Total:</span> <b id="t21">0.00</b></div>
             </div>
-            <div style="margin-top:15px; background:rgba(255,255,255,0.03); border:1px solid #333; padding:15px; border-radius:18px; text-align:center;">
+
+            <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:15px; border-radius:18px; text-align:center;">
+                <div style="font-size:12px; color:#aaa;">GRAND TOTAL</div>
                 <div id="grandTotal" style="font-size:38px; font-weight:bold; color:#fff;">0.00</div>
             </div>
-            <input id="cName" class="big-input" style="font-size:16px; height:45px; margin-top:15px; text-align:left; padding:10px; background:rgba(0,0,0,0.3);" placeholder="Customer Name">
-            <button class="t-btn" style="width:100%; margin-top:15px; background:var(--btn-bg); color:white; border:none; height:50px; border-radius:15px;" onclick="window.genPDF()">DOWNLOAD INVOICE PDF</button>
         </div>
     </div>
 </div>
 
 <div id="customKeypad">
-    <div class="key-row"><button class="key-btn" onclick="window.pressKey('1')">1</button><button class="key-btn" onclick="window.pressKey('2')">2</button><button class="key-btn" onclick="window.pressKey('3')">3</button></div>
-    <div class="key-row"><button class="key-btn" onclick="window.pressKey('4')">4</button><button class="key-btn" onclick="window.pressKey('5')">5</button><button class="key-btn" onclick="window.pressKey('6')">6</button></div>
-    <div class="key-row"><button class="key-btn" onclick="window.pressKey('7')">7</button><button class="key-btn" onclick="window.pressKey('8')">8</button><button class="key-btn" onclick="window.pressKey('9')">9</button></div>
-    <div class="key-row"><button class="key-btn" id="dotBtn" onclick="window.pressKey('.')">.</button><button class="key-btn" onclick="window.pressKey('0')">0</button><button class="key-btn" style="color:#ff4444" onclick="window.pressKey('BS')">⌫</button></div>
-    <button class="key-btn" style="width:100%; background:var(--accent-color); color:#000; font-size:18px; border:none; margin-top:10px;" onclick="window.closeKeypad()">DONE ▼</button>
+    <div class="key-row">
+        <button class="key-btn" onclick="pressKey('1')">1</button>
+        <button class="key-btn" onclick="pressKey('2')">2</button>
+        <button class="key-btn" onclick="pressKey('3')">3</button>
+    </div>
+    <div class="key-row">
+        <button class="key-btn" onclick="pressKey('4')">4</button>
+        <button class="key-btn" onclick="pressKey('5')">5</button>
+        <button class="key-btn" onclick="pressKey('6')">6</button>
+    </div>
+    <div class="key-row">
+        <button class="key-btn" onclick="pressKey('7')">7</button>
+        <button class="key-btn" onclick="pressKey('8')">8</button>
+        <button class="key-btn" onclick="pressKey('9')">9</button>
+    </div>
+    <div class="key-row">
+        <button class="key-btn" onclick="pressKey('.')">.</button>
+        <button class="key-btn" onclick="pressKey('0')">0</button>
+        <button class="key-btn" style="color:#ff4444" onclick="pressKey('BS')">⌫</button>
+    </div>
+    <button class="key-btn" style="width:100%; background:var(--accent-color); color:#000; margin-top:10px;" onclick="closeKeypad()">DONE ▼</button>
 </div>
 
-<!-- adminPanel, PDF modal, rest stays unchanged -->
-
 <script>
-window.switchPage = function(p) {
+let activeInput = null;
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
+
+function switchPage(p) {
     document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
     document.getElementById('page_' + p).classList.add('active');
-    window.toggleSidebar && window.toggleSidebar();
-};
+    toggleSidebar();
+}
 
-window.initApp = function() {
-    const saved = localStorage.getItem('gold_pro_final_v20');
-    if(saved) data = JSON.parse(saved);
-    const root = document.documentElement;
-    if (typeof data !== 'undefined' && data.theme) {
-        for (const [k, v] of Object.entries(data.theme)) root.style.setProperty(k, v);
-    }
-    window.setTab && window.setTab('both');
-    document.querySelectorAll('.use-keypad').forEach(i => {
-        i.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.activeInput = this;
+function initApp() {
+    document.querySelectorAll('.use-keypad').forEach(input => {
+        input.addEventListener('click', function() {
+            activeInput = this;
             document.getElementById('customKeypad').classList.add('show');
-            const app = document.getElementById('appMain');
-            app.classList.add('keypad-active');
-            setTimeout(() => {
-                const rect = this.getBoundingClientRect();
-                const appRect = app.getBoundingClientRect();
-                if(app) {
-                  const offset = (rect.top - appRect.top) - (app.clientHeight / 2) + (rect.height / 2);
-                  app.scrollBy({ top: offset, behavior: 'smooth' });
-                }
-            }, 300);
         });
     });
-};
+}
+
+function pressKey(key) {
+    if (!activeInput) return;
+    
+    let current = activeInput.value;
+    if (key === 'BS') {
+        activeInput.value = current.slice(0, -1);
+    } else {
+        if (key === '.' && current.includes('.')) return;
+        activeInput.value = current + key;
+    }
+    calculateAll();
+}
+
+function closeKeypad() {
+    document.getElementById('customKeypad').classList.remove('show');
+    activeInput = null;
+}
+
+function calculateAll() {
+    // Weight Converter Logic
+    const grams = parseFloat(document.getElementById('gramInput').value) || 0;
+    if (activeInput && activeInput.id === 'gramInput') {
+        document.getElementById('bhoriInput').value = (grams / 11.664).toFixed(3);
+        document.getElementById('anaInput').value = (grams / 0.729).toFixed(3);
+        document.getElementById('rattiInput').value = (grams / 0.121).toFixed(3);
+    }
+
+    // Price Calculator Logic
+    const rate = parseFloat(document.getElementById('screenRate').value) || 0;
+    const w22 = parseFloat(document.getElementById('w22').value) || 0;
+    const w21 = parseFloat(document.getElementById('w21').value) || 0;
+
+    const total22 = rate * w22;
+    const total21 = (rate * 0.95) * w21; // Example: 21K is 95% of 22K rate
+
+    document.getElementById('t22').innerText = total22.toLocaleString();
+    document.getElementById('t21').innerText = total21.toLocaleString();
+    document.getElementById('grandTotal').innerText = (total22 + total21).toLocaleString();
+}
 </script>
+
 </body>
 </html>
