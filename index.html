@@ -3,184 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff">
     <title>Gold App Pro</title>
     
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        :root {
-            /* CLEAN LIGHT THEME VARIABLES (Optimized for Speed) */
-            --bg-body: #f4f7f6;
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --border-color: #e0e0e0;
-            
-            --color-orange: #ff9f43; 
-            --color-blue: #0abde3; 
-            --color-golden: #ffd700;
-            --color-green: #2ecc71;
-            
-            --accent-active: #ff9f43; /* Default active color */
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; touch-action: manipulation; }
+        /* BASE RESET - Ensures Touch Works */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        input { user-select: text !important; -webkit-user-select: text !important; } /* CRITICAL FIX */
         
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
+            background-color: #f4f7f6; 
+            color: #333; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            touch-action: manipulation;
         }
 
-        .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; z-index: 10; }
+        .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; }
         
         /* HEADER */
         .header { 
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
-            background: var(--bg-card); 
-            padding: 15px; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
+            background: #fff; padding: 15px; border-radius: 15px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #ddd;
         }
         #appTitle { margin: 0; font-size: 20px; color: #333; font-weight: 800; letter-spacing: 1px; }
         
         /* MENU */
         #menuPopup { 
             display: none; position: absolute; top: 75px; left: 15px; width: 220px; 
-            background: #ffffff; 
-            border-radius: 12px; padding: 10px; z-index: 3000; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15); border: 1px solid #ddd;
-            flex-direction: column; gap: 5px;
+            background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 10px; z-index: 3000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); flex-direction: column; gap: 8px; 
         }
         .menu-btn { 
-            background: #f9f9f9; color: #333; padding: 12px; border-radius: 8px; border: none; 
-            font-size: 15px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px; cursor: pointer;
-            border: 1px solid transparent;
+            background: #f9f9f9; color: #333; padding: 12px; border-radius: 8px; border: 1px solid #eee; 
+            font-size: 15px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px; cursor: pointer; 
         }
-        .menu-btn:active { background: #eee; border-color: #ccc; }
         
-        /* CARD */
+        /* CARDS */
         .card { 
-            background: var(--bg-card); 
-            padding: 20px; border-radius: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border: 1px solid var(--border-color);
-            margin-bottom: 15px; 
+            background: #fff; padding: 20px; border-radius: 20px; 
+            border: 1px solid #e0e0e0; margin-bottom: 15px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
-        /* INPUTS */
+        /* INPUTS - Made Standard for Performance */
         .main-input { 
             width: 100%; padding: 15px; margin-bottom: 15px; 
-            background: #f8f9fa; border: 2px solid #e0e0e0; 
+            background: #f8f9fa; border: 2px solid #ddd; 
             border-radius: 12px; font-size: 32px; color: #333; 
-            text-align: center; font-weight: bold; transition: 0.2s;
+            text-align: center; font-weight: bold; outline: none;
         }
-        .main-input.active-field { border-color: var(--accent-active); background: #fff; }
+        .main-input:focus, .active-field { border-color: #ff9f43; background: #fff; }
 
         /* TABS */
-        .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: #f1f1f1; padding: 5px; border-radius: 30px; }
-        .t-btn { background: transparent; color: #666; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; transition: 0.2s; }
-        .t-btn.active-22 { background: var(--color-orange); color: #fff; box-shadow: 0 4px 10px rgba(255, 159, 67, 0.4); }
-        .t-btn.active-21 { background: var(--color-blue); color: #fff; box-shadow: 0 4px 10px rgba(10, 189, 227, 0.4); }
-        .t-btn.active-both { background: var(--color-golden); color: #000; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4); }
+        .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 30px; }
+        .t-btn { background: transparent; color: #666; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; }
+        .t-btn.active-22 { background: #ff9f43; color: #fff; }
+        .t-btn.active-21 { background: #0abde3; color: #fff; }
+        .t-btn.active-both { background: #ffd700; color: #000; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        
         .small-input { 
-            width: 100%; padding: 14px; background: #f8f9fa; border: 1px solid #e0e0e0; 
-            border-radius: 10px; color: #333; text-align: center; font-weight: bold; 
+            width: 100%; padding: 14px; background: #f8f9fa; border: 1px solid #ddd; 
+            border-radius: 10px; color: #333; text-align: center; font-weight: bold; outline: none;
         }
-        .small-input.active-field { border-color: var(--accent-active); background: #fff; }
+        .small-input:focus, .active-field { border-color: #ff9f43; background: #fff; }
 
         .weight-input { 
-            width: 100%; padding: 18px; background: #f0f0f0; border: 2px solid #e0e0e0; 
-            border-radius: 12px; color: #333; text-align: center; font-size: 26px; font-weight: bold; 
+            width: 100%; padding: 18px; background: #f0f0f0; border: 2px solid #ddd; 
+            border-radius: 12px; color: #333; text-align: center; font-size: 26px; font-weight: bold; outline: none;
         }
-        .weight-input.active-field { border-color: var(--accent-active); background: #fff; }
+        .weight-input:focus, .active-field { border-color: #ff9f43; background: #fff; }
         
-        .sec-22 { border-left: 5px solid var(--color-orange); padding-left: 15px; margin-bottom: 20px; }
-        .sec-21 { border-left: 5px solid var(--color-blue); padding-left: 15px; margin-bottom: 20px; }
+        .sec-22 { border-left: 5px solid #ff9f43; padding-left: 15px; margin-bottom: 20px; }
+        .sec-21 { border-left: 5px solid #0abde3; padding-left: 15px; margin-bottom: 20px; }
         .hidden { display: none; }
         .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 15px; color: #555; }
         
         .btn-action { 
-            width: 100%; padding: 16px; 
-            background: var(--color-green); 
+            width: 100%; padding: 16px; background: #28a745; 
             color: #fff; border: none; border-radius: 12px; 
             font-size: 16px; font-weight: bold; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3); 
+            cursor: pointer; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
         }
         .btn-action:active { transform: scale(0.98); }
 
-        /* CLEAN KEYPAD (No Heavy Blur) */
+        /* FAST KEYPAD */
         #customKeypad { 
             position: fixed; bottom: -100%; left: 0; width: 100%; 
-            background: #ffffff; 
-            border-top: 1px solid #ddd; border-radius: 25px 25px 0 0; padding: 20px 15px; 
+            background: #fff; border-top: 1px solid #ccc; 
+            border-radius: 25px 25px 0 0; padding: 20px 15px; 
             transition: bottom 0.2s ease-out; z-index: 5000; 
-            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1); 
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.1); 
         }
         #customKeypad.show { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 5px; }
         .k-btn { 
-            background: #f4f6f8; border: 1px solid #e0e0e0; 
-            color: #333; font-size: 24px; font-weight: 700; padding: 15px 0; border-radius: 12px; 
-            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            background: #f4f6f8; border: 1px solid #ddd; color: #333; 
+            font-size: 24px; font-weight: 700; padding: 15px 0; border-radius: 12px; 
+            cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1);
         }
-        .k-btn:active { background: var(--accent-active); color: #fff; }
-        .k-close { grid-column: span 3; background: #ffeaea; color: #ff4d4d; border: 1px solid #ffcccc; font-size: 16px; padding: 10px; margin-bottom: 10px; }
+        .k-btn:active { background: #ff9f43; color: #fff; }
+        .k-close { grid-column: span 3; background: #fff0f0; border: 1px solid #ffcccc; color: #ff4d4d; font-size: 16px; padding: 10px; margin-bottom: 10px; }
 
+        /* MODALS */
         #calculatorPage, #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f6; z-index: 1000; padding: 20px; overflow-y: auto; }
         
-        /* CONVERTER BOXES */
-        .conv-box { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #e0e0e0; }
-        .conv-inp { width: 100%; background: transparent; border: none; color: #333; font-size: 22px; font-weight: bold; text-align: center; }
+        .conv-box { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
+        .conv-inp { width: 100%; background: transparent; border: none; color: #333; font-size: 22px; font-weight: bold; text-align: center; outline: none; }
         .conv-lbl { font-size: 10px; color: #777; margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
-
-        /* INSTALL HELP */
-        #install-help { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; z-index: 6000; padding: 20px; border-top: 1px solid #ddd; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); text-align: center; }
-        .help-btn { background: #333; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; margin-top: 10px; font-weight: bold; }
-
-        /* PDF CONTAINER (HIDDEN) */
-        #pdf-generator-container { position: fixed; top: 0; left: 0; width: 210mm; min-height: 297mm; background: #ffffff; color: #000000; padding: 20px; z-index: -9999; opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body onload="init()">
 
-<div id="pdf-generator-container"></div>
-
 <div class="app-container">
     <div class="header">
-        <button onclick="toggleMenu()" style="background:#f0f0f0; border:1px solid #ddd; width:40px; height:40px; border-radius:10px; color:#333; font-size:24px; font-weight:bold; cursor:pointer;">+</button>
+        <button onclick="toggleMenu()" style="background:#eee; border:1px solid #ddd; width:40px; height:40px; border-radius:10px; color:#333; font-size:24px; font-weight:bold;">+</button>
         <h3 id="appTitle">GOLD APP</h3>
         <div style="width:40px;"></div>
     </div>
 
     <div id="menuPopup">
-        <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()"><span>🧮</span> Price Calculator</button>
-        <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()"><span>⚙️</span> Settings</button>
-        <button id="installBtn" class="menu-btn" onclick="tryInstall()"><span>📲</span> Install App</button>
+        <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()">🧮 Price Calculator</button>
+        <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()">⚙️ Settings</button>
+        <button id="installBtn" class="menu-btn" onclick="alert('Tap browser menu -> Add to Home Screen')">📲 Install App</button>
     </div>
 
     <div class="card" id="main-content" style="text-align:center;">
-        <h4 style="color:var(--color-orange); margin-bottom:15px; letter-spacing:2px; font-weight:900;">WEIGHT CONVERTER</h4>
+        <h4 style="color:#ff9f43; margin-bottom:15px; letter-spacing:2px; font-weight:900;">WEIGHT CONVERTER</h4>
         <input type="text" inputmode="none" readonly id="cv_g" class="main-input" placeholder="Grams" onclick="focusField(this)">
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin:20px 0;">
             <div class="conv-box"><input type="text" inputmode="none" readonly id="res_v" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Vori</span></div>
             <div class="conv-box"><input type="text" inputmode="none" readonly id="res_a" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ana</span></div>
             <div class="conv-box"><input type="text" inputmode="none" readonly id="res_r" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ratti</span></div>
         </div>
-        <button class="btn-action" onclick="generateInvoice('converter')">DOWNLOAD REPORT</button>
+        <button class="btn-action" onclick="downloadPDF('converter')">DOWNLOAD REPORT</button>
     </div>
 </div>
 
 <div id="calculatorPage">
     <div class="header">
-        <button onclick="closeP('calculatorPage')" style="background:#ffcccc; color:#ff4d4d; width:40px; height:40px; border-radius:10px; font-weight:bold; border:1px solid #ffb3b3;">✕</button>
+        <button onclick="closeP('calculatorPage')" style="background:#fff0f0; color:#ff4d4d; width:40px; height:40px; border-radius:10px; font-weight:bold; border:1px solid #ffcccc;">✕</button>
         <h3 style="color:#333; margin:0;">CALCULATOR</h3>
         <div></div>
     </div>
@@ -196,7 +166,7 @@
         </div>
 
         <div id="sec22" class="sec-22">
-            <div class="row"><span style="color:var(--color-orange); font-weight:bold;">22 Karat (92.6%)</span></div>
+            <div class="row"><span style="color:#ff9f43; font-weight:bold;">22 Karat (92.6%)</span></div>
             <div class="grid-2">
                 <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
                 <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -205,11 +175,11 @@
             </div>
             <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:#333;">0.00</span></div>
-            <div class="row"><span style="color:var(--color-orange); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--color-orange);">0.00</span></div>
+            <div class="row"><span style="color:#ff9f43; font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:#ff9f43;">0.00</span></div>
         </div>
 
         <div id="sec21" class="sec-21 hidden">
-            <div class="row"><span style="color:var(--color-blue); font-weight:bold;">21 Karat (88.5%)</span></div>
+            <div class="row"><span style="color:#0abde3; font-weight:bold;">21 Karat (88.5%)</span></div>
             <div class="grid-2">
                 <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
                 <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -218,7 +188,7 @@
             </div>
             <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:#333;">0.00</span></div>
-            <div class="row"><span style="color:var(--color-blue); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--color-blue);">0.00</span></div>
+            <div class="row"><span style="color:#0abde3; font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:#0abde3;">0.00</span></div>
         </div>
 
         <div style="background:#f0f0f0; padding:15px; border-radius:15px; text-align:center; border:1px solid #ddd;">
@@ -229,7 +199,7 @@
             <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:#fff; border:1px solid #ccc; border-radius:8px; color:#333;" placeholder="Customer Name">
             <input id="authName" style="width:100%; padding:12px; background:#fff; border:1px solid #ccc; border-radius:8px; color:#333;" placeholder="Authorized By">
         </div>
-        <button class="btn-action" onclick="generateInvoice('invoice')">DOWNLOAD INVOICE</button>
+        <button class="btn-action" onclick="downloadPDF('invoice')">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
@@ -247,7 +217,7 @@
         <button class="k-btn" onclick="press('9')">9</button>
         <button class="k-btn" onclick="press('.')">.</button>
         <button class="k-btn" onclick="press('0')">0</button>
-        <button class="k-btn" id="btn-back" style="color:#ff6b6b;">⌫</button>
+        <button class="k-btn" id="btn-back" style="color:#ff4d4d;">⌫</button>
     </div>
 </div>
 
@@ -263,59 +233,154 @@
     <button class="btn-action">SAVE</button>
 </div>
 
-<div id="install-help">
-    <div class="help-box">
-        <h3>📲 Install App</h3>
-        <p style="color:#555;">To install: Tap browser menu <strong>(⋮)</strong> or <strong>Share</strong>, then select <strong>"Add to Home Screen"</strong></p>
-        <button class="help-btn" onclick="document.getElementById('install-help').style.display='none'">GOT IT</button>
-    </div>
-</div>
-
 <script>
-    let activeInput = null, backTimer, backDelay, deferredPrompt;
+    let activeInput = null, backTimer;
 
-    function init() { 
-        setTab('both'); 
-        setupBackspace(); 
+    // LAZY LOAD PDF LIB (Prevent Startup Freeze)
+    function loadPdfLib(callback) {
+        if(typeof html2pdf !== 'undefined') { callback(); return; }
+        let script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = callback;
+        document.body.appendChild(script);
+    }
+
+    function init() { setTab('both'); setupBackspace(); }
+    
+    function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+    
+    function focusField(el) {
+        if(activeInput) activeInput.classList.remove('active-field');
+        activeInput = el; activeInput.classList.add('active-field');
+        document.getElementById('customKeypad').classList.add('show');
+        document.querySelector('.app-container').style.paddingBottom = "400px";
+        document.getElementById('menuPopup').style.display = 'none';
+    }
+    
+    function closeKeypad() {
+        document.getElementById('customKeypad').classList.remove('show');
+        if(activeInput) activeInput.classList.remove('active-field');
+        document.querySelector('.app-container').style.paddingBottom = "15px";
+    }
+    
+    function press(key) {
+        if(!activeInput) return;
+        if(key === 'back') activeInput.value = activeInput.value.slice(0, -1);
+        else { 
+            if(key === '.' && activeInput.value.includes('.')) return; 
+            activeInput.value += key; 
+        }
+        if(activeInput.id.startsWith('res_') || activeInput.id === 'cv_g') {
+            if(activeInput.id === 'cv_g') gToV(); else vToG();
+        } else calc();
+    }
+
+    function setupBackspace() {
+        const btn = document.getElementById('btn-back');
+        const start = (e) => { 
+            press('back'); 
+            backTimer = setInterval(() => { press('back'); }, 150); 
+        };
+        const stop = () => { clearInterval(backTimer); };
         
-        if ('serviceWorker' in navigator) {
-            // Dummy SW for PWA Install Trigger
-            const swContent = "self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));";
-            const swBlob = new Blob([swContent], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
-        }
-    }
-    
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-
-    function tryInstall() {
-        toggleMenu();
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => { deferredPrompt = null; });
-        } else {
-            document.getElementById('install-help').style.display = 'block';
-        }
+        btn.addEventListener('mousedown', start); btn.addEventListener('touchstart', start, {passive: true});
+        window.addEventListener('mouseup', stop); window.addEventListener('touchend', stop);
     }
 
-    function toggleMenu() { const m=document.getElementById('menuPopup'); m.style.display=(m.style.display==='flex')?'none':'flex'; }
-    function focusField(el) { if(activeInput) activeInput.classList.remove('active-field'); activeInput=el; activeInput.classList.add('active-field'); document.getElementById('customKeypad').classList.add('show'); document.querySelector('.app-container').style.paddingBottom="400px"; document.getElementById('menuPopup').style.display='none'; }
-    function closeKeypad() { document.getElementById('customKeypad').classList.remove('show'); if(activeInput) activeInput.classList.remove('active-field'); document.querySelector('.app-container').style.paddingBottom="15px"; }
-    function press(key) { if(!activeInput) return; if(key==='back') activeInput.value=activeInput.value.slice(0,-1); else { if(key==='.'&&activeInput.value.includes('.'))return; activeInput.value+=key; } if(activeInput.id.startsWith('res_')||activeInput.id==='cv_g'){ if(activeInput.id==='cv_g') gToV(); else vToG(); } else calc(); }
-    function setupBackspace() { const btn=document.getElementById('btn-back'); const start=(e)=>{ press('back'); backDelay=setTimeout(()=>{ backTimer=setInterval(()=>{ press('back'); },120); },500); }; const stop=()=>{ clearTimeout(backDelay); clearInterval(backTimer); }; btn.addEventListener('mousedown',start); btn.addEventListener('touchstart',start,{passive:true}); window.addEventListener('mouseup',stop); window.addEventListener('touchend',stop); window.addEventListener('touchcancel',stop); }
-    
     function setTab(t) {
-        document.getElementById('b22').className='t-btn'; document.getElementById('b21').className='t-btn'; document.getElementById('bBoth').className='t-btn';
+        document.getElementById('b22').className = 't-btn'; document.getElementById('b21').className = 't-btn'; document.getElementById('bBoth').className = 't-btn';
         document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden');
-        const r=document.documentElement;
-        if(t==='22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-orange)'); }
-        else if(t==='21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-blue)'); }
-        else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-golden)'); }
+        if(t === '22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); }
+        else if(t === '21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); }
+        else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); }
         calc();
     }
+
     function calc() {
-        let b=parseFloat(document.getElementById('screenRate').value)||0;
-        let p22=0.926, m22=parseFloat(document.getElementById('mc22').value)||0, d22=parseFloat(document.getElementById('dh22').value)||0, c22=parseFloat(document.getElementById('cr22').value)||0, mg22=parseFloat(document.getElementById('mg22').value)||0;
-        let r22=(((b*3.674/31.1035*p22)+m22)*11.664*d22)+c22+mg22;
-        let w22=parseFloat(document.getElementById('w22').value)||0, t22=r22*(w22/11.664);
-        document.getElementById('r22').innerText=r22.toLocaleString(undefined,{maximumFractionDigits:2}); document.getEl
+        let b = parseFloat(document.getElementById('screenRate').value) || 0;
+        let p22 = 0.926, m22 = parseFloat(document.getElementById('mc22').value)||0, d22 = parseFloat(document.getElementById('dh22').value)||0, c22 = parseFloat(document.getElementById('cr22').value)||0, mg22 = parseFloat(document.getElementById('mg22').value)||0;
+        let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22;
+        let w22 = parseFloat(document.getElementById('w22').value) || 0;
+        let t22 = r22 * (w22 / 11.664);
+        document.getElementById('r22').innerText = r22.toLocaleString(undefined, {maximumFractionDigits: 2});
+        document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        let p21 = 0.885, m21 = parseFloat(document.getElementById('mc21').value)||0, d21 = parseFloat(document.getElementById('dh21').value)||0, c21 = parseFloat(document.getElementById('cr21').value)||0, mg21 = parseFloat(document.getElementById('mg21').value)||0;
+        let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21;
+        let w21 = parseFloat(document.getElementById('w21').value) || 0;
+        let t21 = r21 * (w21 / 11.664);
+        document.getElementById('r21').innerText = r21.toLocaleString(undefined, {maximumFractionDigits: 2});
+        document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21);
+        document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2});
+    }
+
+    function gToV() {
+        let g = parseFloat(document.getElementById('cv_g').value) || 0;
+        let tb = g / 11.664, v = Math.floor(tb), rem = tb - v, a = Math.floor(rem * 16), r = ((rem * 16) - a) * 6;
+        document.getElementById('res_v').value = v; document.getElementById('res_a').value = a; document.getElementById('res_r').value = r.toFixed(2);
+    }
+
+    function vToG() {
+        let v = parseFloat(document.getElementById('res_v').value) || 0, a = parseFloat(document.getElementById('res_a').value) || 0, r = parseFloat(document.getElementById('res_r').value) || 0;
+        document.getElementById('cv_g').value = ((v + (a/16) + (r/96)) * 11.664).toFixed(3);
+    }
+
+    function openP(id) { document.getElementById(id).style.display = 'block'; }
+    function closeP(id) { document.getElementById(id).style.display = 'none'; }
+
+    // --- PDF LOGIC (DYNAMIC INJECTION) ---
+    function downloadPDF(type) {
+        const btn = document.activeElement;
+        const oldText = btn.innerText;
+        btn.innerText = "WAIT...";
+
+        loadPdfLib(() => {
+            const title = document.getElementById('appTitle').innerText;
+            const date = new Date().toLocaleString();
+            let content = '';
+
+            if(type === 'converter') {
+                content = `
+                <div style="font-family:sans-serif; padding:20px; color:#000;">
+                    <h2 style="text-align:center; border-bottom:2px solid #000;">${title}</h2>
+                    <p style="text-align:center;">Weight Report | ${date}</p>
+                    <table style="width:100%; border:1px solid #000; border-collapse:collapse; margin-top:15px;">
+                        <tr style="background:#eee;"><th>Unit</th><th>Value</th></tr>
+                        <tr><td style="padding:10px;border:1px solid #000;">Grams</td><td style="padding:10px;border:1px solid #000;">${document.getElementById('cv_g').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #000;">Vori</td><td style="padding:10px;border:1px solid #000;">${document.getElementById('res_v').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #000;">Ana</td><td style="padding:10px;border:1px solid #000;">${document.getElementById('res_a').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #000;">Ratti</td><td style="padding:10px;border:1px solid #000;">${document.getElementById('res_r').value}</td></tr>
+                    </table>
+                </div>`;
+            } else {
+                const c = document.getElementById('cName').value || 'Customer';
+                content = `
+                <div style="font-family:sans-serif; padding:20px; color:#000;">
+                    <h2 style="text-align:center; border-bottom:2px solid #000;">${title}</h2>
+                    <p style="text-align:center;">INVOICE | ${date}</p>
+                    <p><strong>Customer:</strong> ${c}</p>
+                    <table style="width:100%; border:1px solid #000; border-collapse:collapse; margin-top:15px; font-size:12px;">
+                        <tr style="background:#eee;"><th>Item</th><th>Weight</th><th>Rate</th><th>Total</th></tr>
+                        <tr><td style="padding:5px;border:1px solid #000;">22K</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('w22').value}</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('r22').innerText}</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('t22').innerText}</td></tr>
+                        <tr><td style="padding:5px;border:1px solid #000;">21K</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('w21').value}</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('r21').innerText}</td><td style="padding:5px;border:1px solid #000;">${document.getElementById('t21').innerText}</td></tr>
+                    </table>
+                    <h3 style="text-align:right;">Total: ${document.getElementById('grandTotal').innerText} BDT</h3>
+                </div>`;
+            }
+
+            // Create temporary container
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            document.body.appendChild(tempDiv);
+
+            html2pdf().set({ margin: 10, filename: type+'.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } })
+            .from(tempDiv).save()
+            .then(() => { document.body.removeChild(tempDiv); btn.innerText = oldText; })
+            .catch(() => { document.body.removeChild(tempDiv); btn.innerText = oldText; alert('Error generating PDF'); });
+        });
+    }
+</script>
+</body>
+</html>
