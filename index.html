@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App | Pro Invoice</title>
+    <title>Gold App | Pro Invoice Fix</title>
     
     <style>
         :root {
-            /* THEME VARIABLES */
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             --glass-bg: rgba(20, 20, 20, 0.85);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-            
             --text-main: #ffffff;
-            --text-sub: #b0b0b0;
             --color-orange: #ff9f43; 
             --color-blue: #0abde3; 
             --color-golden: #ffd700;
@@ -23,104 +20,47 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; touch-action: manipulation; }
         
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-gradient); 
-            color: var(--text-main); 
+            font-family: 'Segoe UI', sans-serif; background: var(--bg-gradient); color: var(--text-main); 
             margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
-            background-attachment: fixed;
         }
 
         .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; }
         
-        /* HEADER */
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
-            background: var(--glass-bg); 
-            padding: 12px 15px; border-radius: 20px; border: var(--glass-border); 
-            position: relative; z-index: 100;
-        }
-        .logo-area h3 { margin: 0; font-size: 18px; color: var(--accent-active); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        /* UI STYLES (UNCHANGED) */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--glass-bg); padding: 12px 15px; border-radius: 20px; border: var(--glass-border); position: relative; z-index: 100; }
+        #appTitle { margin: 0; font-size: 18px; color: var(--accent-active); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
         
-        /* MENU */
-        #menuPopup {
-            display: none; position: absolute; top: 70px; left: 15px; width: 220px;
-            background: #1a1a25; 
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 15px; z-index: 3000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-direction: column; gap: 12px;
-        }
-
-        .menu-btn {
-            background: rgba(255, 255, 255, 0.05); color: #fff; padding: 12px; border-radius: 10px; border: none;
-            font-size: 15px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
-        .menu-btn:active { background: var(--accent-active); color: #000; }
-
-        /* CARD */
-        .card { 
-            background: var(--glass-bg); 
-            padding: 20px; border-radius: 25px; border: var(--glass-border); margin-bottom: 15px; 
-        }
-
-        /* INPUTS */
-        .main-input { 
-            width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); 
-            border-radius: 15px; font-size: 32px; color: var(--accent-active); text-align: center; font-weight: bold; transition: 0.2s;
-        }
-        .main-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        #menuPopup { display: none; position: absolute; top: 70px; left: 15px; width: 220px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 15px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-direction: column; gap: 12px; }
+        .menu-btn { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 12px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        
+        .card { background: var(--glass-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); margin-bottom: 15px; }
+        .main-input { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); border-radius: 15px; font-size: 32px; color: var(--accent-active); text-align: center; font-weight: bold; }
+        .active-field { border-color: var(--accent-active) !important; box-shadow: 0 0 15px var(--accent-active); }
 
         .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 30px; border: var(--glass-border); }
-        .t-btn { background: transparent; color: #aaa; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; transition: 0.2s; }
+        .t-btn { background: transparent; color: #aaa; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; }
         .t-btn.active-22 { background: var(--color-orange); color: #000; box-shadow: 0 0 15px var(--color-orange); }
         .t-btn.active-21 { background: var(--color-blue); color: #fff; box-shadow: 0 0 15px var(--color-blue); }
         .t-btn.active-both { background: var(--color-golden); color: #000; box-shadow: 0 0 15px var(--color-golden); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .small-input { 
-            width: 100%; padding: 14px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); border-radius: 12px; 
-            color: #fff; text-align: center; font-weight: bold; transition: 0.2s;
-        }
-        .small-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 10px var(--accent-active); }
-
-        .weight-input { 
-            width: 100%; padding: 18px; background: rgba(0, 0, 0, 0.5); border: var(--glass-border); border-radius: 15px; 
-            color: #fff; text-align: center; font-size: 26px; font-weight: bold; 
-        }
-        .weight-input.active-field { border-color: var(--accent-active); box-shadow: 0 0 15px rgba(255,255,255,0.15); }
-
+        .small-input { width: 100%; padding: 14px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); border-radius: 12px; color: #fff; text-align: center; font-weight: bold; }
+        .weight-input { width: 100%; padding: 18px; background: rgba(0, 0, 0, 0.5); border: var(--glass-border); border-radius: 15px; color: #fff; text-align: center; font-size: 26px; font-weight: bold; }
+        
         .sec-22 { border-left: 4px solid var(--color-orange); padding-left: 15px; margin-bottom: 20px; }
         .sec-21 { border-left: 4px solid var(--color-blue); padding-left: 15px; margin-bottom: 20px; }
         .hidden { display: none; }
         .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 15px; }
         
-        .btn-action { 
-            width: 100%; padding: 16px; background: linear-gradient(135deg, #1db954, #1aa34a); 
-            color: #fff; border: none; border-radius: 15px; font-size: 16px; font-weight: bold; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 5px 15px rgba(29, 185, 84, 0.5);
-        }
+        .btn-action { width: 100%; padding: 16px; background: linear-gradient(135deg, #1db954, #1aa34a); color: #fff; border: none; border-radius: 15px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; box-shadow: 0 5px 15px rgba(29, 185, 84, 0.5); }
 
         /* KEYPAD */
-        #customKeypad {
-            position: fixed; bottom: -100%; left: 0; width: 100%;
-            background: #12121a; 
-            border-top: 1px solid rgba(255,255,255,0.2); border-radius: 35px 35px 0 0; padding: 20px 15px; 
-            transition: bottom 0.2s ease-out; z-index: 5000; 
-            box-shadow: 0 -10px 40px rgba(0, 150, 255, 0.15);
-        }
+        #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: #12121a; border-top: 1px solid rgba(255,255,255,0.2); border-radius: 35px 35px 0 0; padding: 20px 15px; transition: bottom 0.2s ease-out; z-index: 5000; box-shadow: 0 -10px 40px rgba(0, 150, 255, 0.15); }
         #customKeypad.show { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 5px; }
-        
-        .k-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff; font-size: 28px; font-weight: 700; padding: 15px 0; border-radius: 18px;
-            cursor: pointer; user-select: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5), 0 0 20px rgba(0, 190, 255, 0.25);
-        }
-        .k-btn:active { transform: scale(0.95); background: var(--accent-active); color: #000; border-color: #fff; box-shadow: 0 0 30px var(--accent-active); }
-        
-        .k-close { 
-            grid-column: span 3; background: rgba(255, 80, 80, 0.15); border: 1px solid rgba(255, 80, 80, 0.4);
-            color: #ff8080; font-size: 16px; padding: 12px; margin-bottom: 10px;
-        }
+        .k-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 28px; font-weight: 700; padding: 15px 0; border-radius: 18px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5), 0 0 20px rgba(0, 190, 255, 0.25); }
+        .k-btn:active { transform: scale(0.95); background: var(--accent-active); color: #000; box-shadow: 0 0 30px var(--accent-active); }
+        .k-close { grid-column: span 3; background: rgba(255, 80, 80, 0.15); border: 1px solid rgba(255, 80, 80, 0.4); color: #ff8080; font-size: 16px; padding: 12px; margin-bottom: 10px; }
 
         #calculatorPage, #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f0c29; z-index: 1000; padding: 20px; overflow-y: auto; }
         
@@ -128,51 +68,56 @@
         .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
         .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
 
-        /* --- HIDDEN PRINT TEMPLATE (Pure White Invoice) --- */
-        #print-area { display: none; }
+        /* --- PDF GENERATION CONTAINER (OFF SCREEN) --- */
+        #pdf-generator-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 210mm; /* A4 Width */
+            background: #ffffff;
+            color: #000000;
+            padding: 20px;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body onload="init()">
 
 <div class="app-container">
     <div class="header">
-        <button onclick="toggleMenu()" style="background:var(--color-orange); border:none; width:40px; height:40px; border-radius:10px; color:#000; font-size:24px; font-weight:bold; cursor:pointer; box-shadow: 0 0 15px var(--color-orange);">+</button>
+        <button onclick="toggleMenu()" style="background:var(--color-orange); border:none; width:40px; height:40px; border-radius:10px; color:#000; font-size:24px; font-weight:bold; cursor:pointer;">+</button>
         <h3 id="appTitle">GOLD APP</h3>
         <div style="width:40px;"></div>
     </div>
 
     <div id="menuPopup">
-        <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()">
-            <span style="font-size:20px;">🧮</span> Price Calculator
-        </button>
+        <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()"><span>🧮</span> Price Calculator</button>
         <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
-        <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()">
-            <span style="font-size:20px;">⚙️</span> Settings
-        </button>
+        <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()"><span>⚙️</span> Settings</button>
     </div>
 
     <div class="card" id="main-content" style="text-align:center;">
         <h4 style="color:var(--color-orange); margin-bottom:15px; letter-spacing:2px;">WEIGHT CONVERTER</h4>
-        <input type="text" inputmode="none" readonly id="cv_g" class="main-input num-field" placeholder="Grams" onclick="focusField(this)">
+        <input type="text" inputmode="none" readonly id="cv_g" class="main-input" placeholder="Grams" onclick="focusField(this)">
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin:20px 0;">
-            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_v" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Vori</span></div>
-            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_a" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ana</span></div>
-            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_r" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ratti</span></div>
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_v" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Vori</span></div>
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_a" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ana</span></div>
+            <div class="conv-box"><input type="text" inputmode="none" readonly id="res_r" class="conv-inp" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ratti</span></div>
         </div>
-        <button class="btn-action" onclick="printReport('converter')">DOWNLOAD REPORT</button>
+        <button class="btn-action" onclick="generateInvoice('converter')">DOWNLOAD REPORT</button>
     </div>
 </div>
 
 <div id="calculatorPage">
     <div class="header">
-        <button onclick="closeP('calculatorPage')" style="background:var(--color-orange); color:#000; width:40px; height:40px; border-radius:12px; font-weight:bold; border:none; box-shadow: 0 0 20px var(--color-orange);">✕</button>
+        <button onclick="closeP('calculatorPage')" style="background:var(--color-orange); color:#000; width:40px; height:40px; border-radius:12px; font-weight:bold; border:none;">✕</button>
         <h3 style="color:var(--accent-active); margin:0;">CALCULATOR</h3>
         <div></div>
     </div>
     
-    <div class="card" id="calc-content">
-        <label style="font-size:11px; color:#bbb; text-transform:uppercase; letter-spacing:1px;">Screen Rate (Input Your Rate)</label>
-        <input type="text" inputmode="none" readonly id="screenRate" class="main-input num-field" placeholder="0.00" onclick="focusField(this)">
+    <div class="card">
+        <label style="font-size:11px; color:#bbb;">Screen Rate</label>
+        <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0.00" onclick="focusField(this)">
 
         <div class="tab-box">
             <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
@@ -183,12 +128,12 @@
         <div id="sec22" class="sec-22">
             <div class="row"><span style="color:var(--color-orange); font-weight:bold;">22 Karat (92.6%)</span></div>
             <div class="grid-2">
-                <input type="text" inputmode="none" readonly id="mc22" class="small-input num-field" placeholder="MC" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="dh22" class="small-input num-field" placeholder="Dh" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="cr22" class="small-input num-field" placeholder="CR" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="mg22" class="small-input num-field" placeholder="MG" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
             </div>
-            <input type="text" inputmode="none" readonly id="w22" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
+            <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:#fff;">0.00</span></div>
             <div class="row"><span style="color:var(--color-orange); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--color-orange);">0.00</span></div>
         </div>
@@ -196,12 +141,12 @@
         <div id="sec21" class="sec-21 hidden">
             <div class="row"><span style="color:var(--color-blue); font-weight:bold;">21 Karat (88.5%)</span></div>
             <div class="grid-2">
-                <input type="text" inputmode="none" readonly id="mc21" class="small-input num-field" placeholder="MC" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="dh21" class="small-input num-field" placeholder="Dh" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="cr21" class="small-input num-field" placeholder="CR" onclick="focusField(this)">
-                <input type="text" inputmode="none" readonly id="mg21" class="small-input num-field" placeholder="MG" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
+                <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
             </div>
-            <input type="text" inputmode="none" readonly id="w21" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
+            <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:#fff;">0.00</span></div>
             <div class="row"><span style="color:var(--color-blue); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--color-blue);">0.00</span></div>
         </div>
@@ -214,7 +159,7 @@
             <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Customer Name">
             <input id="authName" style="width:100%; padding:12px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Authorized By">
         </div>
-        <button class="btn-action" onclick="printReport('invoice')">DOWNLOAD INVOICE</button>
+        <button class="btn-action" onclick="generateInvoice('invoice')">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
@@ -238,17 +183,17 @@
 
 <div id="adminPanel">
     <div class="admin-header">
-        <h2 style="color:var(--color-golden); margin:0;">Admin Settings</h2>
+        <h2 style="color:var(--color-golden); margin:0;">Settings</h2>
         <button onclick="closeP('adminPanel')" style="background:none; border:none; color:red; font-size:30px;">✕</button>
     </div>
     <div class="card">
         <label class="lbl">App Title</label>
         <input id="cfg_title" class="small-input" style="width:100%; margin-bottom:15px;" oninput="document.getElementById('appTitle').innerText=this.value">
     </div>
-    <button class="btn-action">SAVE SETTINGS</button>
+    <button class="btn-action">SAVE</button>
 </div>
 
-<div id="print-area"></div>
+<div id="pdf-generator-container"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
@@ -256,209 +201,73 @@
     let backTimer, backDelay;
 
     function init() { setTab('both'); setupBackspace(); }
-
-    function toggleMenu() {
-        const menu = document.getElementById('menuPopup');
-        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    function toggleMenu() { const m=document.getElementById('menuPopup'); m.style.display=(m.style.display==='flex')?'none':'flex'; }
+    function focusField(el) { 
+        if(activeInput) activeInput.classList.remove('active-field'); 
+        activeInput=el; activeInput.classList.add('active-field'); 
+        document.getElementById('customKeypad').classList.add('show'); 
+        document.querySelector('.app-container').style.paddingBottom="400px"; 
+        document.getElementById('menuPopup').style.display='none'; 
     }
-
-    function focusField(el) {
-        if(activeInput) activeInput.classList.remove('active-field');
-        activeInput = el;
-        activeInput.classList.add('active-field');
-        document.getElementById('customKeypad').classList.add('show');
-        document.querySelector('.app-container').style.paddingBottom = "400px";
-        document.getElementById('menuPopup').style.display = 'none';
+    function closeKeypad() { 
+        document.getElementById('customKeypad').classList.remove('show'); 
+        if(activeInput) activeInput.classList.remove('active-field'); 
+        document.querySelector('.app-container').style.paddingBottom="15px"; 
     }
-
-    function closeKeypad() {
-        document.getElementById('customKeypad').classList.remove('show');
-        if(activeInput) activeInput.classList.remove('active-field');
-        document.querySelector('.app-container').style.paddingBottom = "15px";
+    function press(key) { 
+        if(!activeInput) return; 
+        if(key==='back') activeInput.value=activeInput.value.slice(0,-1); 
+        else { if(key==='.'&&activeInput.value.includes('.'))return; activeInput.value+=key; } 
+        if(activeInput.id.startsWith('res_')||activeInput.id==='cv_g'){ if(activeInput.id==='cv_g') gToV(); else vToG(); } else calc(); 
     }
-
-    function press(key) {
-        if(!activeInput) return;
-        if(key === 'back') activeInput.value = activeInput.value.slice(0, -1);
-        else {
-            if(key === '.' && activeInput.value.includes('.')) return;
-            activeInput.value += key;
-        }
-        if(activeInput.id.startsWith('res_') || activeInput.id === 'cv_g') {
-            if(activeInput.id === 'cv_g') gToV(); else vToG();
-        } else calc();
-    }
-
     function setupBackspace() {
-        const btn = document.getElementById('btn-back');
-        const start = (e) => {
-            press('back');
-            backDelay = setTimeout(() => {
-                backTimer = setInterval(() => { press('back'); }, 120); 
-            }, 500);
-        };
-        const stop = () => { clearTimeout(backDelay); clearInterval(backTimer); };
-        
-        btn.addEventListener('mousedown', start);
-        btn.addEventListener('touchstart', start, {passive: true});
-        window.addEventListener('mouseup', stop);
-        window.addEventListener('touchend', stop);
-        window.addEventListener('touchcancel', stop);
+        const btn=document.getElementById('btn-back');
+        const start=(e)=>{ press('back'); backDelay=setTimeout(()=>{ backTimer=setInterval(()=>{ press('back'); },120); },500); };
+        const stop=()=>{ clearTimeout(backDelay); clearInterval(backTimer); };
+        btn.addEventListener('mousedown',start); btn.addEventListener('touchstart',start,{passive:true});
+        window.addEventListener('mouseup',stop); window.addEventListener('touchend',stop); window.addEventListener('touchcancel',stop);
     }
-
     function setTab(t) {
-        document.getElementById('b22').className = 't-btn';
-        document.getElementById('b21').className = 't-btn';
-        document.getElementById('bBoth').className = 't-btn';
-        document.getElementById('sec22').classList.add('hidden');
-        document.getElementById('sec21').classList.add('hidden');
-        const root = document.documentElement;
-
-        if(t === '22') {
-            document.getElementById('b22').classList.add('active-22');
-            document.getElementById('sec22').classList.remove('hidden');
-            root.style.setProperty('--accent-active', 'var(--color-orange)');
-        } else if(t === '21') {
-            document.getElementById('b21').classList.add('active-21');
-            document.getElementById('sec21').classList.remove('hidden');
-            root.style.setProperty('--accent-active', 'var(--color-blue)');
-        } else {
-            document.getElementById('bBoth').classList.add('active-both');
-            document.getElementById('sec22').classList.remove('hidden');
-            document.getElementById('sec21').classList.remove('hidden');
-            root.style.setProperty('--accent-active', 'var(--color-golden)');
-        }
+        document.getElementById('b22').className='t-btn'; document.getElementById('b21').className='t-btn'; document.getElementById('bBoth').className='t-btn';
+        document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden');
+        const r=document.documentElement;
+        if(t==='22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-orange)'); }
+        else if(t==='21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-blue)'); }
+        else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); r.style.setProperty('--accent-active','var(--color-golden)'); }
         calc();
     }
-
     function calc() {
-        let baseRate = parseFloat(document.getElementById('screenRate').value) || 0;
+        let b=parseFloat(document.getElementById('screenRate').value)||0;
         
-        let purity22 = 0.926;
-        let mc22 = parseFloat(document.getElementById('mc22').value) || 0;
-        let dh22 = parseFloat(document.getElementById('dh22').value) || 0;
-        let cr22 = parseFloat(document.getElementById('cr22').value) || 0;
-        let mg22 = parseFloat(document.getElementById('mg22').value) || 0;
-        
-        let rate_per_bhori_22 = (((baseRate * 3.674 / 31.1035 * purity22) + mc22) * 11.664 * dh22) + cr22 + mg22;
-        let w22_gm = parseFloat(document.getElementById('w22').value) || 0;
-        let total22 = rate_per_bhori_22 * (w22_gm / 11.664);
-        
-        document.getElementById('r22').innerText = rate_per_bhori_22.toLocaleString(undefined, {maximumFractionDigits: 2});
-        document.getElementById('t22').innerText = total22.toLocaleString(undefined,{minimumFractionDigits: 2});
+        let p22=0.926, m22=parseFloat(document.getElementById('mc22').value)||0, d22=parseFloat(document.getElementById('dh22').value)||0, c22=parseFloat(document.getElementById('cr22').value)||0, mg22=parseFloat(document.getElementById('mg22').value)||0;
+        let r22=(((b*3.674/31.1035*p22)+m22)*11.664*d22)+c22+mg22;
+        let w22=parseFloat(document.getElementById('w22').value)||0, t22=r22*(w22/11.664);
+        document.getElementById('r22').innerText=r22.toLocaleString(undefined,{maximumFractionDigits:2}); document.getElementById('t22').innerText=t22.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        let purity21 = 0.885;
-        let mc21 = parseFloat(document.getElementById('mc21').value) || 0;
-        let dh21 = parseFloat(document.getElementById('dh21').value) || 0;
-        let cr21 = parseFloat(document.getElementById('cr21').value) || 0;
-        let mg21 = parseFloat(document.getElementById('mg21').value) || 0;
+        let p21=0.885, m21=parseFloat(document.getElementById('mc21').value)||0, d21=parseFloat(document.getElementById('dh21').value)||0, c21=parseFloat(document.getElementById('cr21').value)||0, mg21=parseFloat(document.getElementById('mg21').value)||0;
+        let r21=(((b*3.674/31.1035*p21)+m21)*11.664*d21)+c21+mg21;
+        let w21=parseFloat(document.getElementById('w21').value)||0, t21=r21*(w21/11.664);
+        document.getElementById('r21').innerText=r21.toLocaleString(undefined,{maximumFractionDigits:2}); document.getElementById('t21').innerText=t21.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        let rate_per_bhori_21 = (((baseRate * 3.674 / 31.1035 * purity21) + mc21) * 11.664 * dh21) + cr21 + mg21;
-        let w21_gm = parseFloat(document.getElementById('w21').value) || 0;
-        let total21 = rate_per_bhori_21 * (w21_gm / 11.664);
-        
-        document.getElementById('r21').innerText = rate_per_bhori_21.toLocaleString(undefined, {maximumFractionDigits: 2});
-        document.getElementById('t21').innerText = total21.toLocaleString(undefined,{minimumFractionDigits: 2});
-
-        let grand = (document.getElementById('sec22').classList.contains('hidden')?0:total22) + (document.getElementById('sec21').classList.contains('hidden')?0:total21);
-        document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined,{minimumFractionDigits: 2});
+        document.getElementById('grandTotal').innerText=((document.getElementById('sec22').classList.contains('hidden')?0:t22)+(document.getElementById('sec21').classList.contains('hidden')?0:t21)).toLocaleString(undefined,{minimumFractionDigits:2});
     }
+    function gToV(){ let g=parseFloat(document.getElementById('cv_g').value)||0, tb=g/11.664, v=Math.floor(tb), rem=tb-v, a=Math.floor(rem*16), r=((rem*16)-a)*6; document.getElementById('res_v').value=v; document.getElementById('res_a').value=a; document.getElementById('res_r').value=r.toFixed(2); }
+    function vToG(){ let v=parseFloat(document.getElementById('res_v').value)||0, a=parseFloat(document.getElementById('res_a').value)||0, r=parseFloat(document.getElementById('res_r').value)||0; document.getElementById('cv_g').value=((v+(a/16)+(r/96))*11.664).toFixed(3); }
+    function openP(id){ document.getElementById(id).style.display='block'; }
+    function closeP(id){ document.getElementById(id).style.display='none'; }
 
-    function gToV() {
-        let g = parseFloat(document.getElementById('cv_g').value) || 0;
-        let tb = g / 11.664;
-        let v = Math.floor(tb), rem = tb - v, a = Math.floor(rem * 16), r = ((rem * 16) - a) * 6;
-        document.getElementById('res_v').value = v; document.getElementById('res_a').value = a; document.getElementById('res_r').value = r.toFixed(2);
-    }
-
-    function vToG() {
-        let v = parseFloat(document.getElementById('res_v').value) || 0, a = parseFloat(document.getElementById('res_a').value) || 0, r = parseFloat(document.getElementById('res_r').value) || 0;
-        document.getElementById('cv_g').value = ((v + (a/16) + (r/96)) * 11.664).toFixed(3);
-    }
-
-    function openP(id) { document.getElementById(id).style.display = 'block'; }
-    function closeP(id) { document.getElementById(id).style.display = 'none'; }
-
-    // --- PRO PDF GENERATION (NO SCREENSHOT LOOK) ---
-    function printReport(type) {
-        if (typeof html2pdf === 'undefined') { alert('System Loading...'); return; }
+    // --- NEW PDF GENERATOR LOGIC ---
+    function generateInvoice(type) {
+        if(typeof html2pdf === 'undefined') { alert('PDF Library Loading...'); return; }
+        const btn = document.activeElement; const org = btn.innerText; btn.innerText="MAKING PDF...";
         
-        const btn = document.activeElement;
-        const orgText = btn.innerText;
-        btn.innerText = "GENERATING...";
-
-        const container = document.getElementById('print-area');
-        const shopName = document.getElementById('appTitle').innerText;
+        // 1. Get the container
+        const container = document.getElementById('pdf-generator-container');
+        const title = document.getElementById('appTitle').innerText;
         const date = new Date().toLocaleString();
 
-        let content = '';
-
+        // 2. Build CLEAN WHITE HTML
+        let html = '';
         if(type === 'converter') {
-            content = `
-                <div style="padding:20px; font-family:sans-serif; color:#000; background:#fff;">
-                    <h2 style="text-align:center; border-bottom:2px solid #333; padding-bottom:10px;">${shopName}</h2>
-                    <p style="text-align:center; font-size:12px; color:#555;">Weight Conversion Report<br>${date}</p>
-                    <table style="width:100%; margin-top:20px; border-collapse:collapse;">
-                        <tr style="background:#f0f0f0;"><th style="padding:10px; border:1px solid #ccc;">Unit</th><th style="padding:10px; border:1px solid #ccc;">Value</th></tr>
-                        <tr><td style="padding:10px; border:1px solid #ccc;">Grams</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
-                        <tr><td style="padding:10px; border:1px solid #ccc;">Vori</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
-                        <tr><td style="padding:10px; border:1px solid #ccc;">Ana</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
-                        <tr><td style="padding:10px; border:1px solid #ccc;">Ratti</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
-                    </table>
-                </div>`;
-        } else {
-            const cName = document.getElementById('cName').value || 'N/A';
-            const auth = document.getElementById('authName').value || 'Manager';
-            const grand = document.getElementById('grandTotal').innerText;
-            
-            content = `
-                <div style="padding:20px; font-family:sans-serif; color:#000; background:#fff;">
-                    <div style="text-align:center; margin-bottom:20px;">
-                        <h1 style="margin:0;">${shopName}</h1>
-                        <p style="margin:5px 0; font-size:12px;">INVOICE / ESTIMATE</p>
-                        <p style="font-size:10px; color:#666;">${date}</p>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <strong>Customer:</strong> ${cName}
-                    </div>
-                    <table style="width:100%; border-collapse:collapse; font-size:12px;">
-                        <thead style="background:#000; color:#fff;">
-                            <tr><th style="padding:8px;">Item</th><th style="padding:8px;">Weight</th><th style="padding:8px;">Rate/Bhori</th><th style="padding:8px;">Total</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">22K Gold</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('w22').value} gm</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('r22').innerText}</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('t22').innerText}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">21K Gold</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('w21').value} gm</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('r21').innerText}</td>
-                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('t21').innerText}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h2 style="text-align:right; margin-top:20px;">Total: ${grand} BDT</h2>
-                    <div style="margin-top:40px; border-top:1px solid #000; display:inline-block; padding-top:5px; font-size:12px;">Authorized Signature: ${auth}</div>
-                </div>`;
-        }
-
-        container.innerHTML = content;
-
-        const opt = {
-            margin: 0,
-            filename: type + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(container).save()
-        .then(() => { btn.innerText = orgText; })
-        .catch(err => { alert("Error: " + err); btn.innerText = orgText; });
-    }
-</script>
-</body>
-</html>
+            html = `
+        
