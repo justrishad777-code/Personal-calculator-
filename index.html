@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App | Final Stable</title>
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f0c29">
+    <title>Gold App Pro</title>
+    
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiR29sZCBBcHAiLCJzaG9ydF9uYW1lIjoiR29sZCBBcHAiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjBjMjkiLCJ0aGVtZV9jb2xvciI6IiMwZjBjMjkiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly9jZG4tYWljb25zLmVzcC5jb20vc3ByaXRlLzY0LzU5ZC5wbmciLCJzaXplcyI6IjY0eDY0IiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
+
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --glass-bg: rgba(20, 20, 20, 0.90); /* Darker for stability */
+            --glass-bg: rgba(20, 20, 20, 0.90);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
             --color-orange: #ff9f43; 
@@ -26,13 +32,15 @@
 
         .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; z-index: 10; }
         
-        /* UI STYLES */
+        /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--glass-bg); padding: 12px 15px; border-radius: 20px; border: var(--glass-border); position: relative; z-index: 100; }
         #appTitle { margin: 0; font-size: 18px; color: var(--accent-active); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
         
+        /* MENU */
         #menuPopup { display: none; position: absolute; top: 70px; left: 15px; width: 220px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 15px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-direction: column; gap: 12px; }
         .menu-btn { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 12px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         
+        /* CARD */
         .card { background: var(--glass-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); margin-bottom: 15px; }
         .main-input { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); border-radius: 15px; font-size: 32px; color: var(--accent-active); text-align: center; font-weight: bold; }
         .active-field { border-color: var(--accent-active) !important; box-shadow: 0 0 15px var(--accent-active); }
@@ -54,7 +62,7 @@
         
         .btn-action { width: 100%; padding: 16px; background: linear-gradient(135deg, #1db954, #1aa34a); color: #fff; border: none; border-radius: 15px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; box-shadow: 0 5px 15px rgba(29, 185, 84, 0.5); }
 
-        /* KEYPAD */
+        /* GLOW KEYPAD */
         #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: #12121a; border-top: 1px solid rgba(255,255,255,0.2); border-radius: 35px 35px 0 0; padding: 20px 15px; transition: bottom 0.2s ease-out; z-index: 5000; box-shadow: 0 -10px 40px rgba(0, 150, 255, 0.15); }
         #customKeypad.show { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 5px; }
@@ -68,20 +76,11 @@
         .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
         .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
 
-        /* --- PDF GENERATION CONTAINER (FIXED POSITION, LOW Z-INDEX) --- */
-        /* This prevents freezing by keeping it in the render tree but hidden */
-        #pdf-generator-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 210mm;
-            min-height: 297mm;
-            background: #ffffff;
-            color: #000000;
-            padding: 20px;
-            z-index: -9999; /* Hidden behind everything */
-            opacity: 0; /* Invisible */
-            pointer-events: none;
-        }
+        /* PDF CONTAINER (HIDDEN) */
+        #pdf-generator-container { position: fixed; top: 0; left: 0; width: 210mm; min-height: 297mm; background: #ffffff; color: #000000; padding: 20px; z-index: -9999; opacity: 0; pointer-events: none; }
+        
+        /* INSTALL PROMPT */
+        #install-instructions { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; padding: 15px; border-radius: 10px; z-index: 6000; width: 90%; text-align: center; border: 1px solid #555; }
     </style>
 </head>
 <body onload="init()">
@@ -99,6 +98,8 @@
         <button class="menu-btn" onclick="openP('calculatorPage'); toggleMenu()"><span>🧮</span> Price Calculator</button>
         <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
         <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()"><span>⚙️</span> Settings</button>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
+        <button id="installBtn" class="menu-btn" onclick="installApp()" style="display:none;"><span>📲</span> Install App</button>
     </div>
 
     <div class="card" id="main-content" style="text-align:center;">
@@ -198,12 +199,34 @@
     <button class="btn-action">SAVE</button>
 </div>
 
+<div id="install-instructions">
+    <p>To Install: Tap <strong>Share</strong> icon -> <strong>Add to Home Screen</strong></p>
+    <button onclick="document.getElementById('install-instructions').style.display='none'" style="background:#555; color:#fff; border:none; padding:5px 10px; margin-top:5px;">Close</button>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
-    let activeInput = null;
-    let backTimer, backDelay;
+    let activeInput = null, backTimer, backDelay, deferredPrompt;
 
     function init() { setTab('both'); setupBackspace(); }
+    
+    // --- INSTALL LOGIC ---
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); deferredPrompt = e;
+        document.getElementById('installBtn').style.display = 'flex';
+    });
+
+    function installApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => { deferredPrompt = null; });
+        } else {
+            // Manual Instructions for iOS/Others
+            document.getElementById('install-instructions').style.display = 'block';
+        }
+        toggleMenu();
+    }
+
     function toggleMenu() { const m=document.getElementById('menuPopup'); m.style.display=(m.style.display==='flex')?'none':'flex'; }
     function focusField(el) { 
         if(activeInput) activeInput.classList.remove('active-field'); 
@@ -241,7 +264,6 @@
     }
     function calc() {
         let b=parseFloat(document.getElementById('screenRate').value)||0;
-        
         let p22=0.926, m22=parseFloat(document.getElementById('mc22').value)||0, d22=parseFloat(document.getElementById('dh22').value)||0, c22=parseFloat(document.getElementById('cr22').value)||0, mg22=parseFloat(document.getElementById('mg22').value)||0;
         let r22=(((b*3.674/31.1035*p22)+m22)*11.664*d22)+c22+mg22;
         let w22=parseFloat(document.getElementById('w22').value)||0, t22=r22*(w22/11.664);
@@ -260,7 +282,7 @@
     function closeP(id){ document.getElementById(id).style.display='none'; }
 
     function generateInvoice(type) {
-        if(typeof html2pdf === 'undefined') { alert('PDF Engine Loading... Wait 2s'); return; }
+        if(typeof html2pdf === 'undefined') { alert('PDF Engine Loading...'); return; }
         const btn = document.activeElement; const org = btn.innerText; btn.innerText="MAKING...";
         
         const container = document.getElementById('pdf-generator-container');
@@ -270,65 +292,55 @@
         let html = '';
         if(type === 'converter') {
             html = `
-            <div style="font-family:Helvetica, sans-serif; padding:40px; color:#000;">
-                <h2 style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px;">${title}</h2>
-                <p style="text-align:center; color:#555; font-size:12px;">Conversion Report | ${date}</p>
-                <table style="width:100%; border:1px solid #ccc; border-collapse:collapse; margin-top:20px;">
-                    <tr style="background:#eee;"><th style="padding:10px; border:1px solid #ccc;">Unit</th><th style="padding:10px; border:1px solid #ccc;">Value</th></tr>
-                    <tr><td style="padding:10px; border:1px solid #ccc;">Grams</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
+            <div style="font-family:sans-serif; padding:30px; border:1px solid #ddd;">
+                <h1 style="text-align:center; color:#333;">${title}</h1>
+                <p style="text-align:center; color:#666; font-size:12px; margin-bottom:30px;">Weight Conversion Report | ${date}</p>
+                <table style="width:100%; border-collapse:collapse; text-align:center;">
+                    <tr style="background:#f4f4f4; font-weight:bold;"><td style="padding:10px; border:1px solid #ccc;">Input (Grams)</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
                     <tr><td style="padding:10px; border:1px solid #ccc;">Vori</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
                     <tr><td style="padding:10px; border:1px solid #ccc;">Ana</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
                     <tr><td style="padding:10px; border:1px solid #ccc;">Ratti</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
                 </table>
             </div>`;
         } else {
-            const c = document.getElementById('cName').value || 'Walk-in Customer';
-            const a = document.getElementById('authName').value || 'Admin';
+            const c = document.getElementById('cName').value || 'Customer';
+            const a = document.getElementById('authName').value || 'Manager';
             html = `
-            <div style="font-family:Helvetica, sans-serif; padding:40px; color:#000;">
-                <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:15px; margin-bottom:20px;">
-                    <h1 style="margin:0; font-size:24px;">${title}</h1>
-                    <p style="margin:5px 0 0; font-size:14px;">SALES INVOICE</p>
-                    <p style="font-size:12px; color:#666;">Date: ${date}</p>
+            <div style="font-family:sans-serif; padding:30px; color:#000;">
+                <div style="text-align:center; margin-bottom:30px;">
+                    <h1 style="margin:0; color:#000;">${title}</h1>
+                    <p style="margin:5px 0; color:#555;">INVOICE</p>
+                    <p style="font-size:12px; color:#777;">${date}</p>
                 </div>
-                <p><strong>Customer:</strong> ${c}</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
-                    <thead style="background:#f0f0f0; font-weight:bold;">
-                        <tr>
-                            <td style="padding:8px; border:1px solid #999;">Description</td>
-                            <td style="padding:8px; border:1px solid #999;">Weight (gm)</td>
-                            <td style="padding:8px; border:1px solid #999;">Rate/Bhori</td>
-                            <td style="padding:8px; border:1px solid #999; text-align:right;">Amount</td>
-                        </tr>
+                <div style="margin-bottom:20px; font-weight:bold;">Customer: ${c}</div>
+                <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:20px;">
+                    <thead style="background:#eee; font-weight:bold;">
+                        <tr><td style="padding:8px; border:1px solid #ddd;">Item</td><td style="padding:8px; border:1px solid #ddd;">Weight</td><td style="padding:8px; border:1px solid #ddd;">Rate/Bhori</td><td style="padding:8px; border:1px solid #ddd;">Total</td></tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding:8px; border:1px solid #999;">22K Gold (92.6%)</td>
-                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('w22').value}</td>
-                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('r22').innerText}</td>
-                            <td style="padding:8px; border:1px solid #999; text-align:right;">${document.getElementById('t22').innerText}</td>
+                            <td style="padding:8px; border:1px solid #ddd;">22K Gold</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('w22').value} gm</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('r22').innerText}</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('t22').innerText}</td>
                         </tr>
                         <tr>
-                            <td style="padding:8px; border:1px solid #999;">21K Gold (88.5%)</td>
-                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('w21').value}</td>
-                            <td style="padding:8px; border:1px solid #999;">${document.getElementById('r21').innerText}</td>
-                            <td style="padding:8px; border:1px solid #999; text-align:right;">${document.getElementById('t21').innerText}</td>
+                            <td style="padding:8px; border:1px solid #ddd;">21K Gold</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('w21').value} gm</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('r21').innerText}</td>
+                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('t21').innerText}</td>
                         </tr>
                     </tbody>
                 </table>
-                <h3 style="text-align:right; margin-top:20px;">TOTAL: ${document.getElementById('grandTotal').innerText} BDT</h3>
-                <div style="margin-top:60px; display:flex; justify-content:space-between;">
-                    <div style="border-top:1px solid #000; padding-top:5px; width:40%; text-align:center;">Customer Signature</div>
-                    <div style="border-top:1px solid #000; padding-top:5px; width:40%; text-align:center;">${a} (Authorized)</div>
-                </div>
+                <h3 style="text-align:right; margin-top:20px;">Grand Total: ${document.getElementById('grandTotal').innerText} BDT</h3>
+                <div style="margin-top:50px; border-top:1px solid #000; display:inline-block; padding-top:5px; font-size:12px;">Authorized Signature: ${a}</div>
             </div>`;
         }
 
         container.innerHTML = html;
 
-        // Force a tiny delay to ensure DOM update
         setTimeout(() => {
-            const opt = { margin: 0, filename: type + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            const opt = { margin: 10, filename: type + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
             html2pdf().set(opt).from(container).save().then(()=>{ btn.innerText=org; }).catch(e=>{ alert('Error'); btn.innerText=org; });
         }, 100);
     }
