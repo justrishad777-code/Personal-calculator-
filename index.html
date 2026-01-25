@@ -9,10 +9,11 @@
     <meta name="theme-color" content="#0f0c29">
     <title>Gold App Pro</title>
     
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiR29sZCBBcHAiLCJzaG9ydF9uYW1lIjoiR29sZCBBcHAiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjBjMjkiLCJ0aGVtZV9jb2xvciI6IiMwZjBjMjkiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly9jZG4tYWljb25zLmVzcC5jb20vc3ByaXRlLzY0LzU5ZC5wbmciLCJzaXplcyI6IjY0eDY0IiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
+            /* THEME */
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             --glass-bg: rgba(20, 20, 20, 0.90);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
@@ -45,6 +46,7 @@
         .main-input { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.3); border: var(--glass-border); border-radius: 15px; font-size: 32px; color: var(--accent-active); text-align: center; font-weight: bold; }
         .active-field { border-color: var(--accent-active) !important; box-shadow: 0 0 15px var(--accent-active); }
 
+        /* TABS & INPUTS */
         .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 30px; border: var(--glass-border); }
         .t-btn { background: transparent; color: #aaa; border: none; padding: 10px; border-radius: 25px; font-size: 12px; font-weight: bold; flex: 1; cursor: pointer; }
         .t-btn.active-22 { background: var(--color-orange); color: #000; box-shadow: 0 0 15px var(--color-orange); }
@@ -76,16 +78,15 @@
         .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
         .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
 
-        /* PDF CONTAINER (HIDDEN) */
-        #pdf-generator-container { position: fixed; top: 0; left: 0; width: 210mm; min-height: 297mm; background: #ffffff; color: #000000; padding: 20px; z-index: -9999; opacity: 0; pointer-events: none; }
-        
-        /* INSTALL PROMPT */
-        #install-instructions { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; padding: 15px; border-radius: 10px; z-index: 6000; width: 90%; text-align: center; border: 1px solid #555; }
+        /* INSTALL HELP MODAL */
+        #install-help { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 6000; justify-content: center; align-items: center; padding: 20px; }
+        .help-box { background: #1a1a25; border: 1px solid #333; padding: 25px; border-radius: 20px; text-align: center; color: #fff; max-width: 350px; }
+        .help-box h3 { color: var(--color-golden); margin-top: 0; }
+        .help-box p { font-size: 14px; color: #ccc; line-height: 1.6; }
+        .help-btn { background: var(--color-blue); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 15px; font-weight: bold; width: 100%; }
     </style>
 </head>
 <body onload="init()">
-
-<div id="pdf-generator-container"></div>
 
 <div class="app-container">
     <div class="header">
@@ -99,7 +100,7 @@
         <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
         <button class="menu-btn" onclick="openP('adminPanel'); toggleMenu()"><span>⚙️</span> Settings</button>
         <div style="height:1px; background:rgba(255,255,255,0.1); margin:5px 0;"></div>
-        <button id="installBtn" class="menu-btn" onclick="installApp()" style="display:none;"><span>📲</span> Install App</button>
+        <button id="installBtn" class="menu-btn" onclick="tryInstall()"><span>📲</span> Install App</button>
     </div>
 
     <div class="card" id="main-content" style="text-align:center;">
@@ -199,32 +200,34 @@
     <button class="btn-action">SAVE</button>
 </div>
 
-<div id="install-instructions">
-    <p>To Install: Tap <strong>Share</strong> icon -> <strong>Add to Home Screen</strong></p>
-    <button onclick="document.getElementById('install-instructions').style.display='none'" style="background:#555; color:#fff; border:none; padding:5px 10px; margin-top:5px;">Close</button>
+<div id="install-help">
+    <div class="help-box">
+        <h3>📲 Install App</h3>
+        <p>To install this app on your phone:</p>
+        <p>1. Tap the browser menu (⋮ or Share icon)</p>
+        <p>2. Select <strong>"Add to Home Screen"</strong></p>
+        <button class="help-btn" onclick="document.getElementById('install-help').style.display='none'">GOT IT</button>
+    </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
-    let activeInput = null, backTimer, backDelay, deferredPrompt;
+    let activeInput = null;
+    let backTimer, backDelay;
+    let deferredPrompt;
 
     function init() { setTab('both'); setupBackspace(); }
     
     // --- INSTALL LOGIC ---
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); deferredPrompt = e;
-        document.getElementById('installBtn').style.display = 'flex';
-    });
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
 
-    function installApp() {
+    function tryInstall() {
+        toggleMenu();
         if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => { deferredPrompt = null; });
         } else {
-            // Manual Instructions for iOS/Others
-            document.getElementById('install-instructions').style.display = 'block';
+            document.getElementById('install-help').style.display = 'flex';
         }
-        toggleMenu();
     }
 
     function toggleMenu() { const m=document.getElementById('menuPopup'); m.style.display=(m.style.display==='flex')?'none':'flex'; }
@@ -281,68 +284,58 @@
     function openP(id){ document.getElementById(id).style.display='block'; }
     function closeP(id){ document.getElementById(id).style.display='none'; }
 
+    // --- OVERLAY PDF GENERATOR (Fixes Blank Pages) ---
     function generateInvoice(type) {
         if(typeof html2pdf === 'undefined') { alert('PDF Engine Loading...'); return; }
         const btn = document.activeElement; const org = btn.innerText; btn.innerText="MAKING...";
         
-        const container = document.getElementById('pdf-generator-container');
+        // 1. Create a Full Screen White Overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed'; overlay.style.top = '0'; overlay.style.left = '0'; overlay.style.width = '100%'; overlay.style.height = '100%'; 
+        overlay.style.zIndex = '99999'; overlay.style.background = '#fff'; overlay.style.color = '#000'; overlay.style.padding = '20px';
+        overlay.style.fontFamily = 'Helvetica, sans-serif';
+        document.body.appendChild(overlay);
+
         const title = document.getElementById('appTitle').innerText;
         const date = new Date().toLocaleString();
 
+        // 2. Fill it with content
         let html = '';
         if(type === 'converter') {
-            html = `
-            <div style="font-family:sans-serif; padding:30px; border:1px solid #ddd;">
-                <h1 style="text-align:center; color:#333;">${title}</h1>
-                <p style="text-align:center; color:#666; font-size:12px; margin-bottom:30px;">Weight Conversion Report | ${date}</p>
-                <table style="width:100%; border-collapse:collapse; text-align:center;">
-                    <tr style="background:#f4f4f4; font-weight:bold;"><td style="padding:10px; border:1px solid #ccc;">Input (Grams)</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
-                    <tr><td style="padding:10px; border:1px solid #ccc;">Vori</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
-                    <tr><td style="padding:10px; border:1px solid #ccc;">Ana</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
-                    <tr><td style="padding:10px; border:1px solid #ccc;">Ratti</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
-                </table>
-            </div>`;
+            html = `<h1 style="text-align:center;border-bottom:2px solid #000;">${title}</h1>
+                    <p style="text-align:center;">Weight Report | ${date}</p>
+                    <table style="width:100%; border:1px solid #ccc; border-collapse:collapse; margin-top:20px;">
+                        <tr style="background:#eee;"><th>Unit</th><th>Value</th></tr>
+                        <tr><td style="padding:10px;border:1px solid #ccc;">Grams</td><td style="padding:10px;border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #ccc;">Vori</td><td style="padding:10px;border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #ccc;">Ana</td><td style="padding:10px;border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
+                        <tr><td style="padding:10px;border:1px solid #ccc;">Ratti</td><td style="padding:10px;border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
+                    </table>`;
         } else {
             const c = document.getElementById('cName').value || 'Customer';
-            const a = document.getElementById('authName').value || 'Manager';
-            html = `
-            <div style="font-family:sans-serif; padding:30px; color:#000;">
-                <div style="text-align:center; margin-bottom:30px;">
-                    <h1 style="margin:0; color:#000;">${title}</h1>
-                    <p style="margin:5px 0; color:#555;">INVOICE</p>
-                    <p style="font-size:12px; color:#777;">${date}</p>
-                </div>
-                <div style="margin-bottom:20px; font-weight:bold;">Customer: ${c}</div>
-                <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:20px;">
-                    <thead style="background:#eee; font-weight:bold;">
-                        <tr><td style="padding:8px; border:1px solid #ddd;">Item</td><td style="padding:8px; border:1px solid #ddd;">Weight</td><td style="padding:8px; border:1px solid #ddd;">Rate/Bhori</td><td style="padding:8px; border:1px solid #ddd;">Total</td></tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="padding:8px; border:1px solid #ddd;">22K Gold</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('w22').value} gm</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('r22').innerText}</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('t22').innerText}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px; border:1px solid #ddd;">21K Gold</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('w21').value} gm</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('r21').innerText}</td>
-                            <td style="padding:8px; border:1px solid #ddd;">${document.getElementById('t21').innerText}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <h3 style="text-align:right; margin-top:20px;">Grand Total: ${document.getElementById('grandTotal').innerText} BDT</h3>
-                <div style="margin-top:50px; border-top:1px solid #000; display:inline-block; padding-top:5px; font-size:12px;">Authorized Signature: ${a}</div>
-            </div>`;
+            html = `<h1 style="text-align:center;border-bottom:2px solid #000;">${title}</h1>
+                    <p style="text-align:center;">INVOICE | ${date}</p>
+                    <p><strong>Customer:</strong> ${c}</p>
+                    <table style="width:100%; border:1px solid #ccc; border-collapse:collapse; margin-top:20px; font-size:12px;">
+                        <tr style="background:#eee;"><th>Item</th><th>Weight</th><th>Rate</th><th>Total</th></tr>
+                        <tr><td style="padding:5px;border:1px solid #ccc;">22K</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('w22').value}</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('r22').innerText}</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('t22').innerText}</td></tr>
+                        <tr><td style="padding:5px;border:1px solid #ccc;">21K</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('w21').value}</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('r21').innerText}</td><td style="padding:5px;border:1px solid #ccc;">${document.getElementById('t21').innerText}</td></tr>
+                    </table>
+                    <h2 style="text-align:right;">Total: ${document.getElementById('grandTotal').innerText} BDT</h2>`;
         }
+        overlay.innerHTML = html;
 
-        container.innerHTML = html;
-
-        setTimeout(() => {
-            const opt = { margin: 10, filename: type + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            html2pdf().set(opt).from(container).save().then(()=>{ btn.innerText=org; }).catch(e=>{ alert('Error'); btn.innerText=org; });
-        }, 100);
+        // 3. Capture & Remove
+        const opt = { margin: 10, filename: type + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        
+        html2pdf().set(opt).from(overlay).save().then(() => {
+            document.body.removeChild(overlay);
+            btn.innerText = org;
+        }).catch(err => {
+            document.body.removeChild(overlay);
+            alert("Error");
+            btn.innerText = org;
+        });
     }
 </script>
 </body>
