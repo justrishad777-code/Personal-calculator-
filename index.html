@@ -31,7 +31,8 @@
             touch-action: pan-y;
         }
         .app-container.keypad-active { padding-bottom: 420px; }
-        /* ... remaining CSS unchanged ... */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
     </style>
 </head>
 <body onload="initApp()">
@@ -100,32 +101,38 @@
 <!-- adminPanel, PDF modal, rest stays unchanged -->
 
 <script>
-    // ... everything unchanged up to window.initApp ...
-    window.initApp = function() {
-        const saved = localStorage.getItem('gold_pro_final_v20');
-        if(saved) data = JSON.parse(saved);
-        const root = document.documentElement;
+window.switchPage = function(p) {
+    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('page_' + p).classList.add('active');
+    window.toggleSidebar && window.toggleSidebar();
+};
+
+window.initApp = function() {
+    const saved = localStorage.getItem('gold_pro_final_v20');
+    if(saved) data = JSON.parse(saved);
+    const root = document.documentElement;
+    if (typeof data !== 'undefined' && data.theme) {
         for (const [k, v] of Object.entries(data.theme)) root.style.setProperty(k, v);
-        window.setTab('both');
-        // Bind Keypad
-        document.querySelectorAll('.use-keypad').forEach(i => {
-            i.addEventListener('click', function(e) {
-                e.preventDefault();
-                activeInput = this;
-                document.getElementById('customKeypad').classList.add('show');
-                const app = document.getElementById('appMain');
-                app.classList.add('keypad-active');
-                // Only scroll .app-container, not viewport
-                setTimeout(() => {
-                    const rect = this.getBoundingClientRect();
-                    const appRect = app.getBoundingClientRect();
-                    const offset = (rect.top - appRect.top) - (app.clientHeight / 2) + (rect.height / 2);
-                    app.scrollBy({ top: offset, behavior: 'smooth' });
-                }, 300);
-            });
+    }
+    window.setTab && window.setTab('both');
+    document.querySelectorAll('.use-keypad').forEach(i => {
+        i.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.activeInput = this;
+            document.getElementById('customKeypad').classList.add('show');
+            const app = document.getElementById('appMain');
+            app.classList.add('keypad-active');
+            setTimeout(() => {
+                const rect = this.getBoundingClientRect();
+                const appRect = app.getBoundingClientRect();
+                if(app) {
+                  const offset = (rect.top - appRect.top) - (app.clientHeight / 2) + (rect.height / 2);
+                  app.scrollBy({ top: offset, behavior: 'smooth' });
+                }
+            }, 300);
         });
-    };
-    // ... rest of script unchanged ...
+    });
+};
 </script>
 </body>
 </html>
