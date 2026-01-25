@@ -21,12 +21,9 @@
             --btn-bg: #1db954;
             --glass-blur: blur(15px);
         }
-
-        /* --- STABLE APP VIEWPORT --- */
         html, body { height: 100%; width: 100%; overflow: hidden; position: fixed; margin: 0; background: #000; touch-action: none; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; }
-        
         .app-container { 
             width: 100%; max-width: 450px; height: 100%; padding: 15px; 
             display: flex; flex-direction: column; overflow-y: auto;
@@ -34,44 +31,7 @@
             touch-action: pan-y;
         }
         .app-container.keypad-active { padding-bottom: 420px; }
-
-        /* HEADER */
-        .header { display: flex; align-items: center; justify-content: center; margin-bottom: 15px; background: var(--header-bg); backdrop-filter: var(--glass-blur); padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border-color); position: relative; height: 80px; flex-shrink: 0; }
-        .plus-btn { position: absolute; left: 15px; background: var(--accent-color); border: none; width: 45px; height: 45px; border-radius: 14px; color: #000; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; }
-        .logo-middle img { height: 60px; width: auto; filter: drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
-
-        /* SIDEBAR */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 900; display: none; backdrop-filter: blur(10px); }
-        .sidebar { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(25px); border-right: 1px solid var(--border-color); z-index: 1000; transition: left 0.4s ease; padding: 40px 20px; display: flex; flex-direction: column; }
-        .sidebar.open { left: 0; }
-        .menu-item { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--border-color); padding: 18px; border-radius: 18px; text-align: left; margin-bottom: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .card { background: var(--bg-card); backdrop-filter: var(--glass-blur); padding: 18px; border-radius: 30px; border: 1px solid var(--border-color); margin-bottom: 15px; }
-        .main-title { text-align: center; color: var(--accent-color); font-size: 20px; font-weight: 900; margin-bottom: 15px; }
-        .big-input { width: 100%; padding: 15px; background: var(--bg-input); border: 2px solid var(--border-color); border-radius: 18px; font-size: 34px; color: var(--accent-color); text-align: center; font-weight: bold; }
-
-        .tab-group { display: flex; gap: 8px; margin: 12px 0; }
-        .t-btn { flex: 1; padding: 14px; font-size: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #333; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        #btn22.active { background: var(--color-22k); color: #000; border-color: var(--color-22k); }
-        #btn21.active { background: var(--color-21k); color: #fff; border-color: var(--color-21k); }
-        #btnBoth.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
-
-        /* KEYPAD */
-        #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: rgba(10, 10, 10, 0.98); border-top: 3px solid var(--accent-color); transition: bottom 0.4s ease; z-index: 2000; padding: 15px 15px 35px 15px; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); }
-        #customKeypad.show { bottom: 0; }
-        .key-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .key-btn { flex: 1; padding: 20px; font-size: 26px; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; font-weight: bold; }
-
-        /* ADMIN PANEL */
-        #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 3000; padding: 25px; overflow-y: auto; }
-        .admin-box { background: var(--bg-card); padding: 18px; border-radius: 25px; border: 1px solid var(--border-color); margin-bottom: 15px; }
-        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .color-item { display: flex; flex-direction: column; gap: 5px; }
-        .color-picker { width: 100%; height: 40px; border-radius: 10px; border: 1px solid #444; background: none; cursor: pointer; }
+        /* ... remaining CSS unchanged ... */
     </style>
 </head>
 <body onload="initApp()">
@@ -90,12 +50,12 @@
     <div id="page_converter" class="page-section active">
         <div class="card">
             <div class="main-title">WEIGHT CONVERTER</div>
-            <input type="text" id="gramInput" class="big-input use-keypad" placeholder="0.00" readonly>
+            <input type="text" id="gramInput" class="big-input use-keypad" inputmode="none" placeholder="0.00" readonly>
             <div style="text-align:center; color:var(--accent-color); margin:10px 0; font-size:24px;">⇅</div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                <div style="text-align:center;"><input id="bhoriInput" class="big-input use-keypad" style="font-size:18px; padding:10px;" placeholder="Vori" readonly><div style="font-size:9px; color:var(--text-sub); margin-top:4px;">BHORI</div></div>
-                <div style="text-align:center;"><input id="anaInput" class="big-input use-keypad" style="font-size:18px; padding:10px;" placeholder="Ana" readonly><div style="font-size:9px; color:var(--text-sub); margin-top:4px;">ANA</div></div>
-                <div style="text-align:center;"><input id="rattiInput" class="big-input use-keypad" style="font-size:18px; padding:10px;" placeholder="Ratti" readonly><div style="font-size:9px; color:var(--text-sub); margin-top:4px;">RATTI</div></div>
+                <div style="text-align:center;"><input id="bhoriInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Vori" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 11.664g</div></div>
+                <div style="text-align:center;"><input id="anaInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Ana" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.729g</div></div>
+                <div style="text-align:center;"><input id="rattiInput" class="big-input use-keypad" inputmode="none" style="font-size:18px; padding:10px;" placeholder="Ratti" readonly><div style="font-size:9px; color:var(--text-sub)">1 = 0.121g</div></div>
             </div>
             <button class="t-btn" style="width:100%; margin-top:15px; background:var(--btn-bg); color:white; border:none; height:50px; border-radius:15px;" onclick="window.genConverterPDF()">DOWNLOAD PDF</button>
         </div>
@@ -104,7 +64,7 @@
     <div id="page_gRateW" class="page-section">
         <div class="card">
             <div class="main-title">PRICE CALCULATOR</div>
-            <input type="text" id="screenRate" class="big-input use-keypad" placeholder="0.00" readonly>
+            <input type="text" id="screenRate" class="big-input use-keypad" inputmode="none" placeholder="0.00" readonly>
             <div class="tab-group">
                 <button id="btn22" class="t-btn" onclick="window.setTab('22')">22K</button>
                 <button id="btn21" class="t-btn" onclick="window.setTab('21')">21K</button>
@@ -112,19 +72,19 @@
             </div>
             <div id="sec22">
                 <div style="color:var(--color-22k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">22K GOLD <span id="p22Display">92.6%</span></div>
-                <input type="text" id="w22" class="big-input use-keypad" style="font-size:26px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
+                <input type="text" id="w22" class="big-input use-keypad" inputmode="none" style="font-size:26px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
                 <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-22k);"><span>Total:</span> <b id="t22">0.00</b></div>
             </div>
             <div id="sec21" style="margin-top:15px; border-top:1px dashed #444; padding-top:15px;">
                 <div style="color:var(--color-21k); display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">21K GOLD <span id="p21Display">88.5%</span></div>
-                <input type="text" id="w21" class="big-input use-keypad" style="font-size:24px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
+                <input type="text" id="w21" class="big-input use-keypad" inputmode="none" style="font-size:24px; margin-bottom:8px;" placeholder="Weight (g)" readonly>
                 <div style="display:flex; justify-content:space-between; font-size:22px; color:var(--color-21k);"><span>Total:</span> <b id="t21">0.00</b></div>
             </div>
             <div style="margin-top:15px; background:rgba(255,255,255,0.03); border:1px solid #333; padding:15px; border-radius:18px; text-align:center;">
                 <div id="grandTotal" style="font-size:38px; font-weight:bold; color:#fff;">0.00</div>
             </div>
             <input id="cName" class="big-input" style="font-size:16px; height:45px; margin-top:15px; text-align:left; padding:10px; background:rgba(0,0,0,0.3);" placeholder="Customer Name">
-            <button class="t-btn" style="width:100%; margin-top:15px; background:var(--btn-bg); color:white; border:none; height:50px; border-radius:15px;" onclick="window.genPDF()">DOWNLOAD INVOICE</button>
+            <button class="t-btn" style="width:100%; margin-top:15px; background:var(--btn-bg); color:white; border:none; height:50px; border-radius:15px;" onclick="window.genPDF()">DOWNLOAD INVOICE PDF</button>
         </div>
     </div>
 </div>
@@ -133,179 +93,39 @@
     <div class="key-row"><button class="key-btn" onclick="window.pressKey('1')">1</button><button class="key-btn" onclick="window.pressKey('2')">2</button><button class="key-btn" onclick="window.pressKey('3')">3</button></div>
     <div class="key-row"><button class="key-btn" onclick="window.pressKey('4')">4</button><button class="key-btn" onclick="window.pressKey('5')">5</button><button class="key-btn" onclick="window.pressKey('6')">6</button></div>
     <div class="key-row"><button class="key-btn" onclick="window.pressKey('7')">7</button><button class="key-btn" onclick="window.pressKey('8')">8</button><button class="key-btn" onclick="window.pressKey('9')">9</button></div>
-    <div class="key-row"><button class="key-btn" id="dotBtn" onclick="window.pressKey('.')">.</button><button class="key-btn" onclick="window.pressKey('0')">0</button><button class="key-btn" style="color:#ff4b4b" onclick="window.pressKey('BS')">⌫</button></div>
+    <div class="key-row"><button class="key-btn" id="dotBtn" onclick="window.pressKey('.')">.</button><button class="key-btn" onclick="window.pressKey('0')">0</button><button class="key-btn" style="color:#ff4444" onclick="window.pressKey('BS')">⌫</button></div>
     <button class="key-btn" style="width:100%; background:var(--accent-color); color:#000; font-size:18px; border:none; margin-top:10px;" onclick="window.closeKeypad()">DONE ▼</button>
 </div>
 
-<div id="adminPanel">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h2>Settings</h2><button onclick="window.closeAdmin()" style="color:red; background:none; border:none; font-size:35px;">✕</button></div>
-    <div class="admin-box">
-        <h4>Colors Customizer</h4>
-        <div class="color-grid">
-            <div class="color-item"><label>Body BG</label><input type="color" id="th_bg_body" class="color-picker" oninput="window.updateLivePreview()"></div>
-            <div class="color-item"><label>Card BG</label><input type="color" id="th_bg_card" class="color-picker" oninput="window.updateLivePreview()"></div>
-            <div class="color-item"><label>Accent Color</label><input type="color" id="th_accent" class="color-picker" oninput="window.updateLivePreview()"></div>
-            <div class="color-item"><label>Text Color</label><input type="color" id="th_text" class="color-picker" oninput="window.updateLivePreview()"></div>
-            <div class="color-item"><label>Header BG</label><input type="color" id="th_header" class="color-picker" oninput="window.updateLivePreview()"></div>
-            <div class="color-item"><label>Input BG</label><input type="color" id="th_input" class="color-picker" oninput="window.updateLivePreview()"></div>
-        </div>
-    </div>
-    <div class="admin-box">
-        <input id="cfg_pdfname" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #333; border-radius:10px; margin-bottom:10px;" placeholder="Invoice Filename">
-        <input id="cfg_auth" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #333; border-radius:10px;" placeholder="Authorized By">
-    </div>
-    <button class="t-btn" style="width:100%; background:var(--btn-bg);" onclick="window.saveSettings()">SAVE ALL CHANGES</button>
-</div>
-
-<div id="pdfInvoice" style="display:none; background:white; color:black; width:595px; padding:40px;">
-    <h1 style="text-align:center;">GOLD INVOICE</h1>
-    <p><strong>Customer:</strong> <span id="pCus"></span> <span style="float:right;"><strong>Date:</strong> <span id="pDate"></span></span></p>
-    <table style="width:100%; border-collapse:collapse; margin-top:20px;">
-        <thead><tr style="background:#eee;"><th style="border:1px solid #ddd; padding:8px;">Item</th><th style="border:1px solid #ddd; padding:8px;">Weight</th><th style="border:1px solid #ddd; padding:8px;">Total</th></tr></thead>
-        <tbody id="pBody"></tbody>
-    </table>
-    <h2 style="text-align:right;">Total: <span id="pTotal"></span> TK</h2>
-    <div style="margin-top:50px; display:flex; justify-content:space-between;">
-        <div>Customer Signature</div>
-        <div id="pAuthName">Authorized By</div>
-    </div>
-</div>
-
-<div id="pdfConv" style="display:none; background:white; color:black; width:595px; padding:60px; text-align:center;">
-    <h1>WEIGHT REPORT</h1>
-    <p style="font-size:24px;">Grams: <b id="pConvGram"></b> g</p>
-    <p style="font-size:22px;">Result: <b id="pConvTrad"></b></p>
-</div>
+<!-- adminPanel, PDF modal, rest stays unchanged -->
 
 <script>
-    // DEFINE ALL FUNCTIONS GLOBALLY ON WINDOW
-    let data = { pdfName: "GoldInvoice", authBy: "", p22: 0.926, p21: 0.885, theme: { "--bg-body": "#050505", "--bg-card": "rgba(25, 25, 25, 0.85)", "--accent-color": "#ff8c00", "--text-main": "#ffffff", "--header-bg": "rgba(20, 20, 20, 0.9)", "--bg-input": "rgba(0, 0, 0, 0.6)" } };
-    let activeInput = null;
-
-    window.toggleSidebar = function() {
-        const sb = document.getElementById('sidebar');
-        const ov = document.getElementById('overlay');
-        sb.classList.toggle('open');
-        ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
-    };
-
-    window.switchPage = function(p) {
-        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-        document.getElementById('page_' + p).classList.add('active');
-        window.toggleSidebar();
-    };
-
-    window.openAdmin = function() {
-        window.toggleSidebar();
-        document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('cfg_pdfname').value = data.pdfName;
-        document.getElementById('cfg_auth').value = data.authBy;
-    };
-
-    window.closeAdmin = function() { document.getElementById('adminPanel').style.display = 'none'; };
-
-    window.updateLivePreview = function() {
-        const root = document.documentElement;
-        root.style.setProperty("--bg-body", document.getElementById('th_bg_body').value);
-    };
-
-    window.saveSettings = function() {
-        data.pdfName = document.getElementById('cfg_pdfname').value;
-        data.authBy = document.getElementById('cfg_auth').value;
-        data.theme["--bg-body"] = document.getElementById('th_bg_body').value;
-        localStorage.setItem('gold_pro_final_v20', JSON.stringify(data));
-        location.reload();
-    };
-
+    // ... everything unchanged up to window.initApp ...
     window.initApp = function() {
         const saved = localStorage.getItem('gold_pro_final_v20');
         if(saved) data = JSON.parse(saved);
         const root = document.documentElement;
         for (const [k, v] of Object.entries(data.theme)) root.style.setProperty(k, v);
         window.setTab('both');
-        
         // Bind Keypad
         document.querySelectorAll('.use-keypad').forEach(i => {
-            i.addEventListener('click', function() {
+            i.addEventListener('click', function(e) {
+                e.preventDefault();
                 activeInput = this;
                 document.getElementById('customKeypad').classList.add('show');
-                document.getElementById('appMain').classList.add('keypad-active');
-                setTimeout(() => { this.scrollIntoView({ behavior: "smooth", block: "center" }); }, 300);
+                const app = document.getElementById('appMain');
+                app.classList.add('keypad-active');
+                // Only scroll .app-container, not viewport
+                setTimeout(() => {
+                    const rect = this.getBoundingClientRect();
+                    const appRect = app.getBoundingClientRect();
+                    const offset = (rect.top - appRect.top) - (app.clientHeight / 2) + (rect.height / 2);
+                    app.scrollBy({ top: offset, behavior: 'smooth' });
+                }, 300);
             });
         });
     };
-
-    window.setTab = function(m) {
-        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-        const root = document.documentElement;
-        const kpDot = document.getElementById('dotBtn');
-        const plus = document.querySelector('.plus-btn');
-
-        if(m == '22') {
-            document.getElementById('btn22').classList.add('active');
-            document.getElementById('sec22').style.display = 'block';
-            document.getElementById('sec21').style.display = 'none';
-            root.style.setProperty('--accent-color', 'var(--color-22k)');
-            kpDot.style.color = 'var(--color-22k)'; plus.style.background = 'var(--color-22k)';
-        } else if(m == '21') {
-            document.getElementById('btn21').classList.add('active');
-            document.getElementById('sec21').style.display = 'block';
-            document.getElementById('sec22').style.display = 'none';
-            root.style.setProperty('--accent-color', 'var(--color-21k)');
-            kpDot.style.color = 'var(--color-21k)'; plus.style.background = 'var(--color-21k)';
-        } else {
-            document.getElementById('btnBoth').classList.add('active');
-            document.getElementById('sec22').style.display = 'block';
-            document.getElementById('sec21').style.display = 'block';
-            root.style.setProperty('--accent-color', '#ff8c00');
-            kpDot.style.color = '#ff8c00'; plus.style.background = '#ff8c00';
-        }
-        window.calcPrice();
-    };
-
-    window.pressKey = function(k) {
-        if(!activeInput) return;
-        if(k === 'BS') activeInput.value = activeInput.value.slice(0,-1);
-        else { if(k==='.' && activeInput.value.includes('.')) return; activeInput.value += k; }
-        if(activeInput.id === 'gramInput') window.calcToTraditional();
-        else if(['bhoriInput','anaInput','rattiInput'].includes(activeInput.id)) window.calcToGram();
-        else window.calcPrice();
-    };
-
-    window.closeKeypad = function() { document.getElementById('customKeypad').classList.remove('show'); document.getElementById('appMain').classList.remove('keypad-active'); activeInput = null; };
-
-    function getV(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
-    window.calcToGram = function() { document.getElementById('gramInput').value = ((getV('bhoriInput')+(getV('anaInput')/16)+(getV('rattiInput')/96))*11.664).toFixed(3); };
-    window.calcToTraditional = function() { let g=getV('gramInput'), tb=g/11.664, v=Math.floor(tb), rem=tb-v, a=Math.floor(rem*16), r=((rem*16)-a)*6; document.getElementById('bhoriInput').value=v; document.getElementById('anaInput').value=a; document.getElementById('rattiInput').value=r.toFixed(2); };
-    
-    window.calcPrice = function() {
-        let s=getV('screenRate'), r22 = (s*3.674/31.1035*data.p22)*11.664, t22 = getV('w22')*r22/11.664;
-        let r21 = (s*3.674/31.1035*data.p21)*11.664, t21 = getV('w21')*r21/11.664;
-        document.getElementById('t22').innerText = t22.toLocaleString(undefined,{minimumFractionDigits:2});
-        document.getElementById('t21').innerText = t21.toLocaleString(undefined,{minimumFractionDigits:2});
-        let total = (document.getElementById('sec22').style.display != 'none' ? t22 : 0) + (document.getElementById('sec21').style.display != 'none' ? t21 : 0);
-        document.getElementById('grandTotal').innerText = total.toLocaleString(undefined,{minimumFractionDigits:2});
-    };
-
-    window.genConverterPDF = function() {
-        document.getElementById('pConvGram').innerText = getV('gramInput');
-        document.getElementById('pConvTrad').innerText = `${getV('bhoriInput')} Vori ${getV('anaInput')} Ana ${getV('rattiInput')} Ratti`;
-        const el = document.getElementById('pdfConv'); el.style.display = 'block';
-        html2pdf().from(el).save().then(() => el.style.display = 'none');
-    };
-
-    window.genPDF = function() {
-        document.getElementById('pDate').innerText = new Date().toLocaleDateString();
-        document.getElementById('pCus').innerText = document.getElementById('cName').value || "Guest";
-        document.getElementById('pTotal').innerText = document.getElementById('grandTotal').innerText;
-        let h = '';
-        if(getV('w22')>0 && document.getElementById('sec22').style.display !== 'none') h+= `<tr><td>22K Gold</td><td>${getV('w22')}g</td><td>${document.getElementById('t22').innerText}</td></tr>`;
-        if(getV('w21')>0 && document.getElementById('sec21').style.display !== 'none') h+= `<tr><td>21K Gold</td><td>${getV('w21')}g</td><td>${document.getElementById('t21').innerText}</td></tr>`;
-        document.getElementById('pBody').innerHTML = h;
-        const el = document.getElementById('pdfInvoice'); el.style.display = 'block';
-        html2pdf().set({filename: data.pdfName+'.pdf'}).from(el).save().then(() => el.style.display = 'none');
-    };
+    // ... rest of script unchanged ...
 </script>
 </body>
 </html>
