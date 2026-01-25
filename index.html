@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App | Pro Invoice Fix</title>
+    <title>Gold App | Final Stable</title>
     
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --glass-bg: rgba(20, 20, 20, 0.85);
+            --glass-bg: rgba(20, 20, 20, 0.90); /* Darker for stability */
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
             --color-orange: #ff9f43; 
@@ -24,9 +24,9 @@
             margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
         }
 
-        .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; }
+        .app-container { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 380px; position: relative; z-index: 10; }
         
-        /* UI STYLES (UNCHANGED) */
+        /* UI STYLES */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--glass-bg); padding: 12px 15px; border-radius: 20px; border: var(--glass-border); position: relative; z-index: 100; }
         #appTitle { margin: 0; font-size: 18px; color: var(--accent-active); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
         
@@ -68,20 +68,25 @@
         .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
         .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
 
-        /* --- PDF GENERATION CONTAINER (OFF SCREEN) --- */
+        /* --- PDF GENERATION CONTAINER (FIXED POSITION, LOW Z-INDEX) --- */
+        /* This prevents freezing by keeping it in the render tree but hidden */
         #pdf-generator-container {
             position: fixed;
-            left: -9999px;
-            top: 0;
-            width: 210mm; /* A4 Width */
+            top: 0; left: 0;
+            width: 210mm;
+            min-height: 297mm;
             background: #ffffff;
             color: #000000;
             padding: 20px;
-            z-index: 9999;
+            z-index: -9999; /* Hidden behind everything */
+            opacity: 0; /* Invisible */
+            pointer-events: none;
         }
     </style>
 </head>
 <body onload="init()">
+
+<div id="pdf-generator-container"></div>
 
 <div class="app-container">
     <div class="header">
@@ -193,8 +198,6 @@
     <button class="btn-action">SAVE</button>
 </div>
 
-<div id="pdf-generator-container"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
     let activeInput = null;
@@ -256,18 +259,10 @@
     function openP(id){ document.getElementById(id).style.display='block'; }
     function closeP(id){ document.getElementById(id).style.display='none'; }
 
-    // --- NEW PDF GENERATOR LOGIC ---
     function generateInvoice(type) {
-        if(typeof html2pdf === 'undefined') { alert('PDF Library Loading...'); return; }
-        const btn = document.activeElement; const org = btn.innerText; btn.innerText="MAKING PDF...";
+        if(typeof html2pdf === 'undefined') { alert('PDF Engine Loading... Wait 2s'); return; }
+        const btn = document.activeElement; const org = btn.innerText; btn.innerText="MAKING...";
         
-        // 1. Get the container
         const container = document.getElementById('pdf-generator-container');
         const title = document.getElementById('appTitle').innerText;
-        const date = new Date().toLocaleString();
-
-        // 2. Build CLEAN WHITE HTML
-        let html = '';
-        if(type === 'converter') {
-            html = `
-        
+        const da
