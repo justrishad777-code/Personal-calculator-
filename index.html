@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App | Final Stable</title>
+    <title>Gold App | Pro Invoice</title>
     
     <style>
         :root {
@@ -127,6 +127,9 @@
         .conv-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border: var(--glass-border); }
         .conv-inp { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: bold; text-align: center; }
         .conv-lbl { font-size: 10px; color: var(--text-sub); margin-top: 5px; text-transform: uppercase; display: block; letter-spacing: 1px; }
+
+        /* --- HIDDEN PRINT TEMPLATE (Pure White Invoice) --- */
+        #print-area { display: none; }
     </style>
 </head>
 <body onload="init()">
@@ -156,7 +159,7 @@
             <div class="conv-box"><input type="text" inputmode="none" readonly id="res_a" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ana</span></div>
             <div class="conv-box"><input type="text" inputmode="none" readonly id="res_r" class="conv-inp num-field" placeholder="0" onclick="focusField(this)"><span class="conv-lbl">Ratti</span></div>
         </div>
-        <button class="btn-action" onclick="genPDF('main-content', 'Weight_Report.pdf')">DOWNLOAD REPORT</button>
+        <button class="btn-action" onclick="printReport('converter')">DOWNLOAD REPORT</button>
     </div>
 </div>
 
@@ -187,7 +190,7 @@
             </div>
             <input type="text" inputmode="none" readonly id="w22" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:#fff;">0.00</span></div>
-            <div class="row"><span style="color:var(--color-orange); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--color-orange); text-shadow:0 0 20px rgba(255,159,67,0.6);">0.00</span></div>
+            <div class="row"><span style="color:var(--color-orange); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--color-orange);">0.00</span></div>
         </div>
 
         <div id="sec21" class="sec-21 hidden">
@@ -200,7 +203,7 @@
             </div>
             <input type="text" inputmode="none" readonly id="w21" class="weight-input num-field" placeholder="Weight (gm)" onclick="focusField(this)">
             <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:#fff;">0.00</span></div>
-            <div class="row"><span style="color:var(--color-blue); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--color-blue); text-shadow:0 0 20px rgba(10,189,227,0.6);">0.00</span></div>
+            <div class="row"><span style="color:var(--color-blue); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--color-blue);">0.00</span></div>
         </div>
 
         <div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:15px; text-align:center; border:var(--glass-border);">
@@ -211,7 +214,7 @@
             <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Customer Name">
             <input id="authName" style="width:100%; padding:12px; background:rgba(0,0,0,0.3); border:var(--glass-border); border-radius:8px; color:#fff;" placeholder="Authorized By">
         </div>
-        <button class="btn-action" onclick="genPDF('calc-content', 'Invoice.pdf')">DOWNLOAD INVOICE</button>
+        <button class="btn-action" onclick="printReport('invoice')">DOWNLOAD INVOICE</button>
     </div>
 </div>
 
@@ -244,6 +247,8 @@
     </div>
     <button class="btn-action">SAVE SETTINGS</button>
 </div>
+
+<div id="print-area"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>
@@ -284,8 +289,6 @@
         } else calc();
     }
 
-    // --- FIX FOR FREEZING ---
-    // Added window listeners to stop loop even if finger slides off the button
     function setupBackspace() {
         const btn = document.getElementById('btn-back');
         const start = (e) => {
@@ -298,8 +301,6 @@
         
         btn.addEventListener('mousedown', start);
         btn.addEventListener('touchstart', start, {passive: true});
-        
-        // CRITICAL FIX: Listen on WINDOW to catch lift anywhere
         window.addEventListener('mouseup', stop);
         window.addEventListener('touchend', stop);
         window.addEventListener('touchcancel', stop);
@@ -378,30 +379,85 @@
     function openP(id) { document.getElementById(id).style.display = 'block'; }
     function closeP(id) { document.getElementById(id).style.display = 'none'; }
 
-    function genPDF(id, name) {
-        if (typeof html2pdf === 'undefined') {
-            alert('PDF Library loading... Please wait.');
-            return;
-        }
-        const btn = document.activeElement;
-        const originalText = btn.innerText;
-        btn.innerText = "PROCESSING...";
+    // --- PRO PDF GENERATION (NO SCREENSHOT LOOK) ---
+    function printReport(type) {
+        if (typeof html2pdf === 'undefined') { alert('System Loading...'); return; }
         
-        const element = document.getElementById(id);
+        const btn = document.activeElement;
+        const orgText = btn.innerText;
+        btn.innerText = "GENERATING...";
+
+        const container = document.getElementById('print-area');
+        const shopName = document.getElementById('appTitle').innerText;
+        const date = new Date().toLocaleString();
+
+        let content = '';
+
+        if(type === 'converter') {
+            content = `
+                <div style="padding:20px; font-family:sans-serif; color:#000; background:#fff;">
+                    <h2 style="text-align:center; border-bottom:2px solid #333; padding-bottom:10px;">${shopName}</h2>
+                    <p style="text-align:center; font-size:12px; color:#555;">Weight Conversion Report<br>${date}</p>
+                    <table style="width:100%; margin-top:20px; border-collapse:collapse;">
+                        <tr style="background:#f0f0f0;"><th style="padding:10px; border:1px solid #ccc;">Unit</th><th style="padding:10px; border:1px solid #ccc;">Value</th></tr>
+                        <tr><td style="padding:10px; border:1px solid #ccc;">Grams</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('cv_g').value}</td></tr>
+                        <tr><td style="padding:10px; border:1px solid #ccc;">Vori</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_v').value}</td></tr>
+                        <tr><td style="padding:10px; border:1px solid #ccc;">Ana</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_a').value}</td></tr>
+                        <tr><td style="padding:10px; border:1px solid #ccc;">Ratti</td><td style="padding:10px; border:1px solid #ccc;">${document.getElementById('res_r').value}</td></tr>
+                    </table>
+                </div>`;
+        } else {
+            const cName = document.getElementById('cName').value || 'N/A';
+            const auth = document.getElementById('authName').value || 'Manager';
+            const grand = document.getElementById('grandTotal').innerText;
+            
+            content = `
+                <div style="padding:20px; font-family:sans-serif; color:#000; background:#fff;">
+                    <div style="text-align:center; margin-bottom:20px;">
+                        <h1 style="margin:0;">${shopName}</h1>
+                        <p style="margin:5px 0; font-size:12px;">INVOICE / ESTIMATE</p>
+                        <p style="font-size:10px; color:#666;">${date}</p>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <strong>Customer:</strong> ${cName}
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                        <thead style="background:#000; color:#fff;">
+                            <tr><th style="padding:8px;">Item</th><th style="padding:8px;">Weight</th><th style="padding:8px;">Rate/Bhori</th><th style="padding:8px;">Total</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">22K Gold</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('w22').value} gm</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('r22').innerText}</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('t22').innerText}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">21K Gold</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('w21').value} gm</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('r21').innerText}</td>
+                                <td style="padding:8px; border-bottom:1px solid #ddd;">${document.getElementById('t21').innerText}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h2 style="text-align:right; margin-top:20px;">Total: ${grand} BDT</h2>
+                    <div style="margin-top:40px; border-top:1px solid #000; display:inline-block; padding-top:5px; font-size:12px;">Authorized Signature: ${auth}</div>
+                </div>`;
+        }
+
+        container.innerHTML = content;
+
         const opt = {
-            margin: 5,
-            filename: name,
+            margin: 0,
+            filename: type + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#151520' },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        
-        html2pdf().set(opt).from(element).save()
-        .then(() => { btn.innerText = originalText; })
-        .catch(err => { 
-            alert("Error: " + err); 
-            btn.innerText = originalText; 
-        });
+
+        html2pdf().set(opt).from(container).save()
+        .then(() => { btn.innerText = orgText; })
+        .catch(err => { alert("Error: " + err); btn.innerText = orgText; });
     }
 </script>
 </body>
