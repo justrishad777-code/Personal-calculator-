@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 
     <style>
-        /* --- CSS FIXES --- */
+        /* --- STYLES --- */
         .result-group {
             display: flex; align-items: center; justify-content: flex-end;
             flex: 1; min-width: 0; position: relative;
@@ -16,7 +16,7 @@
         .dynamic-input {
             border: none; background: transparent; font-weight: bold; text-align: right;
             width: 100%; min-width: 0; padding-right: 8px; margin: 0;
-            color: inherit; font-size: 20px; pointer-events: none;
+            color: inherit; font-size: 20px; pointer-events: none; /* Default Locked */
         }
         .rate-box {
             font-size: 14px; font-weight: bold; color: #555; background: #eef2f3;
@@ -34,6 +34,8 @@
             pointer-events: none; margin-top: 5px; padding: 0 40px;
         }
         .grand-edit-btn { position: absolute; bottom: 15px; right: 15px; }
+        
+        /* Highlight Effects */
         .active-field {
             border: 2px solid var(--primary) !important; background: #fff8e1 !important; 
             box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); border-radius: 5px;
@@ -43,8 +45,14 @@
             border-radius: 4px; cursor: pointer; text-transform: uppercase;
             font-weight: bold; border: none; flex-shrink: 0;
         }
-        .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; background: rgba(255, 255, 0, 0.1); }
         
+        /* Editing State */
+        .editing { 
+            border-bottom: 2px solid red !important; 
+            pointer-events: auto !important; 
+            background: rgba(255, 255, 0, 0.1); 
+        }
+
         /* Keypad */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
@@ -59,14 +67,9 @@
         }
         .casio-k-btn:active { background: #eee; }
 
-        /* --- HIDDEN INVOICE STYLE --- */
+        /* Hidden Invoice */
         #invoice-layout {
-            display: none; /* স্ক্রিনে দেখা যাবে না */
-            width: 100%;
-            background: #fff;
-            padding: 20px;
-            font-family: 'Segoe UI', sans-serif;
-            color: #333;
+            display: none; width: 100%; background: #fff; padding: 20px; font-family: 'Segoe UI', sans-serif; color: #333;
         }
         .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
         .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
@@ -186,38 +189,17 @@
     </div>
     
     <div class="inv-info">
-        <div>
-            <strong>Customer:</strong> <span id="inv-cName"></span><br>
-            <strong>Date:</strong> <span id="inv-date"></span>
-        </div>
-        <div style="text-align:right;">
-            <strong>Auth By:</strong> <span id="inv-auth"></span>
-        </div>
+        <div><strong>Customer:</strong> <span id="inv-cName"></span><br><strong>Date:</strong> <span id="inv-date"></span></div>
+        <div style="text-align:right;"><strong>Auth By:</strong> <span id="inv-auth"></span></div>
     </div>
 
     <table class="inv-table">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th class="text-right">Rate/Bhori</th>
-                <th class="text-right">Weight (gm)</th>
-                <th class="text-right">Total</th>
-            </tr>
-        </thead>
-        <tbody id="inv-body">
-            </tbody>
-        <tfoot>
-            <tr class="inv-total-row">
-                <td colspan="3" class="text-right">Grand Total</td>
-                <td class="text-right" id="inv-grand">0.00</td>
-            </tr>
-        </tfoot>
+        <thead><tr><th>Description</th><th class="text-right">Rate/Bhori</th><th class="text-right">Weight (gm)</th><th class="text-right">Total</th></tr></thead>
+        <tbody id="inv-body"></tbody>
+        <tfoot><tr class="inv-total-row"><td colspan="3" class="text-right">Grand Total</td><td class="text-right" id="inv-grand">0.00</td></tr></tfoot>
     </table>
 
-    <div class="inv-footer">
-        <p>This is a computer generated estimate, not a final tax invoice.</p>
-        <p>Thank you for your business!</p>
-    </div>
+    <div class="inv-footer"><p>This is a computer generated estimate.</p><p>Thank you for your business!</p></div>
 </div>
 
 <div id="customKeypad">
@@ -241,6 +223,7 @@
 <script>
     let currentInput = null;
 
+    // 1. SAFE FOCUS
     function focusField(el) {
         document.querySelectorAll('input').forEach(i => i.classList.remove('active-field'));
         el.classList.add('active-field');
@@ -248,12 +231,30 @@
         document.getElementById('customKeypad').classList.add('open');
     }
 
+    // 2. SAFE CLOSE (LOCKS EDITING)
     function closeKeypad() {
         document.getElementById('customKeypad').classList.remove('open');
+        
+        // লক করার লজিক এখানেই
         if(currentInput) {
             currentInput.classList.remove('active-field');
+            // যদি এডিট মোডে থাকে, তবে সেটা বন্ধ করা হবে
+            if(currentInput.classList.contains('editing')) {
+                currentInput.classList.remove('editing');
+                currentInput.style.pointerEvents = "none"; // Lock again
+            }
             currentInput = null;
         }
+    }
+
+    // 3. ENABLE EDIT (UNLOCKS)
+    function enableEdit(id) {
+        let el = document.getElementById(id);
+        el.style.pointerEvents = "auto"; // Unlock
+        el.classList.add('editing'); 
+        focusField(el);
+        // Note: No 'blur' listener here anymore to prevent loops. 
+        // User MUST press 'Done' to close.
     }
 
     function press(key) {
@@ -268,19 +269,6 @@
         calc();
     }
 
-    function enableEdit(id) {
-        let el = document.getElementById(id);
-        el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); 
-        focusField(el);
-        el.addEventListener('blur', function() {
-            setTimeout(() => {
-                el.style.pointerEvents = "none";
-                el.classList.remove('editing');
-            }, 200);
-        }, {once: true});
-    }
-
     function calc() { 
         let b = parseFloat(document.getElementById('screenRate').value) || 0; 
         
@@ -292,6 +280,7 @@
         let mg22 = parseFloat(document.getElementById('mg22').value) || 0; 
         let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; 
         
+        // Update only if NOT editing
         let rateField22 = document.getElementById('rateView22');
         if(!rateField22.classList.contains('editing')) {
             rateField22.value = r22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
@@ -340,72 +329,42 @@
     }
 
     function setTab(t) { 
-        document.getElementById('b22').className = 't-btn'; 
-        document.getElementById('b21').className = 't-btn'; 
-        document.getElementById('bBoth').className = 't-btn'; 
-        document.getElementById('sec22').classList.add('hidden'); 
-        document.getElementById('sec21').classList.add('hidden'); 
-        
-        if(t === '22'){ 
-            document.getElementById('b22').classList.add('active-22'); 
-            document.getElementById('sec22').classList.remove('hidden'); 
-        } else if(t === '21'){ 
-            document.getElementById('b21').classList.add('active-21'); 
-            document.getElementById('sec21').classList.remove('hidden'); 
-        } else { 
-            document.getElementById('bBoth').classList.add('active-both'); 
-            document.getElementById('sec22').classList.remove('hidden'); 
-            document.getElementById('sec21').classList.remove('hidden'); 
-        } 
+        document.getElementById('b22').className = 't-btn'; document.getElementById('b21').className = 't-btn'; document.getElementById('bBoth').className = 't-btn'; document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden'); 
+        if(t === '22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); } else if(t === '21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); } else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); } 
         calc(); 
     }
 
-    // PDF GENERATION FUNCTION
     function downloadPDF() {
-        // 1. Data Collection
         let cName = document.getElementById('cName').value || "Walk-in Customer";
         let auth = document.getElementById('authName').value || "Manager";
         let date = new Date().toLocaleDateString();
         let grandTotal = document.getElementById('grandTotal').value;
 
-        // 2. Fill Invoice Info
         document.getElementById('inv-cName').innerText = cName;
         document.getElementById('inv-auth').innerText = auth;
         document.getElementById('inv-date').innerText = date;
         document.getElementById('inv-grand').innerText = grandTotal;
 
-        // 3. Build Table Rows
         let tbody = document.getElementById('inv-body');
-        tbody.innerHTML = ""; // Clear previous
+        tbody.innerHTML = ""; 
 
-        // 22K Row (Add only if visible)
         if(!document.getElementById('sec22').classList.contains('hidden')) {
-            let r22 = document.getElementById('rateView22').value;
-            let w22 = document.getElementById('w22').value || "0";
-            let t22 = document.getElementById('t22').value;
-            tbody.innerHTML += `
-                <tr>
-                    <td>22 Karat Gold</td>
-                    <td class="text-right">${r22}</td>
-                    <td class="text-right">${w22}</td>
-                    <td class="text-right">${t22}</td>
-                </tr>`;
+            tbody.innerHTML += `<tr><td>22 Karat Gold</td><td class="text-right">${document.getElementById('rateView22').value}</td><td class="text-right">${document.getElementById('w22').value || "0"}</td><td class="text-right">${document.getElementById('t22').value}</td></tr>`;
         }
-
-        // 21K Row (Add only if visible)
         if(!document.getElementById('sec21').classList.contains('hidden')) {
-            let r21 = document.getElementById('rateView21').value;
-            let w21 = document.getElementById('w21').value || "0";
-            let t21 = document.getElementById('t21').value;
-            tbody.innerHTML += `
-                <tr>
-                    <td>21 Karat Gold</td>
-                    <td class="text-right">${r21}</td>
-                    <td class="text-right">${w21}</td>
-                    <td class="text-right">${t21}</td>
-                </tr>`;
+            tbody.innerHTML += `<tr><td>21 Karat Gold</td><td class="text-right">${document.getElementById('rateView21').value}</td><td class="text-right">${document.getElementById('w21').value || "0"}</td><td class="text-right">${document.getElementById('t21').value}</td></tr>`;
         }
 
-        // 4. Generate PDF
         const element = document.getElementById('invoice-layout');
-        element.style.display = 'block'; //
+        element.style.display = 'block'; 
+
+        let opt = { margin: 0.5, filename: 'Invoice_' + Date.now() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+
+        html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; });
+    }
+
+    function toggleMenu() { let m = document.getElementById('menuPopup'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
+    function appInit() { }
+</script>
+</body>
+</html>
