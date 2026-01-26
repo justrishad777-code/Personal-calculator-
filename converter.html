@@ -8,11 +8,11 @@
     
     <style>
         :root { 
-            --primary: #ff9f43; 
-            --secondary: #0abde3; 
-            --bg-color: #f0f2f5; 
-            --card-bg: #ffffff;
-            --text-main: #333;
+            --primary: #ffaf40; 
+            --secondary: #48dbfb; 
+            --bg-color: #222831; 
+            --card-bg: #393e46;
+            --text-main: #eeeeee;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
@@ -21,252 +21,113 @@
             font-family: 'Segoe UI', sans-serif; 
             background: var(--bg-color);
             display: flex; flex-direction: column; height: 100vh;
+            color: var(--text-main);
         }
 
-        /* --- 1. COLORFUL HEADER --- */
         .top-bar { 
-            height: 55px; 
-            /* Gradient Header for colorful look */
-            background: linear-gradient(135deg, #222, #444); 
-            display: flex; align-items: center; 
-            padding: 0 15px; 
-            color: white; 
-            justify-content: space-between; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 100;
+            height: 55px; background: #1a1d24; 
+            display: flex; align-items: center; padding: 0 15px; 
+            color: white; justify-content: space-between; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100; border-bottom: 1px solid #333;
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .app-title { 
             font-size: 18px; font-weight: bold; letter-spacing: 1px; 
             background: -webkit-linear-gradient(45deg, #ff9f43, #0abde3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Menu Popup */
         #menuPopup {
             display: none; position: absolute; top: 55px; left: 10px; width: 220px;
-            background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            z-index: 2000; flex-direction: column; overflow: hidden; border: 1px solid #eee;
+            background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 2000; flex-direction: column; border: 1px solid #555;
         }
         .menu-item { 
-            padding: 15px; text-decoration: none; color: #333; 
-            border-bottom: 1px solid #f0f0f0; font-weight: 600; display: flex; align-items: center; 
-            transition: 0.2s;
+            padding: 15px; text-decoration: none; color: #eee; 
+            border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; 
         }
-        .menu-item:hover { background: #f9f9f9; padding-left: 20px; }
+        .menu-item:hover { background: #444; }
         .menu-icon-span { margin-right: 10px; font-size: 18px; }
 
-        /* --- 2. MAIN CONTENT --- */
-        .content {
-            flex: 1; padding: 20px; overflow-y: auto;
-            background: linear-gradient(to bottom, #f0f2f5, #e1eec3); /* Subtle background gradient */
-        }
+        .content { flex: 1; padding: 20px; overflow-y: auto; background: #222831; }
 
-        /* CARD STYLES */
         .card {
-            background: #fff; border-radius: 15px; padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border: 1px solid #fff;
-            position: relative; overflow: hidden;
+            background: var(--card-bg); border-radius: 15px; padding: 20px;
+            margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- ORANGE SECTION (Vori -> Gram) --- */
-        .card-orange {
-            border-top: 5px solid var(--primary);
-            background: linear-gradient(to bottom, #fff, #fffaf0); /* Light Orange Tint */
-        }
-        .card-header-orange {
-            color: var(--primary); font-size: 18px; font-weight: bold; margin-bottom: 15px;
-            display: flex; align-items: center;
-        }
+        .card-orange { border-top: 5px solid var(--primary); background: linear-gradient(to bottom, #393e46, #403a35); }
+        .card-header-orange { color: var(--primary); font-size: 18px; font-weight: bold; margin-bottom: 15px; }
 
-        /* --- BLUE SECTION (Gram -> Vori) --- */
-        .card-blue {
-            border-top: 5px solid var(--secondary);
-            background: linear-gradient(to bottom, #fff, #f0fbff); /* Light Blue Tint */
-        }
-        .card-header-blue {
-            color: var(--secondary); font-size: 18px; font-weight: bold; margin-bottom: 15px;
-            display: flex; align-items: center;
-        }
+        .card-blue { border-top: 5px solid var(--secondary); background: linear-gradient(to bottom, #393e46, #353d42); }
+        .card-header-blue { color: var(--secondary); font-size: 18px; font-weight: bold; margin-bottom: 15px; }
 
-        /* INPUTS */
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .c-input {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            width: 100%; padding: 12px; border: 1px solid #555; border-radius: 8px;
             font-size: 16px; font-weight: bold; text-align: center; outline: none;
-            background: rgba(255,255,255,0.8);
-            transition: 0.3s;
+            background: #222831; color: #fff;
         }
-        .c-input:focus {
-            background: #fff; box-shadow: 0 0 8px rgba(0,0,0,0.1);
-            border-color: #aaa; transform: scale(1.02);
-        }
+        .c-input:focus { border-color: #888; background: #2a3038; }
 
-        /* LABELS */
-        .unit-label {
-            font-size: 10px; text-transform: uppercase; color: #777; 
-            text-align: center; margin-bottom: 2px; font-weight: bold;
-        }
+        .unit-label { font-size: 10px; text-transform: uppercase; color: #aaa; text-align: center; margin-bottom: 2px; font-weight: bold; }
 
-        /* RESULTS */
         .result-box {
-            background: #fff; border-radius: 10px; padding: 15px;
-            text-align: center; margin-top: 15px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
-            border: 1px solid #eee;
+            background: #2a3038; border-radius: 10px; padding: 15px;
+            text-align: center; margin-top: 15px; border: 1px solid #444;
         }
         .res-val { font-size: 32px; font-weight: 900; line-height: 1; }
         .res-unit { font-size: 14px; color: #888; font-weight: 600; margin-top: 5px; }
 
-        /* COLORS FOR TEXT */
         .text-orange { color: var(--primary); }
         .text-blue { color: var(--secondary); }
-
     </style>
 </head>
 <body onload="init()">
-
     <div class="top-bar">
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
         <span class="app-title">RISHAD'S CONVERTER</span>
         <div style="width: 40px;"></div>
     </div>
-
     <div id="menuPopup">
         <a href="index.html" class="menu-item"><span class="menu-icon-span">🔢</span> Casio Calc</a>
         <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
-        <a href="converter.html" class="menu-item" style="background:#f0f0f0;"><span class="menu-icon-span">⚖️</span> Converter</a>
+        <a href="converter.html" class="menu-item" style="background:#444;"><span class="menu-icon-span">⚖️</span> Converter</a>
         <a href="settings.html" class="menu-item"><span class="menu-icon-span">⚙️</span> Settings</a>
     </div>
-
     <div class="content">
-
         <div class="card card-orange">
-            <div class="card-header-orange">
-                <span>🔶 Traditional to Gram</span>
-            </div>
-            
+            <div class="card-header-orange"><span>🔶 Traditional to Gram</span></div>
             <div class="input-group">
-                <div style="flex:1;">
-                    <div class="unit-label">Vori</div>
-                    <input type="number" id="vori" class="c-input" placeholder="0" oninput="calcToGram()">
-                </div>
-                <div style="flex:1;">
-                    <div class="unit-label">Ana</div>
-                    <input type="number" id="ana" class="c-input" placeholder="0" oninput="calcToGram()">
-                </div>
+                <div style="flex:1;"><div class="unit-label">Vori</div><input type="number" id="vori" class="c-input" placeholder="0" oninput="calcToGram()"></div>
+                <div style="flex:1;"><div class="unit-label">Ana</div><input type="number" id="ana" class="c-input" placeholder="0" oninput="calcToGram()"></div>
             </div>
             <div class="input-group">
-                <div style="flex:1;">
-                    <div class="unit-label">Roti</div>
-                    <input type="number" id="roti" class="c-input" placeholder="0" oninput="calcToGram()">
-                </div>
-                <div style="flex:1;">
-                    <div class="unit-label">Point</div>
-                    <input type="number" id="point" class="c-input" placeholder="0" oninput="calcToGram()">
-                </div>
+                <div style="flex:1;"><div class="unit-label">Roti</div><input type="number" id="roti" class="c-input" placeholder="0" oninput="calcToGram()"></div>
+                <div style="flex:1;"><div class="unit-label">Point</div><input type="number" id="point" class="c-input" placeholder="0" oninput="calcToGram()"></div>
             </div>
-
-            <div class="result-box">
-                <div class="res-val text-orange" id="resGram">0.000</div>
-                <div class="res-unit">Total Grams</div>
-            </div>
+            <div class="result-box"><div class="res-val text-orange" id="resGram">0.000</div><div class="res-unit">Total Grams</div></div>
         </div>
-
         <div class="card card-blue">
-            <div class="card-header-blue">
-                <span>🔷 Gram to Traditional</span>
-            </div>
-
-            <div>
-                <div class="unit-label">Enter Weight in Grams</div>
-                <input type="number" id="gramInput" class="c-input" placeholder="0.000" style="font-size: 24px;" oninput="calcToVori()">
-            </div>
-
+            <div class="card-header-blue"><span>🔷 Gram to Traditional</span></div>
+            <div><div class="unit-label">Enter Weight in Grams</div><input type="number" id="gramInput" class="c-input" placeholder="0.000" style="font-size: 24px;" oninput="calcToVori()"></div>
             <div class="result-box" style="display:flex; justify-content:space-around; align-items:center; padding: 10px;">
-                <div>
-                    <div class="res-val text-blue" id="resVori" style="font-size:24px;">0</div>
-                    <div class="res-unit">Vori</div>
-                </div>
-                <div style="font-size:20px; color:#ddd;">|</div>
-                <div>
-                    <div class="res-val text-blue" id="resAna" style="font-size:24px;">0</div>
-                    <div class="res-unit">Ana</div>
-                </div>
-                <div style="font-size:20px; color:#ddd;">|</div>
-                <div>
-                    <div class="res-val text-blue" id="resRoti" style="font-size:24px;">0</div>
-                    <div class="res-unit">Roti</div>
-                </div>
-                <div style="font-size:20px; color:#ddd;">|</div>
-                <div>
-                    <div class="res-val text-blue" id="resPoint" style="font-size:24px;">0</div>
-                    <div class="res-unit">Point</div>
-                </div>
+                <div><div class="res-val text-blue" id="resVori" style="font-size:24px;">0</div><div class="res-unit">Vori</div></div>
+                <div style="font-size:20px; color:#555;">|</div>
+                <div><div class="res-val text-blue" id="resAna" style="font-size:24px;">0</div><div class="res-unit">Ana</div></div>
+                <div style="font-size:20px; color:#555;">|</div>
+                <div><div class="res-val text-blue" id="resRoti" style="font-size:24px;">0</div><div class="res-unit">Roti</div></div>
+                <div style="font-size:20px; color:#555;">|</div>
+                <div><div class="res-val text-blue" id="resPoint" style="font-size:24px;">0</div><div class="res-unit">Point</div></div>
             </div>
-            
-            <div style="text-align:center; margin-top:10px; font-size:12px; color:#999;">
-                1 Vori = 11.664 Grams
-            </div>
+            <div style="text-align:center; margin-top:10px; font-size:12px; color:#666;">1 Vori = 11.664 Grams</div>
         </div>
-
     </div>
-
     <script>
-        function toggleMenu() {
-            const m = document.getElementById('menuPopup');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        // --- CONVERTER LOGIC ---
-        
-        // 1. Traditional -> Gram
-        function calcToGram() {
-            let v = parseFloat(document.getElementById('vori').value) || 0;
-            let a = parseFloat(document.getElementById('ana').value) || 0;
-            let r = parseFloat(document.getElementById('roti').value) || 0;
-            let p = parseFloat(document.getElementById('point').value) || 0;
-
-            // Conversion Factors (Standard BD)
-            // 1 Vori = 11.664 gm
-            // 1 Ana = 11.664 / 16 gm
-            // 1 Roti = 11.664 / 16 / 6 gm
-            // 1 Point = 11.664 / 16 / 6 / 10 gm
-
-            let totalGram = (v * 11.664) + (a * 0.729) + (r * 0.1215) + (p * 0.01215);
-            
-            document.getElementById('resGram').innerText = totalGram.toLocaleString(undefined, {minimumFractionDigits: 3, maximumFractionDigits: 3});
-        }
-
-        // 2. Gram -> Traditional
-        function calcToVori() {
-            let g = parseFloat(document.getElementById('gramInput').value) || 0;
-
-            let totalVori = g / 11.664;
-            
-            let v = Math.floor(totalVori);
-            let rem1 = (totalVori - v) * 16; // Ana portion
-            
-            let a = Math.floor(rem1);
-            let rem2 = (rem1 - a) * 6; // Roti portion
-            
-            let r = Math.floor(rem2);
-            let rem3 = (rem2 - r) * 10; // Point portion
-            
-            let p = rem3; // Keep decimal for point if needed, or round
-
-            document.getElementById('resVori').innerText = v;
-            document.getElementById('resAna').innerText = a;
-            document.getElementById('resRoti').innerText = r;
-            document.getElementById('resPoint').innerText = p.toFixed(1);
-        }
-
-        function init() {
-            // Optional: Auto focus or clear fields
-        }
+        function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+        function calcToGram() { let v = parseFloat(document.getElementById('vori').value)||0, a = parseFloat(document.getElementById('ana').value)||0, r = parseFloat(document.getElementById('roti').value)||0, p = parseFloat(document.getElementById('point').value)||0; document.getElementById('resGram').innerText = ((v*11.664)+(a*0.729)+(r*0.1215)+(p*0.01215)).toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3}); }
+        function calcToVori() { let g = parseFloat(document.getElementById('gramInput').value)||0, totalVori = g/11.664, v = Math.floor(totalVori), rem1 = (totalVori-v)*16, a = Math.floor(rem1), rem2 = (rem1-a)*6, r = Math.floor(rem2), p = (rem2-r)*10; document.getElementById('resVori').innerText = v; document.getElementById('resAna').innerText = a; document.getElementById('resRoti').innerText = r; document.getElementById('resPoint').innerText = p.toFixed(1); }
+        function init() { }
     </script>
 </body>
 </html>
