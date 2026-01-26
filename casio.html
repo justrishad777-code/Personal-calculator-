@@ -6,34 +6,88 @@
     <title>Rishad's Calculator</title>
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     <style>
-        /* Dark Comfort Theme */
-        :root { --primary: #ffaf40; --secondary: #48dbfb; --bg-color: #222831; --keypad-bg: #2a3038; }
+        /* --- DARK THEME VARIABLES --- */
+        :root { 
+            --primary: #ffaf40;   /* Orange */
+            --secondary: #48dbfb; /* Blue */
+            --bg-color: #222831;  /* Dark Background */
+            --btn-bg: #393e46;    /* Dark Button */
+            --btn-shadow: #222;   /* Button Shadow */
+            --text-main: #eeeeee; /* White Text */
+        }
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        body { margin: 0; padding: 0; height: 100vh; height: 100dvh; width: 100%; background: var(--bg-color); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; overflow: hidden; overscroll-behavior: none; }
+        body { 
+            margin: 0; padding: 0; 
+            height: 100vh; height: 100dvh; 
+            width: 100%; 
+            background: var(--bg-color); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; 
+            overflow: hidden; overscroll-behavior: none; 
+        }
         
-        .top-bar { height: 45px; background: #1a1d24; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #333; color: white; justify-content: space-between; flex-shrink: 0; position: relative; }
+        /* TOP BAR */
+        .top-bar { 
+            height: 45px; background: #1a1d24; display: flex; align-items: center; 
+            padding: 0 15px; border-bottom: 1px solid #333; color: white; 
+            justify-content: space-between; flex-shrink: 0; position: relative;
+        }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .app-title { font-size: 16px; font-weight: bold; letter-spacing: 1px; color: #fff; }
         
-        #menuPopup { display: none; position: absolute; top: 45px; left: 10px; width: 200px; background: #393e46; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; border: 1px solid #555; }
+        /* MENU */
+        #menuPopup { 
+            display: none; position: absolute; top: 45px; left: 10px; width: 200px; 
+            background: #393e46; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
+            z-index: 2000; flex-direction: column; border: 1px solid #555; 
+        }
         .menu-item { padding: 12px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; font-weight: 600; display: block; font-size: 14px; }
         
-        .screen { flex: 0 0 20%; background: #222831; padding: 5px 20px; display: flex; flex-direction: column; border-bottom: 1px solid #333; }
+        /* SCREEN */
+        .screen { 
+            flex: 0 0 20%; background: #222831; padding: 5px 20px; 
+            display: flex; flex-direction: column; border-bottom: 1px solid #333; 
+        }
         .indicators { display: flex; justify-content: space-between; color: #777; height: 18px; font-size: 12px; }
         .op-display { text-align: right; color: var(--primary); font-size: 16px; height: 20px; font-family: monospace; }
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
         .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 45px; line-height: 1; }
         
-        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 15px; background: var(--keypad-bg); flex-shrink: 0; }
-        .c-btn { background: #393e46; border: 1px solid #555; padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 0 #222; color: #eee; }
+        /* CONTROLS (DARK BUTTONS) */
+        .controls { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
+            padding: 10px 15px; background: var(--bg-color); flex-shrink: 0; 
+        }
+        .c-btn { 
+            background: var(--btn-bg); border: 1px solid #555; 
+            padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 12px; 
+            box-shadow: 0 2px 0 var(--btn-shadow); color: #eee; 
+        }
         
-        .keypad { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); gap: 15px; padding: 10px 15px 100px 15px; background: var(--keypad-bg); }
-        .k-btn { width: 100%; height: 100%; border-radius: 12px; border: 1px solid #555; background: #393e46; font-size: 20px; font-weight: bold; color: #eee; box-shadow: 0 2px 0 #222; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* KEYPAD (DARK BUTTONS) */
+        .keypad { 
+            flex: 1; display: grid; 
+            grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); 
+            gap: 15px; padding: 10px 15px 100px 15px; 
+            background: var(--bg-color); 
+        }
+        .k-btn { 
+            width: 100%; height: 100%; border-radius: 12px; 
+            border: 1px solid #555; background: var(--btn-bg); 
+            font-size: 20px; font-weight: bold; color: var(--text-main); 
+            box-shadow: 0 2px 0 var(--btn-shadow); cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; 
+        }
         .k-btn:active { transform: translateY(2px); box-shadow: none; background: #444; }
-        .ac { color: #ff6b6b; } .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #000; border: none; box-shadow: 0 3px 0 #e67e22; }
         
+        /* ACCENT COLORS */
+        .ac { color: #ff6b6b; } 
+        .op { color: var(--primary); } 
+        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 3px 0 #e67e22; }
+        
+        /* DRAWER */
         .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; background: #393e46; z-index: 3000; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid var(--primary); }
         .drawer.open { bottom: 0; }
         .d-head { padding: 15px; border-bottom: 1px solid #555; display: flex; justify-content: space-between; align-items: center; }
@@ -44,10 +98,30 @@
 <body onload="init()">
     <div class="top-bar"> <div class="menu-icon" onclick="toggleMenu()">☰</div> <span class="app-title">Rishad's Calculator</span> <div style="width: 40px;"></div> </div>
     <div id="menuPopup"> <a href="index.html" class="menu-item">🏠 Dashboard</a> <a href="rate.html" class="menu-item">📝 Rate F</a> <a href="converter.html" class="menu-item">⚖️ Converter</a> <a href="settings.html" class="menu-item">⚙️ Settings</a> </div>
-    <div class="screen"> <div class="indicators"> <span class="step" id="step">00</span> <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> </div> <div class="op-display" id="opDisp"></div> <div class="main-display"> <span class="main-text" id="mainDisp">0</span> </div> </div>
-    <div class="controls"> <button class="c-btn" style="color:#48dbfb" onclick="prev()">◀ PREV</button> <button class="c-btn" style="color:#48dbfb" onclick="next()">NEXT ▶</button> <button class="c-btn" onclick="toggleDrawer()">📜 List</button> <button class="c-btn" style="color:#ffaf40" onclick="correct()">CORR</button> </div>
-    <div class="keypad"> <button class="k-btn ac" onclick="AC()">AC</button> <button class="k-btn op" onclick="del()">⌫</button> <button class="k-btn op" onclick="op('%')">%</button> <button class="k-btn op" onclick="op('/')">÷</button> <button class="k-btn" onclick="num('7')">7</button> <button class="k-btn" onclick="num('8')">8</button> <button class="k-btn" onclick="num('9')">9</button> <button class="k-btn op" onclick="op('*')">×</button> <button class="k-btn" onclick="num('4')">4</button> <button class="k-btn" onclick="num('5')">5</button> <button class="k-btn" onclick="num('6')">6</button> <button class="k-btn op" onclick="op('-')">−</button> <button class="k-btn" onclick="num('1')">1</button> <button class="k-btn" onclick="num('2')">2</button> <button class="k-btn" onclick="num('3')">3</button> <button class="k-btn op" onclick="op('+')">+</button> <button class="k-btn" onclick="num('00')">00</button> <button class="k-btn" onclick="num('0')">0</button> <button class="k-btn" onclick="num('.')">.</button> <button class="k-btn eq" onclick="eq()">=</button> </div>
+    
+    <div class="screen"> 
+        <div class="indicators"> <span class="step" id="step">00</span> <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> </div> 
+        <div class="op-display" id="opDisp"></div> 
+        <div class="main-display"> <span class="main-text" id="mainDisp">0</span> </div> 
+    </div>
+    
+    <div class="controls"> 
+        <button class="c-btn" style="color:#48dbfb" onclick="prev()">◀ PREV</button> 
+        <button class="c-btn" style="color:#48dbfb" onclick="next()">NEXT ▶</button> 
+        <button class="c-btn" onclick="toggleDrawer()">📜 List</button> 
+        <button class="c-btn" style="color:#ffaf40" onclick="correct()">CORR</button> 
+    </div>
+    
+    <div class="keypad"> 
+        <button class="k-btn ac" onclick="AC()">AC</button> <button class="k-btn op" onclick="del()">⌫</button> <button class="k-btn op" onclick="op('%')">%</button> <button class="k-btn op" onclick="op('/')">÷</button> 
+        <button class="k-btn" onclick="num('7')">7</button> <button class="k-btn" onclick="num('8')">8</button> <button class="k-btn" onclick="num('9')">9</button> <button class="k-btn op" onclick="op('*')">×</button> 
+        <button class="k-btn" onclick="num('4')">4</button> <button class="k-btn" onclick="num('5')">5</button> <button class="k-btn" onclick="num('6')">6</button> <button class="k-btn op" onclick="op('-')">−</button> 
+        <button class="k-btn" onclick="num('1')">1</button> <button class="k-btn" onclick="num('2')">2</button> <button class="k-btn" onclick="num('3')">3</button> <button class="k-btn op" onclick="op('+')">+</button> 
+        <button class="k-btn" onclick="num('00')">00</button> <button class="k-btn" onclick="num('0')">0</button> <button class="k-btn" onclick="num('.')">.</button> <button class="k-btn eq" onclick="eq()">=</button> 
+    </div>
+    
     <div class="drawer" id="drawer"> <div class="d-head"> <span style="color:#fff; font-weight:bold;">History</span> <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b; font-weight:bold;">✕ Close</span> </div> <div class="d-body" id="list"></div> </div>
+    
     <script>
         function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
