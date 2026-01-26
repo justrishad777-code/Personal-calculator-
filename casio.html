@@ -13,18 +13,17 @@
         
         body { 
             margin: 0; padding: 0; 
-            height: 100dvh; /* Dynamic Height */
+            height: 100vh; height: 100dvh; 
             width: 100%; 
             background: #000; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column;
-            /* Scroll allowed if screen is too small */
-            overflow-y: auto; 
-            overflow-x: hidden;
+            overflow: hidden; /* স্ক্রল বন্ধ করে দিয়েছি যাতে নড়াচড়া না করে */
+            overscroll-behavior: none; /* বাউন্স এফেক্ট বন্ধ */
         }
 
         /* Top Bar */
         .top-bar { 
-            height: 50px; background: #111; display: flex; align-items: center; 
+            height: 45px; background: #111; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
             justify-content: space-between; flex-shrink: 0; position: relative;
         }
@@ -37,16 +36,12 @@
             background: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 2000; flex-direction: column; overflow: hidden;
         }
-        .menu-item {
-            padding: 15px; text-decoration: none; color: #333; 
-            border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px;
-        }
+        .menu-item { padding: 15px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px; }
         .menu-item:active { background: #f4f7f6; }
 
-        /* Screen Area (Flexible but Minimum Height) */
+        /* Screen Area */
         .screen { 
-            flex: 1; /* Takes available space */
-            min-height: 150px; /* এর চেয়ে ছোট হবে না */
+            flex: 0 0 22%; /* হাইট ফিক্সড */
             background: #000; padding: 10px 20px; 
             display: flex; flex-direction: column; 
             border-bottom: 1px solid #222;
@@ -64,24 +59,25 @@
             font-size: 50px; line-height: 1; word-break: break-all; text-align: right;
         }
 
-        /* Controls Area */
+        /* Controls */
         .controls { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
             padding: 10px 15px; background: #f4f7f6; flex-shrink: 0; 
         }
         .c-btn { background: #fff; border: 1px solid #ddd; padding: 12px 0; border-radius: 10px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
         
-        /* Keypad Area */
+        /* Keypad (Perfect Fit) */
         .keypad { 
-            /* Flex grow বন্ধ করে দিয়েছি যাতে জোর করে বড় না হয় */
-            flex-shrink: 0;
+            flex: 1; /* স্ক্রিনের বাকি জায়গা নেবে */
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            grid-template-rows: repeat(5, 60px); /* প্রতিটি বাটন ফিক্সড 60px হাইট */
+            grid-template-rows: repeat(5, 1fr); /* সমান ৫ ভাগে ভাগ হবে */
             gap: 10px; 
-            /* নিচে বিশাল প্যাডিং দেওয়া হয়েছে */
-            padding: 5px 15px 80px 15px; 
+            /* নিচে শুধু সেইফ এরিয়া রাখা হয়েছে, বাড়তি জায়গা বাদ */
+            padding: 5px 15px 15px 15px; 
             background: #f4f7f6; 
+            min-height: 0;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
         }
         .k-btn { 
             width: 100%; height: 100%; 
@@ -95,15 +91,11 @@
         .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 3px 0 #e67e22; }
 
         /* Drawer */
-        .drawer { position: fixed; bottom: -100%; left: 0; width: 100%; height: 70%; background: #222; z-index: 3000; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
+        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 65%; background: #222; z-index: 3000; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
         .drawer.open { bottom: 0; }
         .d-head { padding: 15px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 50px; }
-        .d-row { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid #333; 
-            font-family: monospace; font-size: 15px; 
-        }
+        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; font-family: monospace; font-size: 15px; }
         .d-exp { color: #aaa; font-size: 14px; }
         .d-res { color: #fff; font-size: 18px; font-weight: bold; }
     </style>
@@ -177,32 +169,23 @@
     </div>
 
     <script>
-        /* --- Menu Logic --- */
         function toggleMenu() {
             const m = document.getElementById('menuPopup');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        /* --- Calculator Logic --- */
         let tape = [], chain = [], input = "0";
         let idx = -1, edit = false, resShown = false, isNewStep = false; 
         const ui = { main: document.getElementById('mainDisp'), op: document.getElementById('opDisp'), step: document.getElementById('step'), list: document.getElementById('list') };
 
         function init() {
-            if(localStorage.getItem('casio_data')) {
-                try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) { tape=[]; }
-            }
+            if(localStorage.getItem('casio_data')) { try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) { tape=[]; } }
             render(); renderList();
         }
         function num(n) {
             if(resShown) { AC(); input = n === "." ? "0." : n; render(); return; }
             if(isNewStep) { input = n === "." ? "0." : n; isNewStep = false; } 
-            else {
-                if(input.replace('.','').length >= 12) return;
-                if(input === "0" && n !== ".") input = n;
-                else if(n === "." && input.includes(".")) return;
-                else input += n;
-            }
+            else { if(input.replace('.','').length >= 12) return; if(input === "0" && n !== ".") input = n; else if(n === "." && input.includes(".")) return; else input += n; }
             render();
         }
         function op(o) {
@@ -210,11 +193,7 @@
             if(idx !== -1) { let val = chain[idx].v; chain = []; input = val; idx = -1; }
             if(isNewStep && chain.length > 0) { chain[chain.length-1].o = o; render(); return; }
             chain.push({v: input, o: o});
-            try {
-                let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), "");
-                if("+-*/%".includes(expr.slice(-1))) expr = expr.slice(0,-1);
-                input = String(eval(expr)); 
-            } catch(e) {}
+            try { let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), ""); if("+-*/%".includes(expr.slice(-1))) expr = expr.slice(0,-1); input = String(eval(expr)); } catch(e) {}
             isNewStep = true; resShown = false; render();
         }
         function eq() {
@@ -222,13 +201,7 @@
             if(input === "" || isNewStep) return; 
             chain.push({v: input, o: '='});
             let expr = chain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
-            try {
-                let res = eval(expr);
-                chain.push({v: String(res), o: 'ANS'});
-                tape.push([...chain]); save();
-                input = String(res); resShown = true; isNewStep = true; 
-                render(); renderList();
-            } catch(e) { input = "Error"; render(); }
+            try { let res = eval(expr); chain.push({v: String(res), o: 'ANS'}); tape.push([...chain]); save(); input = String(res); resShown = true; isNewStep = true; render(); renderList(); } catch(e) { input = "Error"; render(); }
         }
         function AC() { chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; render(); }
         function del() { if(resShown || isNewStep) return; input = input.toString().slice(0,-1) || "0"; render(); }
@@ -239,13 +212,7 @@
             chain[idx].v = input;
             let newChain = chain.slice(0, chain.length-1);
             let expr = newChain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
-            try {
-                let res = eval(expr);
-                newChain.push({v:String(res), o:'ANS'});
-                chain = newChain; tape[tape.length-1] = chain; save();
-                edit=false; input="0"; idx=-1; resShown=true; input=String(res);
-                render(); renderList();
-            } catch(e){}
+            try { let res = eval(expr); newChain.push({v:String(res), o:'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); edit=false; input="0"; idx=-1; resShown=true; input=String(res); render(); renderList(); } catch(e){}
         }
         function render() {
             let dV = input, dO = ""; let stepNum = 0;
@@ -262,11 +229,7 @@
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); }
         function renderList() {
             ui.list.innerHTML = tape.map(t => {
-                let e = t.reduce((a,c) => { 
-                    if(c.o==='ANS') return '';
-                    let sym = c.o.replace('x','×').replace('/','÷');
-                    return a + c.v + (sym === '=' ? '' : ' '+sym+' ');
-                }, "");
+                let e = t.reduce((a,c) => { if(c.o==='ANS') return ''; let sym = c.o.replace('x','×').replace('/','÷'); return a + c.v + (sym === '=' ? '' : ' '+sym+' '); }, "");
                 let r = t[t.length-1].v;
                 return `<div class="d-row"><span class="d-exp">${e}=</span><span class="d-res">${parseFloat(r).toLocaleString()}</span></div>`;
             }).reverse().join('');
