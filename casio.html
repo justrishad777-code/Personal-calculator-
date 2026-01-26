@@ -60,31 +60,30 @@
             font-size: 50px; line-height: 1; word-break: break-all; text-align: right;
         }
 
-        /* Controls (Increased Gap) */
+        /* Controls */
         .controls { 
-            display: grid; grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; /* গ্যাপ বাড়ানো হয়েছে */
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; 
             padding: 10px 20px; background: #f4f7f6; flex-shrink: 0; 
         }
-        .c-btn { background: #fff; border: 1px solid #ddd; padding: 10px 0; border-radius: 12px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
+        .c-btn { background: #fff; border: 1px solid #ddd; padding: 12px 0; border-radius: 12px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
         
-        /* Keypad (Increased Gap & Padding for Smaller Buttons) */
+        /* Keypad (Raised Up) */
         .keypad { 
             flex: 1; 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             grid-template-rows: repeat(5, 1fr); 
-            gap: 15px; /* গ্যাপ বাড়ানো হয়েছে যাতে বাটন ছোট হয় */
-            padding: 5px 20px 40px 20px; /* চারপাশে জায়গা বাড়ানো হয়েছে */
+            gap: 12px; 
+            /* নিচে প্যাডিং বাড়িয়ে ৬০px করা হয়েছে যাতে বাটন উপরে উঠে আসে */
+            padding: 5px 20px 60px 20px; 
             background: #f4f7f6; 
             min-height: 0;
+            padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* সেইফ এরিয়া অ্যাড করা হয়েছে */
         }
         .k-btn { 
             width: 100%; height: 100%; 
-            border-radius: 18px; /* আরো গোল করা হয়েছে */
-            border: 1px solid #ddd; background: #fff; 
-            font-size: 22px; /* ফন্ট সাইজ কমানো হয়েছে */
-            font-weight: bold; color: #333; 
+            border-radius: 18px; border: 1px solid #ddd; background: #fff; 
+            font-size: 22px; font-weight: bold; color: #333; 
             box-shadow: 0 3px 0 #ccc; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
         }
