@@ -6,18 +6,61 @@
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Rate Display Style */
-        .bhori-rate {
+        /* SAFE MODE STYLES */
+        .safe-value {
+            border: none;
+            background: transparent;
+            font-weight: bold;
+            color: inherit;
+            text-align: right;
+            width: 100px;
+            pointer-events: none; /* ক্লিক করা যাবে না (Safety) */
+        }
+        
+        .edit-btn {
+            font-size: 10px;
+            color: #fff;
+            background: #bbb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+        
+        /* Active Edit State (যখন এডিট বাটন চাপবে) */
+        .editing {
+            border-bottom: 2px solid red !important;
+            pointer-events: auto !important;
+            background: rgba(255, 255, 0, 0.1);
+        }
+
+        .rate-box {
             font-size: 14px;
             font-weight: bold;
             color: #555;
             background: #eef2f3;
-            padding: 5px 10px;
+            padding: 8px 10px;
             border-radius: 5px;
             margin-top: 10px;
             margin-bottom: 5px;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             border: 1px solid #ddd;
+        }
+        
+        .grand-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--text-main);
+            text-align: center;
+            pointer-events: none; /* Safety */
         }
     </style>
 </head>
@@ -57,13 +100,20 @@
                     <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
                 
-                <div class="bhori-rate">1 Bhori = <span id="rateView22" style="color:var(--primary);">0.00</span></div>
+                <div class="rate-box">
+                    1 Bhori = 
+                    <input type="text" inputmode="none" readonly id="rateView22" class="safe-value" style="color:var(--primary);" value="0.00">
+                    <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
+                </div>
 
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
-                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
                     <span style="color:var(--text-light);">Total</span>
-                    <span id="t22" style="font-size:24px; font-weight:bold; color:var(--primary);">0.00</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="text" inputmode="none" readonly id="t22" class="safe-value" style="font-size:24px; color:var(--primary);" value="0.00">
+                        <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
+                    </div>
                 </div>
             </div>
 
@@ -76,19 +126,27 @@
                     <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
 
-                <div class="bhori-rate">1 Bhori = <span id="rateView21" style="color:var(--secondary);">0.00</span></div>
+                <div class="rate-box">
+                    1 Bhori = 
+                    <input type="text" inputmode="none" readonly id="rateView21" class="safe-value" style="color:var(--secondary);" value="0.00">
+                    <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
+                </div>
 
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
-                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
                     <span style="color:var(--text-light);">Total</span>
-                    <span id="t21" style="font-size:24px; font-weight:bold; color:var(--secondary);">0.00</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="text" inputmode="none" readonly id="t21" class="safe-value" style="font-size:24px; color:var(--secondary);" value="0.00">
+                        <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
+                    </div>
                 </div>
             </div>
 
-            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border); margin-top:15px;">
+            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border); margin-top:15px; position:relative;">
                 <div style="font-size:12px; color:#777;">Grand Total</div>
-                <div id="grandTotal" style="font-size:36px; font-weight:900; color:var(--text-main);">0.00</div>
+                <input type="text" inputmode="none" readonly id="grandTotal" class="grand-input" value="0.00">
+                <button class="edit-btn" style="position:absolute; bottom:10px; right:10px;" onclick="enableEdit('grandTotal')">Edit</button>
             </div>
 
             <div style="margin-top:20px;">
@@ -120,6 +178,27 @@
 
 <script src="js/main.js"></script>
 <script>
+    // --- SAFE EDIT LOGIC ---
+    // এডিট বাটনে চাপ দিলে ফিল্ডটি আনলক হবে এবং কিপ্যাড ওপেন হবে
+    function enableEdit(id) {
+        let el = document.getElementById(id);
+        
+        // সাময়িকভাবে আনলক করা
+        el.style.pointerEvents = "auto"; 
+        el.classList.add('editing'); // স্টাইল চেঞ্জ হবে
+        
+        // কিপ্যাড ওপেন করা
+        focusField(el);
+
+        // যখন ফোকাস সরে যাবে (Done চাপলে), তখন আবার লক হয়ে যাবে
+        el.addEventListener('blur', function() {
+            setTimeout(() => {
+                el.style.pointerEvents = "none";
+                el.classList.remove('editing');
+            }, 200);
+        }, {once: true});
+    }
+
     function setTab(t) { 
         document.getElementById('b22').className = 't-btn'; 
         document.getElementById('b21').className = 't-btn'; 
@@ -142,35 +221,66 @@
     }
 
     function calc() { 
+        // 22K Calculation
         let b = parseFloat(document.getElementById('screenRate').value) || 0; 
-        
-        // 22K
         let p22 = 0.926; 
         let m22 = parseFloat(document.getElementById('mc22').value) || 0; 
         let d22 = parseFloat(document.getElementById('dh22').value) || 0; 
         let c22 = parseFloat(document.getElementById('cr22').value) || 0; 
         let mg22 = parseFloat(document.getElementById('mg22').value) || 0; 
+        
+        // রেট ক্যালকুলেশন
         let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; 
-        document.getElementById('rateView22').innerText = r22.toLocaleString(undefined, {minimumFractionDigits: 2});
+        
+        // শুধু যদি ইউজার এডিট না করে থাকে, তবেই আপডেট হবে
+        let rateField22 = document.getElementById('rateView22');
+        if(!rateField22.classList.contains('editing')) {
+            rateField22.value = r22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
         let w22 = parseFloat(document.getElementById('w22').value) || 0; 
         let t22 = r22 * (w22 / 11.664); 
-        document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+        
+        let totalField22 = document.getElementById('t22');
+        if(!totalField22.classList.contains('editing')) {
+            totalField22.value = t22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
 
-        // 21K
+        // 21K Calculation
         let p21 = 0.885; 
         let m21 = parseFloat(document.getElementById('mc21').value) || 0; 
         let d21 = parseFloat(document.getElementById('dh21').value) || 0; 
         let c21 = parseFloat(document.getElementById('cr21').value) || 0; 
         let mg21 = parseFloat(document.getElementById('mg21').value) || 0; 
+        
         let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; 
-        document.getElementById('rateView21').innerText = r21.toLocaleString(undefined, {minimumFractionDigits: 2});
+        
+        let rateField21 = document.getElementById('rateView21');
+        if(!rateField21.classList.contains('editing')) {
+            rateField21.value = r21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
         let w21 = parseFloat(document.getElementById('w21').value) || 0; 
         let t21 = r21 * (w21 / 11.664); 
-        document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+        
+        let totalField21 = document.getElementById('t21');
+        if(!totalField21.classList.contains('editing')) {
+            totalField21.value = t21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
 
-        let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + 
-                    (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21); 
-        document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+        // Grand Total logic
+        let grandField = document.getElementById('grandTotal');
+        // গ্র্যান্ড টোটাল অটোমেটিক ক্যালকুলেট হবে, যদি না ইউজার ম্যানুয়ালি এডিট করে
+        if(!grandField.classList.contains('editing')) {
+            // আমরা বর্তমান বক্সের ভ্যালু (যেটা এডিট করাও হতে পারে) যোগ করব
+            let finalT22 = parseFloat(document.getElementById('t22').value) || 0;
+            let finalT21 = parseFloat(document.getElementById('t21').value) || 0;
+
+            let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : finalT22) + 
+                        (document.getElementById('sec21').classList.contains('hidden') ? 0 : finalT21); 
+            
+            grandField.value = grand.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false}); 
+        }
     }
 </script>
 </body>
