@@ -6,66 +6,34 @@
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* --- CSS FIXES --- */
+        /* --- CSS FIXES FOR ALL RESULTS --- */
         
-        /* রেজাল্ট ইনপুট এখন ফ্লেক্সিবল হবে */
-        .result-input {
+        /* কমন ফ্লেক্স কন্টেইনার (Result + Edit Button) */
+        .result-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1; /* যতটুকু জায়গা পাবে নেবে */
+            min-width: 0; /* ওভারফ্লো আটকাবে */
+            position: relative;
+        }
+
+        /* ডাইনামিক ইনপুট (সব রেজাল্টের জন্য) */
+        .dynamic-input {
             border: none;
             background: transparent;
             font-weight: bold;
             text-align: right;
-            flex: 1; /* যতটুকু জায়গা পাবে নিয়ে নেবে */
-            min-width: 0; /* ওভারফ্লো আটকাবে */
-            padding-right: 5px; /* বাটনের সাথে গ্যাপ */
+            width: 100%; /* কন্টেইনারের পুরোটা নেবে */
+            min-width: 0;
+            padding-right: 8px; /* বাটনের সাথে গ্যাপ */
             margin: 0;
             color: inherit;
+            font-size: 20px; /* সেইফ সাইজ */
+            pointer-events: none; /* সেইফ মোড */
         }
 
-        /* টোটাল এবং এডিট বাটনের কন্টেইনার */
-        .total-wrapper {
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-end; /* ডান দিকে থাকবে */
-            width: 60%; /* মোট জায়গার ৬০% নেবে যাতে "Total" লেখার সাথে না লাগে */
-        }
-
-        .active-field {
-            border: 2px solid var(--primary) !important;
-            background: #fff8e1 !important; 
-            box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); 
-            border-radius: 5px;
-            transition: 0.2s;
-        }
-
-        .safe-value {
-            border: none;
-            background: transparent;
-            font-weight: bold;
-            color: inherit;
-            text-align: right;
-            pointer-events: none; 
-        }
-        
-        .edit-btn {
-            font-size: 10px;
-            color: #fff;
-            background: #bbb;
-            padding: 3px 8px; /* বাটন একটু সুন্দর করা হয়েছে */
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 0; /* মার্জিন কমানো হয়েছে */
-            text-transform: uppercase;
-            font-weight: bold;
-            border: none;
-            flex-shrink: 0; /* বাটন চ্যাপ্টা হবে না */
-        }
-        
-        .editing {
-            border-bottom: 2px solid red !important;
-            pointer-events: auto !important;
-            background: rgba(255, 255, 0, 0.1);
-        }
-
+        /* 1 Bhori Rate এর জন্য স্পেশাল স্টাইল */
         .rate-box {
             font-size: 14px;
             font-weight: bold;
@@ -76,20 +44,67 @@
             margin-top: 10px;
             margin-bottom: 5px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between; /* টেক্সট বামে, ভ্যালু ডানে */
             align-items: center;
             border: 1px solid #ddd;
         }
-        
+
+        /* গ্র্যান্ড টোটাল ফিক্স */
+        .grand-box {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+            margin-top: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .grand-input {
             width: 100%;
             border: none;
             background: transparent;
-            font-size: 32px; /* ফন্ট একটু কমানো হয়েছে সেফটির জন্য */
+            font-size: 30px; /* ৩৬ থেকে কমিয়ে ৩০ করা হয়েছে */
             font-weight: 900;
             color: var(--text-main);
             text-align: center;
             pointer-events: none;
+            margin-top: 5px;
+            padding: 0 40px; /* দুপাশে জায়গা রাখা হয়েছে */
+        }
+        .grand-edit-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+        }
+
+        /* হাইলাইট এফেক্ট */
+        .active-field {
+            border: 2px solid var(--primary) !important;
+            background: #fff8e1 !important; 
+            box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); 
+            border-radius: 5px;
+        }
+        
+        .edit-btn {
+            font-size: 10px;
+            color: #fff;
+            background: #bbb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            border: none;
+            flex-shrink: 0; /* বাটন চ্যাপ্টা হবে না */
+        }
+        
+        .editing {
+            border-bottom: 2px solid red !important;
+            pointer-events: auto !important;
+            background: rgba(255, 255, 0, 0.1);
         }
 
         /* Keypad Styles */
@@ -146,17 +161,19 @@
                 </div>
                 
                 <div class="rate-box">
-                    1 Bhori = 
-                    <input type="text" inputmode="none" readonly id="rateView22" class="safe-value" style="color:var(--primary); width: 120px;" value="0.00">
-                    <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
+                    <span style="white-space:nowrap;">1 Bhori =</span> 
+                    <div class="result-group">
+                        <input type="text" inputmode="none" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
+                        <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
+                    </div>
                 </div>
 
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                    <span style="color:var(--text-light);">Total</span>
-                    <div class="total-wrapper">
-                        <input type="text" inputmode="none" readonly id="t22" class="result-input" style="font-size:20px; color:var(--primary);" value="0.00">
+                    <span style="color:var(--text-light); width:50px;">Total</span>
+                    <div class="result-group">
+                        <input type="text" inputmode="none" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:22px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
                     </div>
                 </div>
@@ -172,26 +189,28 @@
                 </div>
 
                 <div class="rate-box">
-                    1 Bhori = 
-                    <input type="text" inputmode="none" readonly id="rateView21" class="safe-value" style="color:var(--secondary); width: 120px;" value="0.00">
-                    <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
+                    <span style="white-space:nowrap;">1 Bhori =</span> 
+                    <div class="result-group">
+                        <input type="text" inputmode="none" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
+                        <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
+                    </div>
                 </div>
 
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                    <span style="color:var(--text-light);">Total</span>
-                    <div class="total-wrapper">
-                        <input type="text" inputmode="none" readonly id="t21" class="result-input" style="font-size:20px; color:var(--secondary);" value="0.00">
+                    <span style="color:var(--text-light); width:50px;">Total</span>
+                    <div class="result-group">
+                        <input type="text" inputmode="none" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:22px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
                     </div>
                 </div>
             </div>
 
-            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border); margin-top:15px; position:relative;">
+            <div class="grand-box">
                 <div style="font-size:12px; color:#777;">Grand Total</div>
                 <input type="text" inputmode="none" readonly id="grandTotal" class="grand-input" value="0.00">
-                <button class="edit-btn" style="position:absolute; bottom:10px; right:10px;" onclick="enableEdit('grandTotal')">Edit</button>
+                <button class="edit-btn grand-edit-btn" onclick="enableEdit('grandTotal')">Edit</button>
             </div>
 
             <div style="margin-top:20px;">
