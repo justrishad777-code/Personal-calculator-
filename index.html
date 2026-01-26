@@ -3,84 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App Pro</title>
-    
+    <title>Gold App Pro - Home</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
-</head>
-<body class="fixed-page" onload="if(typeof appInit === 'function') appInit(); if(typeof casio_init === 'function') casio_init();">
-
-<div class="app-container">
-    <div class="header">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <img src="logo.png" alt="Logo" class="logo-img">
-        <div style="width:40px;"></div>
-    </div>
-
-    <div id="menuPopup">
-        <a href="rate.html" class="menu-btn">Rate F</a>
-        <a href="converter.html" class="menu-btn">Weight Converter</a>
-        <a href="settings.html" class="menu-btn">Settings</a>
-        <a href="index.html" class="menu-btn" style="background:#ddd;">Casio Calculator</a>
-    </div>
-
-    <div class="casio-screen">
-        <div class="casio-indicators">
-            <div class="casio-step" id="cStep">00</div>
-            <div class="casio-mode" id="cMode">REVIEW</div>
-        </div>
-        <div class="casio-op" id="cOp"></div>
-        <div class="casio-main-box">
-            <div class="casio-main-text" id="cMain">0</div>
-        </div>
-    </div>
-
-    <div class="casio-controls">
-        <button class="casio-c-btn" style="color:#0abde3" onclick="casio_prev()">◀ PREV</button>
-        <button class="casio-c-btn" style="color:#0abde3" onclick="casio_next()">NEXT ▶</button>
-        <button class="casio-c-btn" onclick="casio_toggleDrawer()">📜 List</button>
-        <button class="casio-c-btn" style="color:#ff9f43" onclick="casio_correct()">CORR</button>
-    </div>
-
-    <div class="casio-keypad">
-        <button class="casio-k-btn casio-ac" onclick="casio_AC()">AC</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_del()">⌫</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_op('%')">%</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_op('/')">÷</button>
+    <style>
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7f6; color: #333;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .container { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
+        .logo { width: 100px; margin-bottom: 30px; }
         
-        <button class="casio-k-btn" onclick="casio_num('7')">7</button>
-        <button class="casio-k-btn" onclick="casio_num('8')">8</button>
-        <button class="casio-k-btn" onclick="casio_num('9')">9</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_op('*')">×</button>
+        .menu-card {
+            background: white; border: 1px solid #ddd; border-radius: 15px;
+            padding: 20px; margin-bottom: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.1s;
+            text-decoration: none; color: #333;
+        }
+        .menu-card:active { transform: scale(0.98); background: #f9f9f9; }
+        .icon { font-size: 24px; width: 40px; }
+        .title { font-size: 18px; font-weight: bold; flex: 1; text-align: left; }
+        .arrow { color: #999; font-size: 20px; }
+        
+        .footer { position: absolute; bottom: 20px; font-size: 12px; color: #aaa; }
+    </style>
+</head>
+<body>
 
-        <button class="casio-k-btn" onclick="casio_num('4')">4</button>
-        <button class="casio-k-btn" onclick="casio_num('5')">5</button>
-        <button class="casio-k-btn" onclick="casio_num('6')">6</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_op('-')">−</button>
+<div class="container">
+    <img src="logo.png" alt="Logo" class="logo">
 
-        <button class="casio-k-btn" onclick="casio_num('1')">1</button>
-        <button class="casio-k-btn" onclick="casio_num('2')">2</button>
-        <button class="casio-k-btn" onclick="casio_num('3')">3</button>
-        <button class="casio-k-btn" style="color:#ff9f43" onclick="casio_op('+')">+</button>
+    <a href="casio.html" class="menu-card">
+        <div class="icon">🧮</div>
+        <div class="title">Casio Calculator</div>
+        <div class="arrow">›</div>
+    </a>
 
-        <button class="casio-k-btn" onclick="casio_num('00')">00</button>
-        <button class="casio-k-btn" onclick="casio_num('0')">0</button>
-        <button class="casio-k-btn" onclick="casio_num('.')">.</button>
-        <button class="casio-k-btn casio-eq" onclick="casio_eq()">=</button>
-    </div>
+    <a href="rate.html" class="menu-card">
+        <div class="icon">📝</div>
+        <div class="title">Rate F Calculator</div>
+        <div class="arrow">›</div>
+    </a>
 
-    <div class="casio-drawer" id="casioDrawer">
-        <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; color:#fff;">
-            <span>History Tape</span>
-            <span onclick="casio_toggleDrawer()" style="cursor:pointer;color:#ff6b6b;">✕</span>
-        </div>
-        <div style="flex:1; overflow-y:auto; padding:15px;" id="casioListBody"></div>
-    </div>
+    <a href="converter.html" class="menu-card">
+        <div class="icon">⚖️</div>
+        <div class="title">Weight Converter</div>
+        <div class="arrow">›</div>
+    </a>
+
+    <a href="settings.html" class="menu-card">
+        <div class="icon">⚙️</div>
+        <div class="title">Settings</div>
+        <div class="arrow">›</div>
+    </a>
 </div>
 
-<script src="js/main.js"></script>
-<script src="js/casio.js"></script>
+<div class="footer">Gold App Pro v2.0</div>
 
 </body>
 </html>
