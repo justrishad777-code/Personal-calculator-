@@ -6,7 +6,7 @@
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body onload="init()">
+<body onload="appInit()">
 
 <div class="app-container">
     <div class="header">
@@ -34,7 +34,7 @@
             </div>
 
             <div id="sec22" class="sec-22">
-                <div class="row"><span style="color:var(--primary); font-weight:bold;">22 Karat (92.6%)</span></div>
+                <div style="color:var(--primary); font-weight:bold; margin-bottom:5px;">22 Karat (92.6%)</div>
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -42,12 +42,14 @@
                     <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:var(--text-main);">0.00</span></div>
-                <div class="row"><span style="color:var(--primary); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--primary);">0.00</span></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                    <span style="color:var(--text-light);">Total</span>
+                    <span id="t22" style="font-size:24px; font-weight:bold; color:var(--primary);">0.00</span>
+                </div>
             </div>
 
             <div id="sec21" class="sec-21 hidden">
-                <div class="row"><span style="color:var(--secondary); font-weight:bold;">21 Karat (88.5%)</span></div>
+                <div style="color:var(--secondary); font-weight:bold; margin-bottom:5px;">21 Karat (88.5%)</div>
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -55,55 +57,48 @@
                     <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:var(--text-main);">0.00</span></div>
-                <div class="row"><span style="color:var(--secondary); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--secondary);">0.00</span></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                    <span style="color:var(--text-light);">Total</span>
+                    <span id="t21" style="font-size:24px; font-weight:bold; color:var(--secondary);">0.00</span>
+                </div>
             </div>
 
-            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border);">
+            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border); margin-top:15px;">
                 <div id="grandTotal" style="font-size:36px; font-weight:900; color:var(--text-main);">0.00</div>
             </div>
 
             <div style="margin-top:20px;">
-                <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg-color); border:1px solid var(--border); border-radius:8px; color:var(--text-main);" placeholder="Customer Name">
-                <input id="authName" style="width:100%; padding:12px; background:var(--bg-color); border:1px solid var(--border); border-radius:8px; color:var(--text-main);" placeholder="Authorized By">
+                <input id="cName" class="small-input" style="width:100%; margin-bottom:10px; text-align:left;" placeholder="Customer Name">
+                <input id="authName" class="small-input" style="width:100%; text-align:left;" placeholder="Authorized By">
             </div>
-            <button class="btn-action" onclick="downloadInvoice()">DOWNLOAD INVOICE</button>
+            <button class="btn-action" onclick="downloadPDF('invoice')">DOWNLOAD INVOICE</button>
         </div>
     </div>
 </div>
 
 <div id="customKeypad">
-    <button class="k-btn k-close" onclick="closeKeypad()">Done ▼</button>
+    <button style="width:100%; padding:10px; background:#ffecec; color:red; border:none; margin-bottom:10px;" onclick="closeKeypad()">Done ▼</button>
     <div class="keypad-grid">
-        <button class="k-btn" onclick="press('1')">1</button>
-        <button class="k-btn" onclick="press('2')">2</button>
-        <button class="k-btn" onclick="press('3')">3</button>
-        <button class="k-btn" onclick="press('4')">4</button>
-        <button class="k-btn" onclick="press('5')">5</button>
-        <button class="k-btn" onclick="press('6')">6</button>
-        <button class="k-btn" onclick="press('7')">7</button>
-        <button class="k-btn" onclick="press('8')">8</button>
-        <button class="k-btn" onclick="press('9')">9</button>
-        <button class="k-btn" onclick="press('.')">.</button>
-        <button class="k-btn" onclick="press('0')">0</button>
-        <button class="k-btn" id="btn-back" style="color:#ff4d4d;">⌫</button>
+        <button class="casio-k-btn" onclick="press('1')">1</button>
+        <button class="casio-k-btn" onclick="press('2')">2</button>
+        <button class="casio-k-btn" onclick="press('3')">3</button>
+        <button class="casio-k-btn" onclick="press('4')">4</button>
+        <button class="casio-k-btn" onclick="press('5')">5</button>
+        <button class="casio-k-btn" onclick="press('6')">6</button>
+        <button class="casio-k-btn" onclick="press('7')">7</button>
+        <button class="casio-k-btn" onclick="press('8')">8</button>
+        <button class="casio-k-btn" onclick="press('9')">9</button>
+        <button class="casio-k-btn" onclick="press('.')">.</button>
+        <button class="casio-k-btn" onclick="press('0')">0</button>
+        <button class="casio-k-btn" id="btn-back" style="color:red;">⌫</button>
     </div>
 </div>
 
-<script src="js/common.js"></script>
-<script src="js/pdfHelper.js"></script>
+<script src="js/main.js"></script>
 <script>
-    // Rate F Specific Logic
-    function init() { loadTheme(); setTab('both'); setupBackspace(); }
-    
-    // Paste Calculation Logic Here (setTab, calc, etc.) from previous code
-    // ... [Previous Calc Logic] ...
-    
-    // PDF Wrapper
-    function downloadInvoice() {
-        let content = `<div style="padding:20px;"><h2>INVOICE</h2><p>Customer: ${document.getElementById('cName').value}</p><h3>Total: ${document.getElementById('grandTotal').innerText}</h3></div>`;
-        generatePDF('Invoice', content);
-    }
+    // Rate F Specific Calculations
+    function setTab(t) { document.getElementById('b22').className = 't-btn'; document.getElementById('b21').className = 't-btn'; document.getElementById('bBoth').className = 't-btn'; document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden'); if(t === '22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); } else if(t === '21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); } else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); } calc(); }
+    function calc() { let b = parseFloat(document.getElementById('screenRate').value) || 0; let p22 = 0.926, m22 = parseFloat(document.getElementById('mc22').value)||0, d22 = parseFloat(document.getElementById('dh22').value)||0, c22 = parseFloat(document.getElementById('cr22').value)||0, mg22 = parseFloat(document.getElementById('mg22').value)||0; let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; let w22 = parseFloat(document.getElementById('w22').value) || 0; let t22 = r22 * (w22 / 11.664); document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2}); let p21 = 0.885, m21 = parseFloat(document.getElementById('mc21').value)||0, d21 = parseFloat(document.getElementById('dh21').value)||0, c21 = parseFloat(document.getElementById('cr21').value)||0, mg21 = parseFloat(document.getElementById('mg21').value)||0; let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; let w21 = parseFloat(document.getElementById('w21').value) || 0; let t21 = r21 * (w21 / 11.664); document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2}); let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21); document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2}); }
 </script>
 </body>
 </html>
