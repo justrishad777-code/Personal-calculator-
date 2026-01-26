@@ -1,0 +1,65 @@
+/* --- THEME VARIABLES --- */
+:root {
+    --primary: #ff9f43;       
+    --secondary: #0abde3;     
+    --bg-color: #f4f7f6;      
+    --card-bg: #ffffff;       
+    --text-main: #333333;     
+    --text-light: #777777;    
+    --border: #dddddd;        
+    --header-bg: #ffffff;     
+}
+
+/* --- GLOBAL RESET --- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+input { user-select: text !important; -webkit-user-select: text !important; }
+
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    background-color: var(--bg-color); 
+    color: var(--text-main); 
+    margin: 0; display: flex; justify-content: center; 
+    min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+}
+
+.app-container { width: 100%; max-width: 450px; height: 100vh; display: flex; flex-direction: column; position: relative; }
+
+/* HEADER */
+.header { 
+    display: flex; justify-content: space-between; align-items: center; 
+    background: var(--header-bg); padding: 10px 15px; 
+    border-bottom: 1px solid var(--border); height: 60px; flex-shrink: 0; z-index: 500;
+}
+.logo-img { height: 35px; display: block; margin: 0 auto; }
+.menu-icon { font-size: 24px; color: var(--text-main); cursor: pointer; width: 40px; }
+
+/* MENU */
+#menuPopup { 
+    display: none; position: absolute; top: 60px; left: 10px; width: 200px; 
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; 
+    padding: 8px; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.15); 
+    flex-direction: column; gap: 5px;
+}
+.menu-btn { 
+    background: var(--bg-color); color: var(--text-main); padding: 12px; 
+    border-radius: 6px; border: none; font-size: 14px; font-weight: 600; 
+    text-align: left; cursor: pointer; text-decoration: none; display: block;
+}
+
+/* CARDS & INPUTS (Shared) */
+.card { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; width: 100%; }
+.main-input { width: 100%; padding: 15px; margin-bottom: 15px; background: var(--bg-color); border: 2px solid var(--border); border-radius: 12px; font-size: 32px; color: var(--text-main); text-align: center; font-weight: bold; outline: none; }
+.btn-action { width: 100%; padding: 16px; background: #28a745; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+
+/* CASIO STYLES */
+.casio-body { background: #000; }
+.casio-screen { flex: 1; background: #000; border-bottom: 1px solid #222; display: flex; flex-direction: column; padding: 15px; }
+.casio-main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 80px; text-align: right; }
+.casio-keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: var(--bg-color); }
+.casio-k-btn { height: 65px; border-radius: 12px; font-size: 28px; font-weight: bold; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); }
+.casio-k-btn:active { background: var(--primary); color: #fff; }
+.casio-ac { color: #ff6b6b; } .casio-eq { background: var(--primary); color: #fff; }
+
+/* UTILS */
+.hidden { display: none; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
