@@ -50,33 +50,30 @@
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
         .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 45px; line-height: 1; }
 
-        /* Controls (Bigger Buttons) */
+        /* Controls */
         .controls { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
-            padding: 10px 15px; background: #f4f7f6; flex-shrink: 0; 
+            padding: 8px 15px; background: #f4f7f6; flex-shrink: 0; 
         }
-        .c-btn { 
-            background: #fff; border: 1px solid #ddd; 
-            padding: 15px 0; 
-            border-radius: 10px; font-weight: bold; font-size: 12px; 
-            box-shadow: 0 2px 0 #ccc; color: #555; 
-        }
+        .c-btn { background: #fff; border: 1px solid #ddd; padding: 12px 0; border-radius: 8px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
         
-        /* Keypad (Compact & Reachable) */
+        /* Keypad (Reachable & Lifted) */
         .keypad { 
             flex: 1; 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             grid-template-rows: repeat(5, 1fr); 
-            gap: 15px; 
-            padding: 10px 15px 100px 15px; /* Lifted bottom */
+            gap: 10px; /* গ্যাপ একটু কমিয়েছি যাতে বাটনগুলো স্ক্রিনে ফিট হয় */
+            
+            /* Top: 30px (Easy Reach), Bottom: 100px (Fixed Lift) */
+            padding: 30px 15px 100px 15px; 
+            
             background: #f4f7f6; 
         }
         .k-btn { 
             width: 100%; height: 100%; 
             border-radius: 12px; border: 1px solid #ddd; background: #fff; 
-            font-size: 20px; 
-            font-weight: bold; color: #333; 
+            font-size: 20px; font-weight: bold; color: #333; 
             box-shadow: 0 2px 0 #ccc; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
         }
@@ -220,19 +217,20 @@
         function save() { localStorage.setItem('casio_data', JSON.stringify(tape)); }
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); }
         
-        // --- HISTORY FIXED HERE ---
+        // --- HISTORY FIXED (Previous Bug Removed) ---
         function renderList() {
             ui.list.innerHTML = tape.map(t => {
-                let resObj = t.find(x => x.o === 'ANS');
-                let result = resObj ? resObj.v : "0";
-                
-                let expr = t.reduce((a,c) => { 
-                    if(c.o==='ANS') return a; // Stop clearing, just return accumulator
+                let e = t.reduce((a,c) => { 
+                    if(c.o==='ANS') return a; // এই লাইনটা ফিক্স করা হয়েছে। আগে এটা ভুলে খালি স্ট্রিং রিটার্ন করত।
                     let sym = c.o.replace('x','×').replace('/','÷');
                     return a + c.v + (sym === '=' ? '' : ' '+sym+' '); 
                 }, "");
                 
-                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${expr}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${parseFloat(result).toLocaleString()}</span></div>`;
+                // রেজাল্ট খোঁজা
+                let resObj = t.find(x => x.o === 'ANS');
+                let result = resObj ? resObj.v : "0";
+
+                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${e}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${parseFloat(result).toLocaleString()}</span></div>`;
             }).reverse().join('');
         }
     </script>
