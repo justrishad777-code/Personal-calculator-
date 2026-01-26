@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Casio Pro</title>
+    <title>Rishad's Calculator</title>
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     
     <style>
@@ -11,28 +11,39 @@
         :root { --primary: #ff9f43; --secondary: #0abde3; --bg-color: #f4f7f6; --text-main: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* একদম ফিক্সড লেআউট (স্ক্রল বন্ধ) */
         body { 
             margin: 0; padding: 0; 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; /* চারপাশ লক করা */
+            height: 100vh; height: 100dvh; 
+            width: 100%; 
             background: #000; font-family: 'Segoe UI', sans-serif; 
-            display: flex; flex-direction: column; 
-            overflow: hidden; /* বাইরে যাওয়া বন্ধ */
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* Top Bar */
         .top-bar { 
-            height: 45px; background: #111; display: flex; align-items: center; 
-            padding: 0 10px; border-bottom: 1px solid #333; color: white; 
-            justify-content: space-between; flex-shrink: 0;
+            height: 50px; background: #111; display: flex; align-items: center; 
+            padding: 0 15px; border-bottom: 1px solid #333; color: white; 
+            justify-content: space-between; flex-shrink: 0; position: relative;
         }
-        .back-btn { text-decoration: none; color: white; font-size: 14px; font-weight: bold; background: #333; padding: 4px 10px; border-radius: 15px; }
+        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
+        .app-title { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: #fff; }
 
-        /* Screen Area (Limited Height) */
+        /* Menu Popup */
+        #menuPopup {
+            display: none; position: absolute; top: 50px; left: 10px; width: 200px;
+            background: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 2000; flex-direction: column; overflow: hidden;
+        }
+        .menu-item {
+            padding: 15px; text-decoration: none; color: #333; 
+            border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px;
+        }
+        .menu-item:active { background: #f4f7f6; }
+
+        /* Screen Area */
         .screen { 
-            flex: 0 0 25%; /* স্ক্রিনের মাত্র ২৫% জায়গা নেবে */
-            max-height: 180px; /* এর বেশি বড় হবে না */
-            background: #000; padding: 5px 15px; 
+            flex: 0 0 25%; 
+            background: #000; padding: 10px 20px; 
             display: flex; flex-direction: column; 
             border-bottom: 1px solid #222;
         }
@@ -51,54 +62,60 @@
 
         /* Controls */
         .controls { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; 
-            padding: 5px 8px; background: #f4f7f6; flex-shrink: 0; 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
+            padding: 10px 15px; background: #f4f7f6; flex-shrink: 0; 
         }
-        .c-btn { background: #fff; border: 1px solid #ddd; padding: 10px 0; border-radius: 8px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 0 #ccc; color: #555; }
+        .c-btn { background: #fff; border: 1px solid #ddd; padding: 12px 0; border-radius: 10px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 0 #ccc; color: #555; }
         
-        /* Keypad (Fills the Rest) */
+        /* Keypad */
         .keypad { 
-            flex: 1; /* বাকি সব জায়গা নেবে */
+            flex: 1; 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            grid-template-rows: repeat(5, 1fr); /* ৫টি সারি সমান ভাগে ভাগ হবে */
-            gap: 5px; 
-            padding: 0 8px 8px; /* নিচে সামান্য জায়গা */
+            grid-template-rows: repeat(5, 1fr); 
+            gap: 12px; 
+            padding: 5px 15px 35px 15px; 
             background: #f4f7f6; 
             min-height: 0;
-            padding-bottom: env(safe-area-inset-bottom); /* আইফোনের নিচের বারের জন্য সেফটি */
         }
         .k-btn { 
-            width: 100%; height: 100%; /* গ্রিড সেলের পুরোটা নেবে */
-            border-radius: 10px; border: 1px solid #ddd; background: #fff; 
+            width: 100%; height: 100%; 
+            border-radius: 15px; border: 1px solid #ddd; background: #fff; 
             font-size: 24px; font-weight: bold; color: #333; 
-            box-shadow: 0 2px 0 #ccc; cursor: pointer; 
+            box-shadow: 0 3px 0 #ccc; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
         }
         .k-btn:active { transform: translateY(2px); box-shadow: none; background: #eee; }
         .ac { color: #ff6b6b; } .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 2px 0 #e67e22; }
+        .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 3px 0 #e67e22; }
 
         /* Drawer */
-        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
+        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 65%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
         .drawer.open { bottom: 0; }
-        .d-head { padding: 10px 15px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
-        .d-body { flex: 1; overflow-y: auto; padding: 10px 15px; }
+        .d-head { padding: 15px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
+        .d-body { flex: 1; overflow-y: auto; padding: 15px; }
         .d-row { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0; border-bottom: 1px solid #333; 
-            font-family: monospace; font-size: 14px; 
+            padding: 10px 0; border-bottom: 1px solid #333; 
+            font-family: monospace; font-size: 15px; 
         }
-        .d-exp { color: #aaa; font-size: 13px; }
-        .d-res { color: #fff; font-size: 16px; font-weight: bold; }
+        .d-exp { color: #aaa; font-size: 14px; }
+        .d-res { color: #fff; font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body onload="init()">
 
     <div class="top-bar">
-        <a href="index.html" class="back-btn">⬅ Menu</a>
-        <span>Casio Pro</span>
-        <div style="width: 50px;"></div>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <span class="app-title">Rishad's Calculator</span>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div id="menuPopup">
+        <a href="index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="rate.html" class="menu-item">📝 Rate F</a>
+        <a href="converter.html" class="menu-item">⚖️ Converter</a>
+        <a href="settings.html" class="menu-item">⚙️ Settings</a>
     </div>
 
     <div class="screen">
@@ -155,6 +172,13 @@
     </div>
 
     <script>
+        /* --- Menu Logic --- */
+        function toggleMenu() {
+            const m = document.getElementById('menuPopup');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        /* --- Calculator Logic --- */
         let tape = [], chain = [], input = "0";
         let idx = -1, edit = false, resShown = false, isNewStep = false; 
         const ui = { main: document.getElementById('mainDisp'), op: document.getElementById('opDisp'), step: document.getElementById('step'), list: document.getElementById('list') };
@@ -232,20 +256,15 @@
         function save() { localStorage.setItem('casio_data', JSON.stringify(tape)); }
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); }
         function renderList() {
-            let html = "";
-            tape.slice().reverse().forEach(t => {
-                let expression = ""; let result = "";
-                t.forEach(item => {
-                    if(item.o === 'ANS') { result = item.v; } 
-                    else { 
-                        let sym = item.o.replace('x','×').replace('/','÷');
-                        if(sym === '=') sym = ''; 
-                        expression += item.v + " " + sym + " ";
-                    }
-                });
-                html += `<div class="d-row"><span class="d-exp">${expression}=</span><span class="d-res">${parseFloat(result).toLocaleString()}</span></div>`;
-            });
-            ui.list.innerHTML = html || "<div style='text-align:center; color:#555; margin-top:20px;'>No History</div>";
+            ui.list.innerHTML = tape.map(t => {
+                let e = t.reduce((a,c) => { 
+                    if(c.o==='ANS') return '';
+                    let sym = c.o.replace('x','×').replace('/','÷');
+                    return a + c.v + (sym === '=' ? '' : ' '+sym+' ');
+                }, "");
+                let r = t[t.length-1].v;
+                return `<div class="d-row"><span class="d-exp">${e}=</span><span class="d-res">${parseFloat(r).toLocaleString()}</span></div>`;
+            }).reverse().join('');
         }
     </script>
 </body>
