@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gold App - Settings</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="loadTheme()">
+
+<div class="app-container">
+    <div class="header">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div style="width:40px;"></div>
+    </div>
+
+    <div id="menuPopup">
+        <a href="rate.html" class="menu-btn">Rate F</a>
+        <a href="converter.html" class="menu-btn">Weight Converter</a>
+        <a href="settings.html" class="menu-btn" style="background:#ddd;">Settings</a>
+        <a href="index.html" class="menu-btn">Casio Calculator</a>
+    </div>
+
+    <div class="scrollable-page active">
+        <div class="card">
+            <h4 style="margin-top:0; color:var(--primary);">Theme Colors</h4>
+            <div class="color-row"><span>Primary Color</span><input type="color" class="color-inp" id="clr-primary" onchange="updateTheme('primary', this.value)"></div>
+            <div class="color-row"><span>Secondary Color</span><input type="color" class="color-inp" id="clr-secondary" onchange="updateTheme('secondary', this.value)"></div>
+            <div class="color-row"><span>Background</span><input type="color" class="color-inp" id="clr-bg" onchange="updateTheme('bg', this.value)"></div>
+            <div class="color-row"><span>Card Background</span><input type="color" class="color-inp" id="clr-card" onchange="updateTheme('card', this.value)"></div>
+            <div class="color-row"><span>Text Color</span><input type="color" class="color-inp" id="clr-text" onchange="updateTheme('text', this.value)"></div>
+            <button class="btn-action" style="background:#666; margin-top:20px;" onclick="resetTheme()">RESET DEFAULT THEME</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+    // Load current values into inputs
+    const t = JSON.parse(localStorage.getItem('gold_theme') || '{}');
+    if(t.primary) document.getElementById('clr-primary').value = t.primary;
+    // ... load others similarly
+    
+    function resetTheme() {
+        localStorage.removeItem('gold_theme');
+        location.reload();
+    }
+</script>
+</body>
+</html>
