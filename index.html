@@ -21,36 +21,34 @@
             --header-bg: #ffffff;     
         }
 
+        /* --- GLOBAL RESET & FIX --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         input { user-select: text !important; -webkit-user-select: text !important; }
         
-        body { 
+        /* Stop bouncy scrolling globally */
+        html, body {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden; position: fixed; /* Locks viewport */
             font-family: 'Segoe UI', sans-serif; 
             background-color: var(--bg-color); 
-            color: var(--text-main); 
-            margin: 0; 
-            display: flex; justify-content: center; 
-            min-height: 100vh; overflow-x: hidden;
+            color: var(--text-main);
             touch-action: manipulation;
         }
 
-        .app-container { width: 100%; max-width: 450px; height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .app-container { 
+            width: 100%; max-width: 450px; height: 100%; margin: 0 auto;
+            display: flex; flex-direction: column; position: relative;
+        }
         
-        /* HEADER */
+        /* HEADER (Logo Centered) */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             background: var(--header-bg); padding: 10px 15px; 
             border-bottom: 1px solid var(--border);
             height: 60px; flex-shrink: 0; z-index: 500;
         }
-        
         .logo-img { height: 35px; display: block; margin: 0 auto; }
-        
-        /* MENU BUTTON */
-        .menu-icon { 
-            font-size: 24px; color: var(--text-main); cursor: pointer; 
-            width: 40px; text-align: left;
-        }
+        .menu-icon { font-size: 24px; color: var(--text-main); cursor: pointer; width: 40px; text-align: left; }
         
         /* MENU POPUP */
         #menuPopup { 
@@ -65,19 +63,26 @@
             text-align: left; cursor: pointer; 
         }
 
-        /* --- PAGES --- */
-        .page-content {
-            flex: 1; overflow-y: auto; padding: 15px; display: none; flex-direction: column;
+        /* --- PAGE STRUCTURE --- */
+        /* Scrollable Page: Default padding small to prevent moving */
+        .scrollable-page {
+            flex: 1; overflow-y: auto; padding: 15px; 
+            padding-bottom: 20px; /* FIXED: Removed large padding */
+            display: none; flex-direction: column;
+            -webkit-overflow-scrolling: touch;
+            transition: padding-bottom 0.3s; /* Smooth transition for keypad */
         }
-        .page-content.active { display: flex; }
-
-        /* --- CASIO CALCULATOR STYLES --- */
-        #page-casio { background: #000; padding: 0; }
         
-        .casio-screen { 
-            flex: 1; background: #000; border-bottom: 1px solid #222; 
-            display: flex; flex-direction: column; padding: 15px; position: relative; 
+        /* Fixed Page (Casio): Never scrolls */
+        .fixed-page {
+            flex: 1; overflow: hidden; padding: 0; 
+            display: none; flex-direction: column; background: #000;
         }
+
+        .active { display: flex !important; }
+
+        /* --- CASIO STYLES --- */
+        .casio-screen { flex: 1; background: #000; border-bottom: 1px solid #222; display: flex; flex-direction: column; padding: 15px; position: relative; }
         .casio-indicators { display: flex; justify-content: space-between; align-items: center; height: 30px; }
         .casio-step { font-family: 'Courier New', monospace; font-size: 18px; color: var(--secondary); border: 1px solid #333; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
         .casio-mode { font-size: 14px; font-weight: bold; color: var(--primary); display: none; }
@@ -85,11 +90,11 @@
         .casio-main-box { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
         .casio-main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 80px; line-height: 1; white-space: nowrap; }
         
-        .casio-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 15px; background: var(--bg-color); }
+        .casio-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 15px; background: var(--bg-color); flex-shrink: 0; }
         .casio-c-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid var(--border); padding: 15px; border-radius: 12px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
         .casio-chk { color: var(--secondary); } .casio-corr { color: var(--primary); }
 
-        .casio-keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 10px 15px 25px; background: var(--bg-color); }
+        .casio-keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 10px 15px 25px; background: var(--bg-color); flex-shrink: 0; }
         .casio-k-btn { height: 65px; width: 100%; border-radius: 18px; border: 1px solid var(--border); font-size: 30px; font-weight: bold; color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
         .casio-k-btn:active { transform: translateY(4px); box-shadow: none; }
         .casio-ac { color: #ff6b6b; } .casio-btn-op { color: var(--primary); } .casio-eq { background: var(--primary); color: #fff; box-shadow: 0 4px 0 rgba(0,0,0,0.2); border:none; }
@@ -99,18 +104,9 @@
         .casio-d-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 10px; color: #aaa; font-family: monospace; font-size: 14px; }
         .casio-d-row b { color: #fff; font-size: 16px; }
 
-        /* --- RATE F STYLES --- */
-        .card { 
-            background: var(--card-bg); padding: 20px; border-radius: 20px; 
-            border: 1px solid var(--border); margin-bottom: 15px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02); width: 100%;
-        }
-        .main-input { 
-            width: 100%; padding: 15px; margin-bottom: 15px; 
-            background: var(--bg-color); border: 2px solid var(--border); 
-            border-radius: 12px; font-size: 32px; color: var(--text-main); 
-            text-align: center; font-weight: bold; outline: none;
-        }
+        /* --- RATE F & CONVERTER --- */
+        .card { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); width: 100%; }
+        .main-input { width: 100%; padding: 15px; margin-bottom: 15px; background: var(--bg-color); border: 2px solid var(--border); border-radius: 12px; font-size: 32px; color: var(--text-main); text-align: center; font-weight: bold; outline: none; }
         .main-input:focus, .active-field { border-color: var(--primary); background: var(--card-bg); }
         
         .tab-box { display: flex; gap: 8px; margin-bottom: 20px; background: var(--bg-color); padding: 5px; border-radius: 30px; }
@@ -130,7 +126,7 @@
         .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 15px; color: var(--text-light); }
         .btn-action { width: 100%; padding: 16px; background: #28a745; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
 
-        /* KEYPAD FOR RATE F */
+        /* POPUP KEYPAD */
         #customKeypad { position: fixed; bottom: -100%; left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); border-radius: 25px 25px 0 0; padding: 20px 15px; transition: bottom 0.2s ease-out; z-index: 5000; box-shadow: 0 -5px 30px rgba(0,0,0,0.1); }
         #customKeypad.show { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 5px; }
@@ -164,7 +160,7 @@
         <button class="menu-btn" onclick="showPage('page-casio'); toggleMenu(); casio_init()">Casio Calculator</button>
     </div>
 
-    <div id="page-casio" class="page-content active">
+    <div id="page-casio" class="fixed-page active">
         <div class="casio-screen">
             <div class="casio-indicators">
                 <div class="casio-step" id="cStep">00</div>
@@ -219,7 +215,7 @@
         </div>
     </div>
 
-    <div id="page-ratef" class="page-content">
+    <div id="page-ratef" class="scrollable-page">
         <div class="card">
             <label style="font-size:11px; color:var(--text-light);">Screen Rate</label>
             <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0.00" onclick="focusField(this)">
@@ -268,7 +264,7 @@
         </div>
     </div>
 
-    <div id="page-converter" class="page-content">
+    <div id="page-converter" class="scrollable-page">
         <div class="card" style="text-align:center;">
             <h4 style="color:var(--primary); margin-bottom:15px; letter-spacing:2px; font-weight:900;">WEIGHT CONVERTER</h4>
             <input type="text" inputmode="none" readonly id="cv_g" class="main-input" placeholder="Grams" onclick="focusField(this)">
@@ -281,240 +277,11 @@
         </div>
     </div>
 
-    <div id="page-settings" class="page-content">
+    <div id="page-settings" class="scrollable-page">
         <div class="card">
             <h4 style="margin-top:0; color:var(--primary);">Theme Colors</h4>
             <div class="color-row"><span>Primary Color</span><input type="color" class="color-inp" id="clr-primary" value="#ff9f43" onchange="updateTheme('primary', this.value)"></div>
             <div class="color-row"><span>Secondary Color</span><input type="color" class="color-inp" id="clr-secondary" value="#0abde3" onchange="updateTheme('secondary', this.value)"></div>
             <div class="color-row"><span>Background</span><input type="color" class="color-inp" id="clr-bg" value="#f4f7f6" onchange="updateTheme('bg', this.value)"></div>
             <div class="color-row"><span>Card Background</span><input type="color" class="color-inp" id="clr-card" value="#ffffff" onchange="updateTheme('card', this.value)"></div>
-            <div class="color-row"><span>Text Color</span><input type="color" class="color-inp" id="clr-text" value="#333333" onchange="updateTheme('text', this.value)"></div>
-            <button class="btn-action" style="background:#666; margin-top:20px;" onclick="resetTheme()">RESET DEFAULT THEME</button>
-        </div>
-    </div>
-</div>
-
-<div id="customKeypad">
-    <button class="k-btn k-close" onclick="closeKeypad()">Done ▼</button>
-    <div class="keypad-grid">
-        <button class="k-btn" onclick="press('1')">1</button>
-        <button class="k-btn" onclick="press('2')">2</button>
-        <button class="k-btn" onclick="press('3')">3</button>
-        <button class="k-btn" onclick="press('4')">4</button>
-        <button class="k-btn" onclick="press('5')">5</button>
-        <button class="k-btn" onclick="press('6')">6</button>
-        <button class="k-btn" onclick="press('7')">7</button>
-        <button class="k-btn" onclick="press('8')">8</button>
-        <button class="k-btn" onclick="press('9')">9</button>
-        <button class="k-btn" onclick="press('.')">.</button>
-        <button class="k-btn" onclick="press('0')">0</button>
-        <button class="k-btn" id="btn-back" style="color:#ff4d4d;">⌫</button>
-    </div>
-</div>
-
-<div id="pdf-hide" style="position:fixed; top:0; left:0; z-index:-100; opacity:0;"></div>
-
-<script>
-    // --- APP CORE ---
-    let activeInput = null, backTimer;
-
-    function init() { 
-        loadTheme();
-        setTab('both'); 
-        setupBackspace();
-        casio_init(); 
-    }
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        if(pageId !== 'page-casio') closeKeypad(); 
-    }
-
-    function updateTheme(key, val) {
-        document.documentElement.style.setProperty(key === 'bg' ? '--bg-color' : (key === 'card' ? '--card-bg' : (key === 'text' ? '--text-main' : '--'+key)), val);
-        saveTheme();
-    }
-
-    function saveTheme() {
-        const t = {
-            primary: document.getElementById('clr-primary').value,
-            secondary: document.getElementById('clr-secondary').value,
-            bg: document.getElementById('clr-bg').value,
-            card: document.getElementById('clr-card').value,
-            text: document.getElementById('clr-text').value
-        };
-        localStorage.setItem('gold_theme', JSON.stringify(t));
-    }
-
-    function loadTheme() {
-        if(localStorage.getItem('gold_theme')) {
-            const t = JSON.parse(localStorage.getItem('gold_theme'));
-            document.getElementById('clr-primary').value = t.primary;
-            document.getElementById('clr-secondary').value = t.secondary;
-            document.getElementById('clr-bg').value = t.bg;
-            document.getElementById('clr-card').value = t.card;
-            document.getElementById('clr-text').value = t.text;
-            updateTheme('primary', t.primary); updateTheme('secondary', t.secondary); updateTheme('bg', t.bg); updateTheme('card', t.card); updateTheme('text', t.text);
-        }
-    }
-
-    function resetTheme() { localStorage.removeItem('gold_theme'); location.reload(); }
-    function loadPdfLib(callback) { if(typeof html2pdf !== 'undefined') { callback(); return; } let script = document.createElement('script'); script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"; script.onload = callback; document.body.appendChild(script); }
-    function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
-    function focusField(el) { if(activeInput) activeInput.classList.remove('active-field'); activeInput = el; activeInput.classList.add('active-field'); document.getElementById('customKeypad').classList.add('show'); document.getElementById('menuPopup').style.display = 'none'; }
-    function closeKeypad() { document.getElementById('customKeypad').classList.remove('show'); if(activeInput) activeInput.classList.remove('active-field'); }
-    function press(key) { if(!activeInput) return; if(key === 'back') activeInput.value = activeInput.value.slice(0, -1); else { if(key === '.' && activeInput.value.includes('.')) return; activeInput.value += key; } if(activeInput.id.startsWith('res_') || activeInput.id === 'cv_g') { if(activeInput.id === 'cv_g') gToV(); else vToG(); } else calc(); }
-    function setupBackspace() { const btn = document.getElementById('btn-back'); const start = (e) => { press('back'); backTimer = setInterval(() => { press('back'); }, 150); }; const stop = () => { clearInterval(backTimer); }; btn.addEventListener('mousedown', start); btn.addEventListener('touchstart', start, {passive: true}); window.addEventListener('mouseup', stop); window.addEventListener('touchend', stop); }
-    function setTab(t) { document.getElementById('b22').className = 't-btn'; document.getElementById('b21').className = 't-btn'; document.getElementById('bBoth').className = 't-btn'; document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden'); if(t === '22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); } else if(t === '21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); } else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); } calc(); }
-    function calc() { let b = parseFloat(document.getElementById('screenRate').value) || 0; let p22 = 0.926, m22 = parseFloat(document.getElementById('mc22').value)||0, d22 = parseFloat(document.getElementById('dh22').value)||0, c22 = parseFloat(document.getElementById('cr22').value)||0, mg22 = parseFloat(document.getElementById('mg22').value)||0; let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; let w22 = parseFloat(document.getElementById('w22').value) || 0; let t22 = r22 * (w22 / 11.664); document.getElementById('r22').innerText = r22.toLocaleString(undefined, {maximumFractionDigits: 2}); document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2}); let p21 = 0.885, m21 = parseFloat(document.getElementById('mc21').value)||0, d21 = parseFloat(document.getElementById('dh21').value)||0, c21 = parseFloat(document.getElementById('cr21').value)||0, mg21 = parseFloat(document.getElementById('mg21').value)||0; let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; let w21 = parseFloat(document.getElementById('w21').value) || 0; let t21 = r21 * (w21 / 11.664); document.getElementById('r21').innerText = r21.toLocaleString(undefined, {maximumFractionDigits: 2}); document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2}); let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21); document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2}); }
-    function gToV() { let g = parseFloat(document.getElementById('cv_g').value) || 0; let tb = g / 11.664, v = Math.floor(tb), rem = tb - v, a = Math.floor(rem * 16), r = ((rem * 16) - a) * 6; document.getElementById('res_v').value = v; document.getElementById('res_a').value = a; document.getElementById('res_r').value = r.toFixed(2); }
-    function vToG() { let v = parseFloat(document.getElementById('res_v').value) || 0, a = parseFloat(document.getElementById('res_a').value) || 0, r = parseFloat(document.getElementById('res_r').value) || 0; document.getElementById('cv_g').value = ((v + (a/16) + (r/96)) * 11.664).toFixed(3); }
-    function downloadPDF(type) { const btn = document.activeElement; const oldText = btn.innerText; btn.innerText = "WAIT..."; loadPdfLib(() => { const date = new Date().toLocaleString(); let s = `style="padding:20px; font-family:sans-serif; background:#fff; color:#000;"`; let content = ''; if(type === 'converter') { content = `<div ${s}><h2 style="border-bottom:2px solid orange;">WEIGHT REPORT</h2><p>${date}</p><h3>Grams: ${document.getElementById('cv_g').value}</h3><p>Vori: ${document.getElementById('res_v').value} | Ana: ${document.getElementById('res_a').value} | Ratti: ${document.getElementById('res_r').value}</p></div>`; } else { content = `<div ${s}><h2 style="border-bottom:2px solid orange;">INVOICE</h2><p>Date: ${date}</p><p>Customer: ${document.getElementById('cName').value}</p><h3>Total: ${document.getElementById('grandTotal').innerText}</h3><p>Auth By: ${document.getElementById('authName').value}</p></div>`; } html2pdf().from(content).save().then(() => { btn.innerText = oldText; }); }); }
-
-    // --- CASIO LOGIC ---
-    let casio_tape = [], casio_chain = [], casio_input = "0";
-    let casio_idx = -1, casio_edit = false, casio_resShown = false, casio_interim = false;
-    const C_MAX = 12;
-    const c_ui = { main: document.getElementById('cMain'), op: document.getElementById('cOp'), step: document.getElementById('cStep'), mode: document.getElementById('cMode'), list: document.getElementById('casioListBody') };
-
-    function casio_init() {
-        if(localStorage.getItem('gold_casio')) {
-            let d = JSON.parse(localStorage.getItem('gold_casio'));
-            casio_tape = d.tape || []; 
-            // DO NOT load active chain to ensure Fresh Start on page load
-            // casio_chain = d.active || []; 
-        }
-        // Force Fresh Start
-        casio_chain = []; casio_input = "0"; casio_idx = -1; casio_edit = false; casio_resShown = false; casio_interim = false;
-        casio_render(); casio_list();
-    }
-
-    function casio_num(n) {
-        if(casio_edit) {
-            if(casio_input.replace('.','').length >= C_MAX) return;
-            if(casio_input === "0" && n !== '.') casio_input = n; else if(n === '.' && casio_input.includes('.')) return; else casio_input += n;
-            casio_render(); return;
-        }
-        if(casio_idx !== -1) casio_AC();
-        if(casio_resShown || casio_interim) { if(casio_resShown) casio_chain = []; casio_input = "0"; casio_resShown = false; casio_interim = false; }
-        if(casio_input.replace('.','').length >= C_MAX) return;
-        if(casio_input === "0" && n !== '.') casio_input = n; else if(n === '.' && casio_input.includes('.')) return; else casio_input += n;
-        casio_render();
-    }
-
-    function casio_op(op) {
-        if(casio_edit) return;
-        if(casio_idx !== -1) casio_AC();
-        if(casio_interim && !casio_resShown) { if(casio_chain.length > 0) { casio_chain[casio_chain.length-1].o = op; casio_render(); return; } }
-        if(casio_resShown) { let lv = casio_chain[casio_chain.length-1].v; casio_chain = [{v:lv, o:op}]; casio_resShown = false; casio_input = lv; }
-        else { if(casio_input !== "") casio_chain.push({v:casio_input, o:op}); }
-        
-        if(casio_chain.length >= 1) {
-            let rt = casio_calc(casio_chain);
-            if(rt !== "Error") { casio_input = String(rt); casio_interim = true; }
-        } else { casio_interim = true; }
-        casio_render();
-    }
-
-    function casio_eq() {
-        if(casio_edit) { casio_finishCorr(); return; }
-        if(casio_idx !== -1) return;
-        if(!casio_interim) casio_chain.push({v:casio_input, o:'='}); else if(casio_chain.length>0) casio_chain[casio_chain.length-1].o='=';
-        let res = casio_calc(casio_chain);
-        casio_chain.push({v:String(res), o:'ANS'});
-        casio_tape.push([...casio_chain]); casio_save();
-        casio_resShown = true; casio_interim = false; casio_input = String(res);
-        casio_render(); casio_list();
-    }
-
-    function casio_del() {
-        if(!casio_edit && casio_idx !== -1) return;
-        if(casio_interim || casio_resShown) return;
-        casio_input = casio_input.toString().slice(0, -1);
-        if(casio_input === "") casio_input = "0";
-        casio_render();
-    }
-
-    function casio_AC() { casio_chain = []; casio_input = "0"; casio_idx = -1; casio_edit = false; casio_resShown = false; casio_interim = false; casio_render(); }
-
-    function casio_calc(chain) {
-        let e = "";
-        for(let s of chain) {
-            if(s.o === 'ANS') continue;
-            e += s.v; let o = s.o;
-            if(o === '=') continue; if(o === 'x' || o === 'X') o = '*'; if(o === '÷') o = '/'; if(o === '%') o = '/100*';
-            e += o;
-        }
-        if("+-*/".includes(e.slice(-1))) e = e.slice(0,-1);
-        try { return parseFloat(eval(e).toPrecision(12)); } catch(err) { return "Error"; }
-    }
-
-    function casio_prev() {
-        if(casio_chain.length === 0) { if(casio_tape.length>0) { casio_chain = casio_tape[casio_tape.length-1]; casio_idx = casio_chain.length-1; } else return; }
-        else { if(casio_idx === -1) casio_idx = casio_chain.length-1; else if(casio_idx > 0) casio_idx--; }
-        casio_edit = false; casio_render();
-    }
-
-    function casio_next() {
-        if(casio_chain.length === 0 || casio_idx === -1) return;
-        if(casio_idx < casio_chain.length-1) casio_idx++;
-        casio_edit = false; casio_render();
-    }
-
-    function casio_correct() {
-        if(casio_idx === -1) return;
-        if(casio_chain[casio_idx].o === 'ANS') return;
-        casio_edit = true; casio_input = casio_chain[casio_idx].v; casio_render();
-    }
-
-    function casio_finishCorr() {
-        casio_chain[casio_idx].v = casio_input;
-        let rc = casio_chain.filter(s => s.o !== 'ANS');
-        let nr = casio_calc(rc);
-        rc.push({v:String(nr), o:'ANS'});
-        casio_chain = rc; casio_save();
-        casio_edit = false; casio_input = "0"; casio_render();
-    }
-
-    function casio_render() {
-        let dv = "0", dop = "", sn = 0, dm = "none", clr = "#fff";
-        if(casio_edit) { dv = casio_input; dop = "EDIT"; sn = casio_idx+1; dm = "block"; c_ui.mode.innerText = "CRT"; c_ui.mode.style.color = "#ff9f43"; clr = "#ff9f43"; }
-        else if(casio_idx !== -1) {
-            let s = casio_chain[casio_idx]; dv = s.v;
-            if(s.o === 'ANS') dop = "="; else { dop = s.o.replace('*','×').replace('/','÷'); if(dop === '=') dop = ""; }
-            sn = casio_idx+1; dm = "block"; c_ui.mode.innerText = "REP"; c_ui.mode.style.color = "#0abde3";
-        } else {
-            dv = casio_input;
-            if(casio_chain.length > 0) { if(casio_interim || casio_input === "0") dop = casio_chain[casio_chain.length-1].o.replace('*','×').replace('/','÷'); }
-            sn = casio_chain.length; if(!casio_interim && !casio_resShown) sn++;
-        }
-        c_ui.main.innerText = c_fmt(dv); c_ui.main.style.color = clr; c_ui.op.innerText = dop; c_ui.step.innerText = String(sn).padStart(2, '0'); c_ui.mode.style.display = dm;
-        c_resize();
-    }
-
-    function c_fmt(n) {
-        if(n==="Error") return n; let s=String(n), p=s.split('.'), i=p[0].replace(/,/g,'');
-        if(!isNaN(i)) { let l3=i.slice(-3), o=i.slice(0,-3); if(o) l3=','+l3; i=o.replace(/\B(?=(\d{2})+(?!\d))/g, ",")+l3; }
-        return i + (p[1]?'.'+p[1]:'');
-    }
-
-    function c_resize() {
-        let b = document.querySelector('.casio-main-box'), t = c_ui.main, s = 80;
-        t.style.fontSize = s+'px';
-        while(t.scrollWidth > b.clientWidth && s > 30) { s-=5; t.style.fontSize = s+'px'; }
-    }
-
-    function casio_save() { localStorage.setItem('gold_casio', JSON.stringify({tape:casio_tape, active:casio_chain})); }
-    function casio_toggleDrawer() { document.getElementById('casioDrawer').classList.toggle('open'); }
-    function casio_list() {
-        let h=""; casio_tape.slice().reverse().forEach(c => {
-            let e="", r="0"; c.forEach(s => { if(s.o === 'ANS') r=s.v; else e+=s.v+(s.o==='='?'':s.o); });
-            h+=`<div class="casio-d-row"><span>${e}=</span><b>${c_fmt(r)}</b></div>`;
-        });
-        c_ui.list.innerHTML = h||"<div style='text-align:center;color:#555;margin-top:20px;'>Empty Tape</div>";
-    }
-    function casio_reset() { if(confirm("Clear All History?")) { localStorage.removeItem('gold_casio'); casio_AC(); } }
-</script>
-</body>
-</html>
+            <div class="color-row"><s
