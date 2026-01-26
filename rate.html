@@ -10,14 +10,14 @@
     <style>
         /* --- DARK COMFORT THEME VARIABLES --- */
         :root { 
-            --primary: #ffaf40;    /* Softer Orange */
-            --secondary: #48dbfb;  /* Softer Blue */
-            --bg-color: #222831;   /* Dark Grey Background (Not Black) */
-            --card-bg: #393e46;    /* Slightly Lighter Card BG */
-            --text-main: #eeeeee;  /* Soft White Text */
-            --text-light: #adb5bd; /* Muted Grey Text */
-            --border: #4b5563;     /* Dark Border */
-            --input-bg: #222831;   /* Input Background */
+            --primary: #ffaf40;    
+            --secondary: #48dbfb;  
+            --bg-color: #222831;   
+            --card-bg: #393e46;    
+            --text-main: #eeeeee;  
+            --text-light: #adb5bd; 
+            --border: #4b5563;     
+            --input-bg: #222831;   
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -25,14 +25,14 @@
         body { 
             margin: 0; padding: 0; 
             font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-color); /* Darkish BG */
+            background: var(--bg-color); 
             color: var(--text-main);
             display: flex; flex-direction: column; height: 100vh;
         }
 
         /* HEADER */
         .header {
-            height: 55px; background: #1a1d24; /* Darker Header */
+            height: 55px; background: #1a1d24; 
             display: flex; align-items: center; padding: 0 15px;
             border-bottom: 1px solid #333; color: white;
             justify-content: space-between; z-index: 100;
@@ -40,7 +40,7 @@
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .logo-img { height: 35px; }
 
-        /* MENU POPUP (Dark) */
+        /* MENU POPUP */
         #menuPopup {
             display: none; position: absolute; top: 55px; left: 10px; width: 200px;
             background: #393e46; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
@@ -50,16 +50,15 @@
             padding: 15px; text-decoration: none; color: #eee; 
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
-        .menu-btn:hover { background: #444; }
 
-        /* CARD STYLE (Dark) */
+        /* CARD STYLE */
         .scrollable-page { flex: 1; overflow-y: auto; padding: 15px; }
         .card {
             background: var(--card-bg); border-radius: 15px; padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* INPUTS (Dark Mode) */
+        /* INPUTS */
         .main-input {
             width: 100%; font-size: 32px; font-weight: bold; text-align: center;
             border: none; border-bottom: 2px solid var(--border);
@@ -88,38 +87,65 @@
         .hidden { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-        /* RESULTS (Dark Mode) */
+        /* --- LAYOUT FIXES (Result Box) --- */
         .rate-box {
             font-size: 14px; font-weight: bold; color: #ccc; 
-            background: #2a3038; /* Darker than card */
+            background: #2a3038; 
             padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 5px;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #444;
+            display: flex; align-items: center; border: 1px solid #444;
+            height: 50px; /* Fixed height for alignment */
         }
+        .rate-label {
+            white-space: nowrap; margin-right: 10px; color: #aaa;
+        }
+        .result-group {
+            display: flex; align-items: center; justify-content: flex-end;
+            flex: 1; min-width: 0; position: relative; height: 100%;
+        }
+        .dynamic-input {
+            border: none; background: transparent; font-weight: bold; text-align: right;
+            width: 100%; padding: 0; margin: 0;
+            color: inherit; font-size: 20px; pointer-events: none;
+        }
+        .edit-btn {
+            font-size: 10px; color: #000; background: #ccc; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            font-weight: bold; border: none; 
+            margin-left: 10px; /* Gap between number and button */
+            flex-shrink: 0;
+        }
+        
+        /* GRAND TOTAL */
         .grand-box {
             background: #2a3038; padding: 15px; border-radius: 15px;
             text-align: center; border: 1px solid #444; margin-top: 15px;
             position: relative; display: flex; flex-direction: column; align-items: center;
-        }
-        
-        .dynamic-input {
-            border: none; background: transparent; font-weight: bold; text-align: right;
-            width: 100%; padding-right: 8px; color: inherit; font-size: 20px; pointer-events: none;
         }
         .grand-input {
             width: 100%; border: none; background: transparent; font-size: 30px;
             font-weight: 900; color: #fff; text-align: center;
             pointer-events: none; margin-top: 5px;
         }
+
+        /* --- PURITY TOGGLE STYLE --- */
+        .purity-box {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;
+        }
+        .p-radio { display: none; } /* Hide default radio */
+        .p-label {
+            padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;
+            border: 1px solid #555; cursor: pointer; color: #aaa; background: #222831;
+            transition: 0.2s;
+        }
+        /* When radio is checked */
+        .p-radio:checked + .p-label {
+            background: #eee; color: #000; border-color: #eee;
+        }
         
         /* Highlight & Edit */
         .active-field {
-            border: 2px solid var(--primary) !important; background: #4a3b2a !important; /* Dark orange glow */
+            border: 2px solid var(--primary) !important; background: #4a3b2a !important; 
             box-shadow: 0 0 10px rgba(255, 175, 64, 0.3); color: #fff !important;
-        }
-        .edit-btn {
-            font-size: 10px; color: #000; background: #ccc; padding: 4px 8px;
-            border-radius: 4px; cursor: pointer; text-transform: uppercase;
-            font-weight: bold; border: none; flex-shrink: 0;
         }
         .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; background: rgba(255, 255, 255, 0.1); }
         .btn-action {
@@ -128,7 +154,7 @@
             margin-top: 20px; cursor: pointer;
         }
 
-        /* KEYPAD (Dark) */
+        /* KEYPAD */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
             background: #222831; padding: 10px; z-index: 1000;
@@ -142,10 +168,10 @@
         }
         .casio-k-btn:active { background: #555; }
 
-        /* INVOICE (MUST STAY WHITE FOR PRINTING) */
+        /* INVOICE */
         #invoice-layout {
             display: none; width: 100%; background: #fff; padding: 20px; 
-            font-family: 'Segoe UI', sans-serif; color: #000; /* Force Black Text */
+            font-family: 'Segoe UI', sans-serif; color: #000;
         }
         .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
         .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
@@ -184,7 +210,19 @@
             </div>
 
             <div id="sec22" class="sec-22">
-                <div style="color:var(--primary); font-weight:bold; margin-bottom:5px;">22 Karat (92.6%)</div>
+                <div style="color:var(--primary); font-weight:bold; margin-bottom:5px; text-align:center;">22 Karat</div>
+                
+                <div class="purity-box">
+                    <label>
+                        <input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()">
+                        <span class="p-label">92.6%</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()">
+                        <span class="p-label">92.0%</span>
+                    </label>
+                </div>
+
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -193,7 +231,7 @@
                 </div>
                 
                 <div class="rate-box">
-                    <span>1 Bhori =</span> 
+                    <span class="rate-label">1 Bhori =</span> 
                     <div class="result-group">
                         <input type="text" inputmode="none" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
@@ -202,17 +240,29 @@
 
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                    <span style="color:var(--text-light); width:50px;">Total</span>
+                <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
+                    <span class="rate-label" style="color:var(--text-light);">Total</span>
                     <div class="result-group">
-                        <input type="text" inputmode="none" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:22px;" value="0.00">
+                        <input type="text" inputmode="none" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:24px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
                     </div>
                 </div>
             </div>
 
             <div id="sec21" class="sec-21 hidden">
-                <div style="color:var(--secondary); font-weight:bold; margin-bottom:5px;">21 Karat (88.5%)</div>
+                <div style="color:var(--secondary); font-weight:bold; margin-bottom:5px; text-align:center;">21 Karat</div>
+
+                <div class="purity-box">
+                    <label>
+                        <input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()">
+                        <span class="p-label">88.5%</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()">
+                        <span class="p-label">88.0%</span>
+                    </label>
+                </div>
+
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
@@ -221,7 +271,7 @@
                 </div>
 
                 <div class="rate-box">
-                    <span>1 Bhori =</span> 
+                    <span class="rate-label">1 Bhori =</span> 
                     <div class="result-group">
                         <input type="text" inputmode="none" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
@@ -230,10 +280,10 @@
 
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
                 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                    <span style="color:var(--text-light); width:50px;">Total</span>
+                <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
+                    <span class="rate-label" style="color:var(--text-light);">Total</span>
                     <div class="result-group">
-                        <input type="text" inputmode="none" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:22px;" value="0.00">
+                        <input type="text" inputmode="none" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:24px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
                     </div>
                 </div>
@@ -292,32 +342,127 @@
 
 <script>
     let currentInput = null;
-    function focusField(el) { document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); el.classList.add('active-field'); currentInput = el; document.getElementById('customKeypad').classList.add('open'); }
-    function closeKeypad() { document.getElementById('customKeypad').classList.remove('open'); if(currentInput) { currentInput.classList.remove('active-field'); if(currentInput.classList.contains('editing')) { currentInput.classList.remove('editing'); currentInput.style.pointerEvents = "none"; } currentInput = null; } }
-    function enableEdit(id) { let el = document.getElementById(id); el.style.pointerEvents = "auto"; el.classList.add('editing'); focusField(el); }
-    function press(key) { if(!currentInput) return; if(key === 'back') { currentInput.value = currentInput.value.slice(0, -1); } else if(key === '.') { if(!currentInput.value.includes('.')) currentInput.value += key; } else { currentInput.value += key; } calc(); }
 
+    // Default Init
+    function appInit() {
+        setTab('22'); // Force Default to 22K
+    }
+
+    // Keypad Logic (Anti-Freeze)
+    function focusField(el) { 
+        document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); 
+        el.classList.add('active-field'); 
+        currentInput = el; 
+        document.getElementById('customKeypad').classList.add('open'); 
+    }
+
+    function closeKeypad() { 
+        document.getElementById('customKeypad').classList.remove('open'); 
+        if(currentInput) { 
+            currentInput.classList.remove('active-field'); 
+            // If editing, lock it back
+            if(currentInput.classList.contains('editing')) { 
+                currentInput.classList.remove('editing'); 
+                currentInput.style.pointerEvents = "none"; 
+            } 
+            currentInput = null; 
+        } 
+    }
+
+    function enableEdit(id) { 
+        let el = document.getElementById(id); 
+        el.style.pointerEvents = "auto"; 
+        el.classList.add('editing'); 
+        focusField(el); 
+    }
+
+    function press(key) { 
+        if(!currentInput) return; 
+        if(key === 'back') { 
+            currentInput.value = currentInput.value.slice(0, -1); 
+        } else if(key === '.') { 
+            if(!currentInput.value.includes('.')) currentInput.value += key; 
+        } else { 
+            currentInput.value += key; 
+        } 
+        calc(); 
+    }
+
+    // MAIN CALCULATION
     function calc() { 
         let b = parseFloat(document.getElementById('screenRate').value) || 0; 
         
-        // 22K
-        let r22 = (((b * 3.674 / 31.1035 * 0.926) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
-        let rf22 = document.getElementById('rateView22'); if(!rf22.classList.contains('editing')) rf22.value = r22.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        // 22K Purity & Calc
+        let p22Val = document.querySelector('input[name="p22"]:checked').value; // Get selected purity
+        let r22 = (((b * 3.674 / 31.1035 * parseFloat(p22Val)) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
+        
+        let rf22 = document.getElementById('rateView22'); 
+        if(!rf22.classList.contains('editing')) rf22.value = r22.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        
         let t22 = r22 * ((parseFloat(document.getElementById('w22').value)||0) / 11.664); 
-        let tf22 = document.getElementById('t22'); if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        let tf22 = document.getElementById('t22'); 
+        if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
 
-        // 21K
-        let r21 = (((b * 3.674 / 31.1035 * 0.885) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
-        let rf21 = document.getElementById('rateView21'); if(!rf21.classList.contains('editing')) rf21.value = r21.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        // 21K Purity & Calc
+        let p21Val = document.querySelector('input[name="p21"]:checked').value; // Get selected purity
+        let r21 = (((b * 3.674 / 31.1035 * parseFloat(p21Val)) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
+        
+        let rf21 = document.getElementById('rateView21'); 
+        if(!rf21.classList.contains('editing')) rf21.value = r21.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        
         let t21 = r21 * ((parseFloat(document.getElementById('w21').value)||0) / 11.664); 
-        let tf21 = document.getElementById('t21'); if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
+        let tf21 = document.getElementById('t21'); 
+        if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false});
 
-        // Grand
-        let gf = document.getElementById('grandTotal'); if(!gf.classList.contains('editing')) {
+        // Grand Total
+        let gf = document.getElementById('grandTotal'); 
+        if(!gf.classList.contains('editing')) {
             let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : (parseFloat(tf22.value.replace(/,/g,''))||0)) + (document.getElementById('sec21').classList.contains('hidden') ? 0 : (parseFloat(tf21.value.replace(/,/g,''))||0)); 
             gf.value = grand.toLocaleString(undefined, {minimumFractionDigits:2, useGrouping:false}); 
         }
     }
 
-    function setTab(t) { document.getElementById('b22').className='t-btn'; document.getElementById('b21').className='t-btn'; document.getElementById('bBoth').className='t-btn'; document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden'); if(t==='22'){document.getElementById('b22').classList.add('active-22');document.getElementById('sec22').classList.remove('hidden');}else if(t==='21'){document.getElementById('b21').classList.add('active-21');document.getElementById('sec21').classList.remove('hidden');}else{document.getElementById('bBoth').classList.add('active-both');document.getElementById('sec22').classList.remove('hidden');document.getElementById('sec21').classList.remove('hidden');} calc(); }
-    function downloadPDF() { let c=document.getElementById('cName').value||"Customer", a=document.getElementById('authName').value||"Auth"; document.getElementById('inv-cName').innerText=c; document.getElementById('inv-auth').innerText=a; document.getElementById('inv-date').innerText=new Date().toLocaleDateString(); document.getElementById('inv-grand').innerText=document.getElementById('grandTotal').value; let tb=document.getElementById('inv-body'); tb.innerHTML=""; if(!document.
+    function setTab(t) { 
+        document.getElementById('b22').className='t-btn'; 
+        document.getElementById('b21').className='t-btn'; 
+        document.getElementById('bBoth').className='t-btn'; 
+        document.getElementById('sec22').classList.add('hidden'); 
+        document.getElementById('sec21').classList.add('hidden'); 
+        
+        if(t==='22'){
+            document.getElementById('b22').classList.add('active-22');
+            document.getElementById('sec22').classList.remove('hidden');
+        } else if(t==='21'){
+            document.getElementById('b21').classList.add('active-21');
+            document.getElementById('sec21').classList.remove('hidden');
+        } else {
+            document.getElementById('bBoth').classList.add('active-both');
+            document.getElementById('sec22').classList.remove('hidden');
+            document.getElementById('sec21').classList.remove('hidden');
+        } 
+        calc(); 
+    }
+
+    function downloadPDF() { 
+        let c=document.getElementById('cName').value||"Customer", a=document.getElementById('authName').value||"Auth"; 
+        document.getElementById('inv-cName').innerText=c; 
+        document.getElementById('inv-auth').innerText=a; 
+        document.getElementById('inv-date').innerText=new Date().toLocaleDateString(); 
+        document.getElementById('inv-grand').innerText=document.getElementById('grandTotal').value; 
+        let tb=document.getElementById('inv-body'); tb.innerHTML=""; 
+        
+        // Purity text for invoice
+        let p22Txt = document.querySelector('input[name="p22"]:checked').value === "0.926" ? "22K (92.6%)" : "22K (92.0%)";
+        let p21Txt = document.querySelector('input[name="p21"]:checked').value === "0.885" ? "21K (88.5%)" : "21K (88.0%)";
+
+        if(!document.getElementById('sec22').classList.contains('hidden')) tb.innerHTML+=`<tr><td>${p22Txt}</td><td class="text-right">${document.getElementById('rateView22').value}</td><td class="text-right">${document.getElementById('w22').value||"0"}</td><td class="text-right">${document.getElementById('t22').value}</td></tr>`; 
+        if(!document.getElementById('sec21').classList.contains('hidden')) tb.innerHTML+=`<tr><td>${p21Txt}</td><td class="text-right">${document.getElementById('rateView21').value}</td><td class="text-right">${document.getElementById('w21').value||"0"}</td><td class="text-right">${document.getElementById('t21').value}</td></tr>`; 
+        
+        const el=document.getElementById('invoice-layout'); el.style.display='block'; 
+        html2pdf().set({margin:0.5,filename:'Inv_'+Date.now()+'.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2},jsPDF:{unit:'in',format:'letter'}}).from(el).save().then(()=>{el.style.display='none';}); 
+    }
+
+    function toggleMenu() { let m=document.getElementById('menuPopup'); m.style.display=(m.style.display==='flex')?'none':'flex'; }
+</script>
+</body>
+</html>
