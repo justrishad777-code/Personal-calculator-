@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gold App - Rate F</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="init()">
+
+<div class="app-container">
+    <div class="header">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div style="width:40px;"></div>
+    </div>
+
+    <div id="menuPopup">
+        <a href="rate.html" class="menu-btn" style="background:#ddd;">Rate F</a>
+        <a href="converter.html" class="menu-btn">Weight Converter</a>
+        <a href="settings.html" class="menu-btn">Settings</a>
+        <a href="index.html" class="menu-btn">Casio Calculator</a>
+    </div>
+
+    <div class="scrollable-page active">
+        <div class="card">
+            <label style="font-size:11px; color:var(--text-light);">Screen Rate</label>
+            <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0.00" onclick="focusField(this)">
+
+            <div class="tab-box">
+                <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
+                <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
+                <button class="t-btn active-both" id="bBoth" onclick="setTab('both')">Both</button>
+            </div>
+
+            <div id="sec22" class="sec-22">
+                <div class="row"><span style="color:var(--primary); font-weight:bold;">22 Karat (92.6%)</span></div>
+                <div class="grid-2">
+                    <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
+                </div>
+                <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                <div class="row"><span>Rate Per Bhori</span> <span id="r22" style="font-weight:bold; color:var(--text-main);">0.00</span></div>
+                <div class="row"><span style="color:var(--primary); font-weight:900;">Total</span> <span id="t22" style="font-size:28px; font-weight:900; color:var(--primary);">0.00</span></div>
+            </div>
+
+            <div id="sec21" class="sec-21 hidden">
+                <div class="row"><span style="color:var(--secondary); font-weight:bold;">21 Karat (88.5%)</span></div>
+                <div class="grid-2">
+                    <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
+                    <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
+                </div>
+                <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                <div class="row"><span>Rate Per Bhori</span> <span id="r21" style="font-weight:bold; color:var(--text-main);">0.00</span></div>
+                <div class="row"><span style="color:var(--secondary); font-weight:900;">Total</span> <span id="t21" style="font-size:28px; font-weight:900; color:var(--secondary);">0.00</span></div>
+            </div>
+
+            <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border);">
+                <div id="grandTotal" style="font-size:36px; font-weight:900; color:var(--text-main);">0.00</div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <input id="cName" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg-color); border:1px solid var(--border); border-radius:8px; color:var(--text-main);" placeholder="Customer Name">
+                <input id="authName" style="width:100%; padding:12px; background:var(--bg-color); border:1px solid var(--border); border-radius:8px; color:var(--text-main);" placeholder="Authorized By">
+            </div>
+            <button class="btn-action" onclick="downloadInvoice()">DOWNLOAD INVOICE</button>
+        </div>
+    </div>
+</div>
+
+<div id="customKeypad">
+    <button class="k-btn k-close" onclick="closeKeypad()">Done ▼</button>
+    <div class="keypad-grid">
+        <button class="k-btn" onclick="press('1')">1</button>
+        <button class="k-btn" onclick="press('2')">2</button>
+        <button class="k-btn" onclick="press('3')">3</button>
+        <button class="k-btn" onclick="press('4')">4</button>
+        <button class="k-btn" onclick="press('5')">5</button>
+        <button class="k-btn" onclick="press('6')">6</button>
+        <button class="k-btn" onclick="press('7')">7</button>
+        <button class="k-btn" onclick="press('8')">8</button>
+        <button class="k-btn" onclick="press('9')">9</button>
+        <button class="k-btn" onclick="press('.')">.</button>
+        <button class="k-btn" onclick="press('0')">0</button>
+        <button class="k-btn" id="btn-back" style="color:#ff4d4d;">⌫</button>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/pdfHelper.js"></script>
+<script>
+    // Rate F Specific Logic
+    function init() { loadTheme(); setTab('both'); setupBackspace(); }
+    
+    // Paste Calculation Logic Here (setTab, calc, etc.) from previous code
+    // ... [Previous Calc Logic] ...
+    
+    // PDF Wrapper
+    function downloadInvoice() {
+        let content = `<div style="padding:20px;"><h2>INVOICE</h2><p>Customer: ${document.getElementById('cName').value}</p><h3>Total: ${document.getElementById('grandTotal').innerText}</h3></div>`;
+        generatePDF('Invoice', content);
+    }
+</script>
+</body>
+</html>
