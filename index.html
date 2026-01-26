@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold App - Rate F</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div style="width:40px;"></div>
+    </div>
+
+    <div id="menuPopup">
+        <a href="index.html" class="menu-btn" style="background:#ddd;">Rate F</a>
+        <a href="converter.html" class="menu-btn">Weight Converter</a>
+        <a href="settings.html" class="menu-btn">Settings</a>
+        <a href="casio.html" class="menu-btn">Casio Calculator</a>
+    </div>
+
+    <div class="card">
+        <h3>Rate F Calculator</h3>
+        <input type="number" class="main-input" placeholder="Screen Rate">
+        <button class="btn-action" onclick="alert('Logic in js/rateLogic.js')">Calculate</button>
+    </div>
+</div>
+<script src="js/common.js"></script>
+</body>
+</html>
