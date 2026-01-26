@@ -5,109 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
-        /* --- CSS FIXES FOR ALL RESULTS --- */
-        
-        /* কমন ফ্লেক্স কন্টেইনার (Result + Edit Button) */
+        /* --- CSS FIXES --- */
         .result-group {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex: 1; /* যতটুকু জায়গা পাবে নেবে */
-            min-width: 0; /* ওভারফ্লো আটকাবে */
-            position: relative;
+            display: flex; align-items: center; justify-content: flex-end;
+            flex: 1; min-width: 0; position: relative;
         }
-
-        /* ডাইনামিক ইনপুট (সব রেজাল্টের জন্য) */
         .dynamic-input {
-            border: none;
-            background: transparent;
-            font-weight: bold;
-            text-align: right;
-            width: 100%; /* কন্টেইনারের পুরোটা নেবে */
-            min-width: 0;
-            padding-right: 8px; /* বাটনের সাথে গ্যাপ */
-            margin: 0;
-            color: inherit;
-            font-size: 20px; /* সেইফ সাইজ */
-            pointer-events: none; /* সেইফ মোড */
+            border: none; background: transparent; font-weight: bold; text-align: right;
+            width: 100%; min-width: 0; padding-right: 8px; margin: 0;
+            color: inherit; font-size: 20px; pointer-events: none;
         }
-
-        /* 1 Bhori Rate এর জন্য স্পেশাল স্টাইল */
         .rate-box {
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            background: #eef2f3;
-            padding: 8px 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between; /* টেক্সট বামে, ভ্যালু ডানে */
-            align-items: center;
-            border: 1px solid #ddd;
+            font-size: 14px; font-weight: bold; color: #555; background: #eef2f3;
+            padding: 8px 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 5px;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #ddd;
         }
-
-        /* গ্র্যান্ড টোটাল ফিক্স */
         .grand-box {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-            margin-top: 15px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: var(--bg-color); padding: 15px; border-radius: 15px;
+            text-align: center; border: 1px solid var(--border); margin-top: 15px;
+            position: relative; display: flex; flex-direction: column; align-items: center;
         }
         .grand-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            font-size: 30px; /* ৩৬ থেকে কমিয়ে ৩০ করা হয়েছে */
-            font-weight: 900;
-            color: var(--text-main);
-            text-align: center;
-            pointer-events: none;
-            margin-top: 5px;
-            padding: 0 40px; /* দুপাশে জায়গা রাখা হয়েছে */
+            width: 100%; border: none; background: transparent; font-size: 30px;
+            font-weight: 900; color: var(--text-main); text-align: center;
+            pointer-events: none; margin-top: 5px; padding: 0 40px;
         }
-        .grand-edit-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-        }
-
-        /* হাইলাইট এফেক্ট */
+        .grand-edit-btn { position: absolute; bottom: 15px; right: 15px; }
         .active-field {
-            border: 2px solid var(--primary) !important;
-            background: #fff8e1 !important; 
-            box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); 
-            border-radius: 5px;
+            border: 2px solid var(--primary) !important; background: #fff8e1 !important; 
+            box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); border-radius: 5px;
         }
-        
         .edit-btn {
-            font-size: 10px;
-            color: #fff;
-            background: #bbb;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            border: none;
-            flex-shrink: 0; /* বাটন চ্যাপ্টা হবে না */
+            font-size: 10px; color: #fff; background: #bbb; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            font-weight: bold; border: none; flex-shrink: 0;
         }
+        .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; background: rgba(255, 255, 0, 0.1); }
         
-        .editing {
-            border-bottom: 2px solid red !important;
-            pointer-events: auto !important;
-            background: rgba(255, 255, 0, 0.1);
-        }
-
-        /* Keypad Styles */
+        /* Keypad */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
             background: #f4f7f6; padding: 10px; z-index: 1000;
@@ -117,11 +55,29 @@
         #customKeypad.open { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .casio-k-btn {
-            background: #fff; border: 1px solid #ccc;
-            padding: 15px; font-size: 20px; font-weight: bold;
-            border-radius: 8px; color: #333;
+            background: #fff; border: 1px solid #ccc; padding: 15px; font-size: 20px; font-weight: bold; border-radius: 8px; color: #333;
         }
         .casio-k-btn:active { background: #eee; }
+
+        /* --- HIDDEN INVOICE STYLE --- */
+        #invoice-layout {
+            display: none; /* স্ক্রিনে দেখা যাবে না */
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+        }
+        .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
+        .inv-title { font-size: 22px; font-weight: bold; text-transform: uppercase; }
+        .inv-info { font-size: 12px; color: #555; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .inv-table th { background: #333; color: #fff; padding: 8px; font-size: 12px; text-align: left; }
+        .inv-table td { border-bottom: 1px solid #ddd; padding: 8px; font-size: 14px; }
+        .inv-total-row { font-weight: bold; background: #f9f9f9; }
+        .inv-footer { margin-top: 30px; text-align: center; font-size: 10px; color: #777; border-top: 1px solid #ddd; padding-top: 10px; }
+        .text-right { text-align: right !important; }
     </style>
 </head>
 <body onload="appInit()">
@@ -217,8 +173,50 @@
                 <input id="cName" class="small-input" style="width:100%; margin-bottom:10px; text-align:left;" placeholder="Customer Name">
                 <input id="authName" class="small-input" style="width:100%; text-align:left;" placeholder="Authorized By">
             </div>
-            <button class="btn-action" onclick="downloadPDF('invoice')">DOWNLOAD INVOICE</button>
+            <button class="btn-action" onclick="downloadPDF()">DOWNLOAD INVOICE</button>
         </div>
+    </div>
+</div>
+
+<div id="invoice-layout">
+    <div class="inv-header">
+        <img src="logo.png" alt="Logo" class="inv-logo">
+        <div class="inv-title">Gold Estimate</div>
+        <div style="font-size:12px; margin-top:5px;">Estimated Rate Calculation</div>
+    </div>
+    
+    <div class="inv-info">
+        <div>
+            <strong>Customer:</strong> <span id="inv-cName"></span><br>
+            <strong>Date:</strong> <span id="inv-date"></span>
+        </div>
+        <div style="text-align:right;">
+            <strong>Auth By:</strong> <span id="inv-auth"></span>
+        </div>
+    </div>
+
+    <table class="inv-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="text-right">Rate/Bhori</th>
+                <th class="text-right">Weight (gm)</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody id="inv-body">
+            </tbody>
+        <tfoot>
+            <tr class="inv-total-row">
+                <td colspan="3" class="text-right">Grand Total</td>
+                <td class="text-right" id="inv-grand">0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="inv-footer">
+        <p>This is a computer generated estimate, not a final tax invoice.</p>
+        <p>Thank you for your business!</p>
     </div>
 </div>
 
@@ -362,12 +360,52 @@
         calc(); 
     }
 
-    function toggleMenu() {
-        let m = document.getElementById('menuPopup');
-        m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
-    }
-    
-    function appInit() { }
-</script>
-</body>
-</html>
+    // PDF GENERATION FUNCTION
+    function downloadPDF() {
+        // 1. Data Collection
+        let cName = document.getElementById('cName').value || "Walk-in Customer";
+        let auth = document.getElementById('authName').value || "Manager";
+        let date = new Date().toLocaleDateString();
+        let grandTotal = document.getElementById('grandTotal').value;
+
+        // 2. Fill Invoice Info
+        document.getElementById('inv-cName').innerText = cName;
+        document.getElementById('inv-auth').innerText = auth;
+        document.getElementById('inv-date').innerText = date;
+        document.getElementById('inv-grand').innerText = grandTotal;
+
+        // 3. Build Table Rows
+        let tbody = document.getElementById('inv-body');
+        tbody.innerHTML = ""; // Clear previous
+
+        // 22K Row (Add only if visible)
+        if(!document.getElementById('sec22').classList.contains('hidden')) {
+            let r22 = document.getElementById('rateView22').value;
+            let w22 = document.getElementById('w22').value || "0";
+            let t22 = document.getElementById('t22').value;
+            tbody.innerHTML += `
+                <tr>
+                    <td>22 Karat Gold</td>
+                    <td class="text-right">${r22}</td>
+                    <td class="text-right">${w22}</td>
+                    <td class="text-right">${t22}</td>
+                </tr>`;
+        }
+
+        // 21K Row (Add only if visible)
+        if(!document.getElementById('sec21').classList.contains('hidden')) {
+            let r21 = document.getElementById('rateView21').value;
+            let w21 = document.getElementById('w21').value || "0";
+            let t21 = document.getElementById('t21').value;
+            tbody.innerHTML += `
+                <tr>
+                    <td>21 Karat Gold</td>
+                    <td class="text-right">${r21}</td>
+                    <td class="text-right">${w21}</td>
+                    <td class="text-right">${t21}</td>
+                </tr>`;
+        }
+
+        // 4. Generate PDF
+        const element = document.getElementById('invoice-layout');
+        element.style.display = 'block'; //
