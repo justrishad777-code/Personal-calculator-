@@ -11,70 +11,65 @@
         :root { --primary: #ff9f43; --secondary: #0abde3; --bg-color: #f4f7f6; --text-main: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* 1. একদম ফিক্সড লেআউট (স্ক্রল বন্ধ + চারপাশ লক) */
         body { 
             margin: 0; padding: 0; 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            height: 100dvh; /* ডায়নামিক হাইট (ব্রাউজারের বারসহ হিসাব করবে) */
+            width: 100%; 
             background: #000; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; 
-            overflow: hidden;
+            overflow: hidden; /* স্ক্রল বন্ধ */
         }
 
-        /* 2. Top Bar */
+        /* 1. Top Bar (ছোট করা হয়েছে) */
         .top-bar { 
-            height: 45px; background: #111; display: flex; align-items: center; 
+            height: 40px; background: #111; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
             justify-content: space-between; flex-shrink: 0;
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
-        .app-title { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: #fff; }
+        .app-title { font-size: 16px; font-weight: bold; letter-spacing: 1px; color: #fff; }
 
         /* Menu Popup */
         #menuPopup {
-            display: none; position: absolute; top: 50px; left: 10px; width: 200px;
+            display: none; position: absolute; top: 45px; left: 10px; width: 200px;
             background: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 2000; flex-direction: column; overflow: hidden;
+            z-index: 2000; flex-direction: column;
         }
-        .menu-item { padding: 15px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px; }
-        .menu-item:active { background: #f4f7f6; }
+        .menu-item { padding: 12px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px; }
 
-        /* 3. Screen Area (Height Reduced to 22%) */
+        /* 2. Screen Area (সাইজ কমিয়ে ২০% করা হয়েছে) */
         .screen { 
-            flex: 0 0 22%; /* স্ক্রিন একটু ছোট করা হয়েছে নিচের জায়গা বাড়াতে */
+            flex: 0 0 20%; /* আগে ২৫% ছিল, এখন কমিয়ে দিয়েছি */
             background: #000; padding: 5px 20px; 
             display: flex; flex-direction: column; 
             border-bottom: 1px solid #222;
         }
-        .indicators { display: flex; justify-content: space-between; color: #555; height: 20px; font-size: 12px; }
-        .step { font-family: monospace; color: var(--secondary); border: 1px solid #333; padding: 0px 4px; border-radius: 3px; }
+        .indicators { display: flex; justify-content: space-between; color: #555; height: 18px; font-size: 12px; }
         .op-display { text-align: right; color: var(--primary); font-size: 18px; height: 22px; font-family: monospace; }
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
-        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 50px; line-height: 1; word-break: break-all; text-align: right; }
+        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 50px; line-height: 1; }
 
-        /* 4. Controls Area */
+        /* 3. Controls */
         .controls { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
-            padding: 8px 15px; background: #f4f7f6; flex-shrink: 0; 
+            padding: 5px 15px; background: #f4f7f6; flex-shrink: 0; 
         }
-        .c-btn { background: #fff; border: 1px solid #ddd; padding: 10px 0; border-radius: 10px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
+        .c-btn { background: #fff; border: 1px solid #ddd; padding: 8px 0; border-radius: 8px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
         
-        /* 5. Keypad Area (Bottom Lifted Up) */
+        /* 4. Keypad (Magic Fix: Force Fit) */
         .keypad { 
-            flex: 1; /* বাকি সব জায়গা নেবে */
+            flex: 1; /* বাকি সব জায়গা নেবে, কিন্তু স্ক্রিনের বাইরে যাবে না */
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            grid-template-rows: repeat(5, 1fr); 
+            grid-template-rows: repeat(5, 1fr); /* সমান ৫ ভাগে ভাগ হবে */
             gap: 10px; 
-            /* নিচে প্যাডিং বাড়িয়ে বাটনগুলো উপরে তোলা হয়েছে */
-            padding: 5px 15px 25px 15px; 
+            padding: 5px 15px 20px 15px; /* নিচে ২০ পিক্সেল ফাঁকা রাখা হয়েছে */
             background: #f4f7f6; 
-            min-height: 0; /* Overflow আটকাবে */
-            /* আইফোনের জন্য সেইফ এরিয়া */
-            padding-bottom: calc(25px + env(safe-area-inset-bottom)); 
+            padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* আইফোনের জন্য সেফটি */
         }
         .k-btn { 
-            width: 100%; height: 100%; 
-            border-radius: 15px; border: 1px solid #ddd; background: #fff; 
+            width: 100%; height: 100%; /* যতটুকু জায়গা পাবে তার পুরোটাই নেবে */
+            border-radius: 12px; border: 1px solid #ddd; background: #fff; 
             font-size: 22px; font-weight: bold; color: #333; 
             box-shadow: 0 3px 0 #ccc; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
@@ -84,13 +79,11 @@
         .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 3px 0 #e67e22; }
 
         /* Drawer */
-        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 65%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
+        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
         .drawer.open { bottom: 0; }
         .d-head { padding: 15px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px; }
         .d-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; font-family: monospace; font-size: 15px; }
-        .d-exp { color: #aaa; font-size: 14px; }
-        .d-res { color: #fff; font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body onload="init()">
@@ -155,27 +148,37 @@
 
     <div class="drawer" id="drawer">
         <div class="d-head">
-            <span>Calculation History</span>
-            <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b;">✕ Close</span>
+            <span style="color:#fff; font-weight:bold;">History</span>
+            <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b; font-weight:bold;">✕ Close</span>
         </div>
         <div class="d-body" id="list"></div>
     </div>
 
     <script>
-        function toggleMenu() { document.getElementById('menuPopup').style.display = (document.getElementById('menuPopup').style.display === 'flex') ? 'none' : 'flex'; }
+        function toggleMenu() {
+            const m = document.getElementById('menuPopup');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
 
         let tape = [], chain = [], input = "0";
         let idx = -1, edit = false, resShown = false, isNewStep = false; 
         const ui = { main: document.getElementById('mainDisp'), op: document.getElementById('opDisp'), step: document.getElementById('step'), list: document.getElementById('list') };
 
         function init() {
-            if(localStorage.getItem('casio_data')) { try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) { tape=[]; } }
+            if(localStorage.getItem('casio_data')) {
+                try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) { tape=[]; }
+            }
             render(); renderList();
         }
         function num(n) {
             if(resShown) { AC(); input = n === "." ? "0." : n; render(); return; }
             if(isNewStep) { input = n === "." ? "0." : n; isNewStep = false; } 
-            else { if(input.replace('.','').length >= 12) return; if(input === "0" && n !== ".") input = n; else if(n === "." && input.includes(".")) return; else input += n; }
+            else {
+                if(input.replace('.','').length >= 12) return;
+                if(input === "0" && n !== ".") input = n;
+                else if(n === "." && input.includes(".")) return;
+                else input += n;
+            }
             render();
         }
         function op(o) {
@@ -183,7 +186,11 @@
             if(idx !== -1) { let val = chain[idx].v; chain = []; input = val; idx = -1; }
             if(isNewStep && chain.length > 0) { chain[chain.length-1].o = o; render(); return; }
             chain.push({v: input, o: o});
-            try { let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), ""); if("+-*/%".includes(expr.slice(-1))) expr = expr.slice(0,-1); input = String(eval(expr)); } catch(e) {}
+            try {
+                let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), "");
+                if("+-*/%".includes(expr.slice(-1))) expr = expr.slice(0,-1);
+                input = String(eval(expr)); 
+            } catch(e) {}
             isNewStep = true; resShown = false; render();
         }
         function eq() {
@@ -191,7 +198,13 @@
             if(input === "" || isNewStep) return; 
             chain.push({v: input, o: '='});
             let expr = chain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
-            try { let res = eval(expr); chain.push({v: String(res), o: 'ANS'}); tape.push([...chain]); save(); input = String(res); resShown = true; isNewStep = true; render(); renderList(); } catch(e) { input = "Error"; render(); }
+            try {
+                let res = eval(expr);
+                chain.push({v: String(res), o: 'ANS'});
+                tape.push([...chain]); save();
+                input = String(res); resShown = true; isNewStep = true; 
+                render(); renderList();
+            } catch(e) { input = "Error"; render(); }
         }
         function AC() { chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; render(); }
         function del() { if(resShown || isNewStep) return; input = input.toString().slice(0,-1) || "0"; render(); }
@@ -202,7 +215,13 @@
             chain[idx].v = input;
             let newChain = chain.slice(0, chain.length-1);
             let expr = newChain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
-            try { let res = eval(expr); newChain.push({v:String(res), o:'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); edit=false; input="0"; idx=-1; resShown=true; input=String(res); render(); renderList(); } catch(e){}
+            try {
+                let res = eval(expr);
+                newChain.push({v:String(res), o:'ANS'});
+                chain = newChain; tape[tape.length-1] = chain; save();
+                edit=false; input="0"; idx=-1; resShown=true; input=String(res);
+                render(); renderList();
+            } catch(e){}
         }
         function render() {
             let dV = input, dO = ""; let stepNum = 0;
@@ -219,9 +238,13 @@
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); }
         function renderList() {
             ui.list.innerHTML = tape.map(t => {
-                let e = t.reduce((a,c) => { if(c.o==='ANS') return ''; let sym = c.o.replace('x','×').replace('/','÷'); return a + c.v + (sym === '=' ? '' : ' '+sym+' '); }, "");
+                let e = t.reduce((a,c) => { 
+                    if(c.o==='ANS') return '';
+                    let sym = c.o.replace('x','×').replace('/','÷');
+                    return a + c.v + (sym === '=' ? '' : ' '+sym+' ');
+                }, "");
                 let r = t[t.length-1].v;
-                return `<div class="d-row"><span class="d-exp">${e}=</span><span class="d-res">${parseFloat(r).toLocaleString()}</span></div>`;
+                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${e}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${parseFloat(r).toLocaleString()}</span></div>`;
             }).reverse().join('');
         }
     </script>
