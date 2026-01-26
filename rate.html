@@ -6,6 +6,16 @@
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* --- ACTIVE FIELD HIGHLIGHT --- */
+        /* যে বক্সে ক্লিক করবেন সেটা হাইলাইট হবে */
+        .active-field {
+            border: 2px solid var(--primary) !important;
+            background: #fff8e1 !important; /* হালকা হলুদ ব্যাকগ্রাউন্ড */
+            box-shadow: 0 0 8px rgba(255, 159, 67, 0.5); /* গ্লো এফেক্ট */
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+
         /* SAFE MODE STYLES */
         .safe-value {
             border: none;
@@ -14,7 +24,7 @@
             color: inherit;
             text-align: right;
             width: 100px;
-            pointer-events: none; /* ক্লিক করা যাবে না (Safety) */
+            pointer-events: none; 
         }
         
         .edit-btn {
@@ -30,7 +40,7 @@
             border: none;
         }
         
-        /* Active Edit State (যখন এডিট বাটন চাপবে) */
+        /* Edit Mode Highlight */
         .editing {
             border-bottom: 2px solid red !important;
             pointer-events: auto !important;
@@ -60,8 +70,24 @@
             font-weight: 900;
             color: var(--text-main);
             text-align: center;
-            pointer-events: none; /* Safety */
+            pointer-events: none;
         }
+
+        /* Keypad Styles (If not in main.css) */
+        #customKeypad {
+            position: fixed; bottom: -100%; left: 0; width: 100%;
+            background: #f4f7f6; padding: 10px; z-index: 1000;
+            border-top: 2px solid #ddd; transition: 0.3s;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        #customKeypad.open { bottom: 0; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .casio-k-btn {
+            background: #fff; border: 1px solid #ccc;
+            padding: 15px; font-size: 20px; font-weight: bold;
+            border-radius: 8px; color: #333;
+        }
+        .casio-k-btn:active { background: #eee; }
     </style>
 </head>
 <body onload="appInit()">
@@ -80,8 +106,7 @@
         <a href="index.html" class="menu-btn">Casio Calculator</a>
     </div>
 
-    <div class="scrollable-page active">
-        <div class="card">
+    <div class="scrollable-page active" style="padding-bottom: 250px;"> <div class="card">
             <label style="font-size:11px; color:var(--text-light);">Screen Rate (Oz)</label>
             <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
 
@@ -159,7 +184,7 @@
 </div>
 
 <div id="customKeypad">
-    <button style="width:100%; padding:10px; background:#ffecec; color:red; border:none; margin-bottom:10px;" onclick="closeKeypad()">Done ▼</button>
+    <button style="width:100%; padding:10px; background:#ffecec; color:red; border:none; margin-bottom:10px; border-radius:5px; font-weight:bold;" onclick="closeKeypad()">Done ▼</button>
     <div class="keypad-grid">
         <button class="casio-k-btn" onclick="press('1')">1</button>
         <button class="casio-k-btn" onclick="press('2')">2</button>
@@ -172,31 +197,126 @@
         <button class="casio-k-btn" onclick="press('9')">9</button>
         <button class="casio-k-btn" onclick="press('.')">.</button>
         <button class="casio-k-btn" onclick="press('0')">0</button>
-        <button class="casio-k-btn" id="btn-back" style="color:red;">⌫</button>
+        <button class="casio-k-btn" onclick="press('back')" style="color:red;">⌫</button>
     </div>
 </div>
 
-<script src="js/main.js"></script>
 <script>
-    // --- SAFE EDIT LOGIC ---
-    // এডিট বাটনে চাপ দিলে ফিল্ডটি আনলক হবে এবং কিপ্যাড ওপেন হবে
+    // --- GLOBAL VARIABLES & FUNCTIONS ---
+    let currentInput = null;
+
+    // 1. FOCUS & HIGHLIGHT FUNCTION
+    function focusField(el) {
+        // সব ইনপুট থেকে হাইলাইট রিমুভ করা
+        document.querySelectorAll('input').forEach(i => i.classList.remove('active-field'));
+        
+        // বর্তমান ইনপুটে হাইলাইট যোগ করা
+        el.classList.add('active-field');
+        currentInput = el;
+
+        // কিপ্যাড ওপেন করা
+        document.getElementById('customKeypad').classList.add('open');
+    }
+
+    // 2. CLOSE KEYPAD FUNCTION
+    function closeKeypad() {
+        document.getElementById('customKeypad').classList.remove('open');
+        if(currentInput) {
+            currentInput.classList.remove('active-field');
+            currentInput = null;
+        }
+    }
+
+    // 3. KEYPAD PRESS FUNCTION
+    function press(key) {
+        if(!currentInput) return;
+
+        if(key === 'back') {
+            currentInput.value = currentInput.value.slice(0, -1);
+        } else if(key === '.') {
+            if(!currentInput.value.includes('.')) currentInput.value += key;
+        } else {
+            currentInput.value += key;
+        }
+        
+        // টাইপ করার সাথে সাথে ক্যালকুলেট হবে
+        calc();
+    }
+
+    // 4. SAFE EDIT ENABLE
     function enableEdit(id) {
         let el = document.getElementById(id);
-        
-        // সাময়িকভাবে আনলক করা
         el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); // স্টাইল চেঞ্জ হবে
-        
-        // কিপ্যাড ওপেন করা
+        el.classList.add('editing'); 
         focusField(el);
 
-        // যখন ফোকাস সরে যাবে (Done চাপলে), তখন আবার লক হয়ে যাবে
+        // ফোকাস সরে গেলে আবার লক হবে
         el.addEventListener('blur', function() {
             setTimeout(() => {
                 el.style.pointerEvents = "none";
                 el.classList.remove('editing');
             }, 200);
         }, {once: true});
+    }
+
+    // 5. CALCULATION LOGIC
+    function calc() { 
+        // 22K
+        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
+        let p22 = 0.926; 
+        let m22 = parseFloat(document.getElementById('mc22').value) || 0; 
+        let d22 = parseFloat(document.getElementById('dh22').value) || 0; 
+        let c22 = parseFloat(document.getElementById('cr22').value) || 0; 
+        let mg22 = parseFloat(document.getElementById('mg22').value) || 0; 
+        
+        let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; 
+        
+        let rateField22 = document.getElementById('rateView22');
+        if(!rateField22.classList.contains('editing')) {
+            rateField22.value = r22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
+        let w22 = parseFloat(document.getElementById('w22').value) || 0; 
+        let t22 = r22 * (w22 / 11.664); 
+        
+        let totalField22 = document.getElementById('t22');
+        if(!totalField22.classList.contains('editing')) {
+            totalField22.value = t22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
+        // 21K
+        let p21 = 0.885; 
+        let m21 = parseFloat(document.getElementById('mc21').value) || 0; 
+        let d21 = parseFloat(document.getElementById('dh21').value) || 0; 
+        let c21 = parseFloat(document.getElementById('cr21').value) || 0; 
+        let mg21 = parseFloat(document.getElementById('mg21').value) || 0; 
+        
+        let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; 
+        
+        let rateField21 = document.getElementById('rateView21');
+        if(!rateField21.classList.contains('editing')) {
+            rateField21.value = r21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
+        let w21 = parseFloat(document.getElementById('w21').value) || 0; 
+        let t21 = r21 * (w21 / 11.664); 
+        
+        let totalField21 = document.getElementById('t21');
+        if(!totalField21.classList.contains('editing')) {
+            totalField21.value = t21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
+        }
+
+        // Grand Total
+        let grandField = document.getElementById('grandTotal');
+        if(!grandField.classList.contains('editing')) {
+            let finalT22 = parseFloat(document.getElementById('t22').value) || 0;
+            let finalT21 = parseFloat(document.getElementById('t21').value) || 0;
+
+            let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : finalT22) + 
+                        (document.getElementById('sec21').classList.contains('hidden') ? 0 : finalT21); 
+            
+            grandField.value = grand.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false}); 
+        }
     }
 
     function setTab(t) { 
@@ -220,67 +340,15 @@
         calc(); 
     }
 
-    function calc() { 
-        // 22K Calculation
-        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
-        let p22 = 0.926; 
-        let m22 = parseFloat(document.getElementById('mc22').value) || 0; 
-        let d22 = parseFloat(document.getElementById('dh22').value) || 0; 
-        let c22 = parseFloat(document.getElementById('cr22').value) || 0; 
-        let mg22 = parseFloat(document.getElementById('mg22').value) || 0; 
-        
-        // রেট ক্যালকুলেশন
-        let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; 
-        
-        // শুধু যদি ইউজার এডিট না করে থাকে, তবেই আপডেট হবে
-        let rateField22 = document.getElementById('rateView22');
-        if(!rateField22.classList.contains('editing')) {
-            rateField22.value = r22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
-        }
-
-        let w22 = parseFloat(document.getElementById('w22').value) || 0; 
-        let t22 = r22 * (w22 / 11.664); 
-        
-        let totalField22 = document.getElementById('t22');
-        if(!totalField22.classList.contains('editing')) {
-            totalField22.value = t22.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
-        }
-
-        // 21K Calculation
-        let p21 = 0.885; 
-        let m21 = parseFloat(document.getElementById('mc21').value) || 0; 
-        let d21 = parseFloat(document.getElementById('dh21').value) || 0; 
-        let c21 = parseFloat(document.getElementById('cr21').value) || 0; 
-        let mg21 = parseFloat(document.getElementById('mg21').value) || 0; 
-        
-        let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; 
-        
-        let rateField21 = document.getElementById('rateView21');
-        if(!rateField21.classList.contains('editing')) {
-            rateField21.value = r21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
-        }
-
-        let w21 = parseFloat(document.getElementById('w21').value) || 0; 
-        let t21 = r21 * (w21 / 11.664); 
-        
-        let totalField21 = document.getElementById('t21');
-        if(!totalField21.classList.contains('editing')) {
-            totalField21.value = t21.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false});
-        }
-
-        // Grand Total logic
-        let grandField = document.getElementById('grandTotal');
-        // গ্র্যান্ড টোটাল অটোমেটিক ক্যালকুলেট হবে, যদি না ইউজার ম্যানুয়ালি এডিট করে
-        if(!grandField.classList.contains('editing')) {
-            // আমরা বর্তমান বক্সের ভ্যালু (যেটা এডিট করাও হতে পারে) যোগ করব
-            let finalT22 = parseFloat(document.getElementById('t22').value) || 0;
-            let finalT21 = parseFloat(document.getElementById('t21').value) || 0;
-
-            let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : finalT22) + 
-                        (document.getElementById('sec21').classList.contains('hidden') ? 0 : finalT21); 
-            
-            grandField.value = grand.toLocaleString(undefined, {minimumFractionDigits: 2, useGrouping: false}); 
-        }
+    // Toggle Menu Placeholder
+    function toggleMenu() {
+        let m = document.getElementById('menuPopup');
+        m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+    }
+    
+    // Init function if needed
+    function appInit() {
+        // Any startup logic
     }
 </script>
 </body>
