@@ -3,51 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Casio Calculator</title>
+    <title>Casio Pro</title>
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     
     <style>
-        /* --- CASIO CSS START --- */
+        /* --- CSS START --- */
         :root { --primary: #ff9f43; --secondary: #0abde3; --bg-color: #f4f7f6; --text-main: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #000; 
-            font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; 
+            margin: 0; padding: 0; height: 100vh; width: 100%; 
+            background: #000; font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* Top Bar */
         .top-bar { 
-            height: 50px; background: #111; display: flex; align-items: center; padding: 0 15px; 
-            border-bottom: 1px solid #333; color: white; justify-content: space-between;
+            height: 50px; background: #111; display: flex; align-items: center; 
+            padding: 0 15px; border-bottom: 1px solid #333; color: white; 
+            justify-content: space-between; flex-shrink: 0;
         }
-        .back-btn { text-decoration: none; color: white; font-size: 20px; font-weight: bold; }
+        .back-btn { text-decoration: none; color: white; font-size: 18px; font-weight: bold; }
 
-        /* Screen */
-        .screen { flex: 1; background: #000; padding: 15px; display: flex; flex-direction: column; position: relative; }
-        .indicators { display: flex; justify-content: space-between; color: #555; height: 30px; }
-        .step { font-family: monospace; color: var(--secondary); border: 1px solid #333; padding: 2px 6px; border-radius: 4px; }
-        .op-display { text-align: right; color: var(--primary); font-size: 30px; height: 40px; font-family: monospace; }
-        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
-        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 80px; line-height: 1; }
+        /* Screen Area (Flexible) */
+        .screen { 
+            flex: 1; /* Takes available space */
+            background: #000; padding: 15px; 
+            display: flex; flex-direction: column; 
+            overflow: hidden; min-height: 0; /* Prevents overflow */
+        }
+        .indicators { display: flex; justify-content: space-between; color: #555; height: 25px; flex-shrink: 0; }
+        .step { font-family: monospace; color: var(--secondary); border: 1px solid #333; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+        .op-display { text-align: right; color: var(--primary); font-size: 24px; height: 30px; font-family: monospace; flex-shrink: 0; }
+        
+        /* Main Display */
+        .main-display { 
+            flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; 
+            overflow: hidden; margin-bottom: 5px;
+        }
+        .main-text { 
+            font-family: 'Digital-7 Mono', monospace; color: #fff; 
+            font-size: 65px; /* Reduced font size to fit screen */
+            line-height: 1; word-break: break-all; text-align: right;
+        }
 
-        /* Controls */
-        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; background: #f4f7f6; }
-        .c-btn { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 3px 0 #ddd; cursor: pointer; color: #555; }
-        .c-btn:active { transform: translateY(2px); box-shadow: none; }
-
-        /* Keypad */
-        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 10px 25px; background: #f4f7f6; flex-shrink: 0; }
-        .k-btn { height: 60px; border-radius: 12px; border: 1px solid #ddd; background: #fff; font-size: 28px; font-weight: bold; color: #333; box-shadow: 0 4px 0 #ddd; cursor: pointer; }
-        .k-btn:active { transform: translateY(3px); box-shadow: none; }
-        .ac { color: #ff6b6b; } .op { color: var(--primary); } .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 4px 0 #e67e22; }
+        /* Controls & Keypad (Fixed at bottom) */
+        .controls { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; 
+            padding: 8px 10px; background: #f4f7f6; flex-shrink: 0; 
+        }
+        .c-btn { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 0 #ddd; color: #555; }
+        
+        .keypad { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; 
+            padding: 0 10px 15px; background: #f4f7f6; flex-shrink: 0; 
+        }
+        .k-btn { 
+            height: 55px; /* Fixed button height */
+            border-radius: 12px; border: 1px solid #ddd; background: #fff; 
+            font-size: 26px; font-weight: bold; color: #333; 
+            box-shadow: 0 3px 0 #ddd; cursor: pointer; 
+        }
+        .k-btn:active { transform: translateY(2px); box-shadow: none; }
+        .ac { color: #ff6b6b; } .op { color: var(--primary); } 
+        .eq { background: var(--primary); color: #fff; border: none; box-shadow: 0 3px 0 #e67e22; }
 
         /* Drawer */
-        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 70%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; }
+        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; background: #222; z-index: 100; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid #ff9f43; }
         .drawer.open { bottom: 0; }
-        .d-head { padding: 15px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
+        .d-head { padding: 12px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px; }
-        .d-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-family: monospace; }
+        .d-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-family: monospace; font-size: 14px; }
     </style>
 </head>
 <body onload="init()">
@@ -105,100 +131,162 @@
 
     <div class="drawer" id="drawer">
         <div class="d-head">
-            <span>History Tape</span>
-            <span onclick="toggleDrawer()" style="cursor:pointer; color:red;">✕ Close</span>
+            <span>History</span>
+            <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b;">✕ Close</span>
         </div>
         <div class="d-body" id="list"></div>
     </div>
 
     <script>
-        /* --- CASIO LOGIC START --- */
+        /* --- Logic Fixed --- */
         let tape = [], chain = [], input = "0";
-        let idx = -1, edit = false, resShown = false, interim = false;
+        let idx = -1, edit = false, resShown = false;
+        let isNewStep = false; // এই ফ্ল্যাগটি ঠিক করবে ৫+৫ ইস্যু
+
         const ui = { main: document.getElementById('mainDisp'), op: document.getElementById('opDisp'), step: document.getElementById('step'), list: document.getElementById('list') };
 
         function init() {
-            // Load Theme from settings if available
-            if(localStorage.getItem('gold_theme')) {
-                const t = JSON.parse(localStorage.getItem('gold_theme'));
-                if(t.primary) document.documentElement.style.setProperty('--primary', t.primary);
-                if(t.secondary) document.documentElement.style.setProperty('--secondary', t.secondary);
-            }
             if(localStorage.getItem('casio_data')) {
-                try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) {}
+                try { tape = JSON.parse(localStorage.getItem('casio_data')); } catch(e) { tape=[]; }
             }
             render(); renderList();
         }
 
         function num(n) {
-            if(edit) { if(input.length<12) input = (input==="0" && n!==".") ? n : input+n; render(); return; }
-            if(idx !== -1) AC();
-            if(resShown) { chain=[]; input="0"; resShown=false; }
-            if(input.length<12) input = (input==="0" && n!==".") ? n : input+n;
+            // যদি আগে = বাটন চাপা হয়ে থাকে, তবে সব রিসেট করে নতুন সংখ্যা শুরু হবে
+            if(resShown) { 
+                AC(); 
+                input = n === "." ? "0." : n; 
+                render(); 
+                return; 
+            }
+
+            // যদি Operator চাপা হয়, তবে পরের সংখ্যা নতুন করে শুরু হবে
+            if(isNewStep) {
+                input = n === "." ? "0." : n;
+                isNewStep = false; // ফ্ল্যাগ বন্ধ
+            } else {
+                // নরমাল টাইপ (Concatenate)
+                if(input.replace('.','').length >= 12) return;
+                if(input === "0" && n !== ".") input = n;
+                else if(n === "." && input.includes(".")) return;
+                else input += n;
+            }
             render();
         }
 
         function op(o) {
             if(edit) return;
-            if(idx !== -1) AC();
-            if(resShown) { chain=[{v:chain[chain.length-1].v, o:o}]; resShown=false; input=chain[0].v; }
-            else if(input !== "") { chain.push({v:input, o:o}); input="0"; }
-            
-            // Interim Calc
-            if(chain.length > 0) {
-                try {
-                    let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), "");
-                    if("+-*/".includes(expr.slice(-1))) expr = expr.slice(0,-1);
-                    input = String(eval(expr)); interim = true;
-                } catch(e){}
+            if(idx !== -1) { // হিস্ট্রি মোডে থাকলে নতুন অঙ্ক শুরু
+                let val = chain[idx].v;
+                chain = []; 
+                input = val;
+                idx = -1;
             }
+
+            // যদি পরপর অপারেটর চাপা হয়, শুধু অপারেটর আপডেট হবে
+            if(isNewStep && chain.length > 0) {
+                chain[chain.length-1].o = o;
+                render();
+                return;
+            }
+
+            // চেইনে ডাটা পুশ করা
+            chain.push({v: input, o: o});
+            
+            // অটো ক্যালকুলেশন (Interim Result)
+            try {
+                let expr = chain.reduce((a,c) => a + c.v + (c.o.replace('x','*').replace('÷','/')), "");
+                if("+-*/%".includes(expr.slice(-1))) expr = expr.slice(0,-1);
+                input = String(eval(expr)); 
+            } catch(e) {}
+
+            isNewStep = true; // ফ্ল্যাগ অন, যাতে পরের সংখ্যা নতুন হয়
+            resShown = false;
             render();
         }
 
         function eq() {
             if(edit) { finishCorr(); return; }
-            if(idx !== -1) return;
-            chain.push({v:input, o:'='});
+            if(input === "" || isNewStep) return; // অসম্পূর্ণ অঙ্ক আটকানো
+
+            chain.push({v: input, o: '='});
+            
             let expr = chain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
-            let res = eval(expr);
-            chain.push({v:String(res), o:'ANS'});
-            tape.push([...chain]); save();
-            resShown = true; input = String(res); chain = [{v:String(res), o:'='}]; // Reset chain slightly
-            render(); renderList();
+            try {
+                let res = eval(expr);
+                chain.push({v: String(res), o: 'ANS'});
+                tape.push([...chain]); 
+                save();
+                
+                input = String(res);
+                resShown = true;
+                isNewStep = true; // উত্তরের পর নতুন টাইপ করলে ফ্রেশ স্টার্ট
+                render(); renderList();
+            } catch(e) { input = "Error"; render(); }
         }
 
-        function AC() { chain=[]; input="0"; idx=-1; edit=false; resShown=false; render(); }
-        function del() { input = input.slice(0,-1)||"0"; render(); }
+        function AC() { chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; render(); }
+        
+        function del() {
+            if(resShown || isNewStep) return;
+            input = input.toString().slice(0,-1) || "0";
+            render();
+        }
         
         function prev() { if(tape.length && idx===-1) { chain=tape[tape.length-1]; idx=chain.length-1; } else if(idx>0) idx--; render(); }
         function next() { if(idx!==-1 && idx<chain.length-1) idx++; render(); }
         
-        function correct() { if(idx!==-1 && chain[idx].o!=='ANS') { edit=true; input=chain[idx].v; render(); } }
+        function correct() { 
+            if(idx!==-1 && chain[idx].o!=='ANS') { 
+                edit=true; 
+                input=chain[idx].v; 
+                isNewStep=false; // এডিট মোডে সরাসরি টাইপ হবে
+                render(); 
+            } 
+        }
+        
         function finishCorr() {
             chain[idx].v = input;
-            // Recalculate
-            let newChain = chain.slice(0, chain.length-1); // Remove ANS
-            let expr = newChain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o), "");
-            let res = eval(expr);
-            newChain.push({v:String(res), o:'ANS'});
-            chain = newChain; tape[tape.length-1] = chain; save();
-            edit=false; input="0"; render(); renderList();
+            let newChain = chain.slice(0, chain.length-1);
+            let expr = newChain.reduce((a,c) => a + c.v + (c.o==='='?'':c.o.replace('x','*').replace('÷','/')), "");
+            try {
+                let res = eval(expr);
+                newChain.push({v:String(res), o:'ANS'});
+                chain = newChain; tape[tape.length-1] = chain; save();
+                edit=false; input="0"; idx=-1; // রিসেট
+                resShown=true; // রেজাল্ট দেখাবে
+                input=String(res);
+                render(); renderList();
+            } catch(e){}
         }
 
         function render() {
             let dV = input, dO = "";
-            if(edit) { dV = input; dO = "EDIT"; }
-            else if(idx!==-1) { dV = chain[idx].v; dO = chain[idx].o; }
-            else if(chain.length) { dO = chain[chain.length-1].o; }
+            let stepNum = 0;
+
+            if(edit) {
+                dV = input; dO = "EDIT"; document.getElementById('mode').style.display="block";
+                stepNum = idx + 1;
+            } else if(idx!==-1) {
+                let item = chain[idx];
+                dV = item.v; dO = item.o==='ANS'?'=':item.o;
+                document.getElementById('mode').style.display="block";
+                stepNum = idx + 1;
+            } else {
+                document.getElementById('mode').style.display="none";
+                if(chain.length > 0 && !resShown) dO = chain[chain.length-1].o;
+                stepNum = chain.length + (isNewStep ? 0 : 1);
+            }
             
-            ui.main.innerText = parseFloat(dV).toLocaleString();
-            ui.op.innerText = dO==='='?'':dO.replace('*','×').replace('/','÷');
-            ui.step.innerText = (idx!==-1 ? idx+1 : chain.length).toString().padStart(2,'0');
+            ui.main.innerText = parseFloat(dV).toLocaleString(undefined, {maximumFractionDigits: 10});
+            ui.op.innerText = dO.replace('*','×').replace('/','÷');
+            ui.step.innerText = String(stepNum).padStart(2,'0');
             resize();
         }
 
         function resize() {
-            let s = 80; ui.main.style.fontSize = s+"px";
+            let s = 65; ui.main.style.fontSize = s+"px";
             while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30) { s-=5; ui.main.style.fontSize=s+"px"; }
         }
 
@@ -206,7 +294,7 @@
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); }
         function renderList() {
             ui.list.innerHTML = tape.map(t => {
-                let e = t.reduce((a,c) => c.o==='ANS'?'':a+c.v+c.o, "");
+                let e = t.reduce((a,c) => c.o==='ANS'?'':a+c.v+c.o.replace('x','×').replace('/','÷'), "");
                 let r = t[t.length-1].v;
                 return `<div class="d-row"><span>${e}</span><b>${parseFloat(r).toLocaleString()}</b></div>`;
             }).reverse().join('');
