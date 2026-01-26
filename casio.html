@@ -17,12 +17,13 @@
             width: 100%; 
             background: #000; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; 
-            overflow: hidden; /* স্ক্রল বন্ধ */
+            overflow: hidden; 
+            overscroll-behavior: none;
         }
 
-        /* 1. Top Bar (Compact) */
+        /* Top Bar */
         .top-bar { 
-            height: 40px; background: #111; display: flex; align-items: center; 
+            height: 45px; background: #111; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
             justify-content: space-between; flex-shrink: 0; position: relative;
         }
@@ -37,9 +38,9 @@
         }
         .menu-item { padding: 12px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; font-weight: 600; display: block; font-size: 14px; }
 
-        /* 2. Screen Area (Significant Reduction: 18%) */
+        /* Screen Area (20% Height - kept same) */
         .screen { 
-            flex: 0 0 18%; /* আগে ২৫% ছিল, এখন কমিয়ে ১৮% করা হয়েছে */
+            flex: 0 0 20%; 
             background: #000; padding: 5px 20px; 
             display: flex; flex-direction: column; 
             border-bottom: 1px solid #222;
@@ -47,34 +48,34 @@
         .indicators { display: flex; justify-content: space-between; color: #555; height: 18px; font-size: 12px; }
         .op-display { text-align: right; color: var(--primary); font-size: 16px; height: 20px; font-family: monospace; }
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
-        /* ফন্ট সাইজ একটু কমানো হয়েছে যাতে ছোট স্ক্রিনে মানায় */
         .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 45px; line-height: 1; }
 
-        /* 3. Controls (Compact) */
+        /* Controls (BIGGER BUTTONS HERE) */
         .controls { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; 
-            padding: 8px 15px; background: #f4f7f6; flex-shrink: 0; 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
+            padding: 10px 15px; background: #f4f7f6; flex-shrink: 0; 
         }
-        .c-btn { background: #fff; border: 1px solid #ddd; padding: 10px 0; border-radius: 8px; font-weight: bold; font-size: 11px; box-shadow: 0 2px 0 #ccc; color: #555; }
+        .c-btn { 
+            background: #fff; border: 1px solid #ddd; 
+            padding: 15px 0; /* প্যাডিং বাড়িয়ে বাটন বড় করা হয়েছে */
+            border-radius: 10px; font-weight: bold; font-size: 12px; 
+            box-shadow: 0 2px 0 #ccc; color: #555; 
+        }
         
-        /* 4. Keypad (Lifted UP & Smaller Buttons) */
+        /* Keypad (SMALLER / MORE COMPACT BUTTONS) */
         .keypad { 
             flex: 1; 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             grid-template-rows: repeat(5, 1fr); 
-            gap: 8px; /* গ্যাপ কমানো হয়েছে যাতে বাটন কাছাকাছি থাকে */
-            
-            /* --- MAGIC FIX --- */
-            /* নিচে ১০০ পিক্সেল খালি জায়গা রাখা হয়েছে, যাতে বাটন উপরে উঠে যায় */
-            padding: 5px 15px 100px 15px; 
-            
+            gap: 15px; /* গ্যাপ বাড়িয়ে বাটন ছোট করা হয়েছে */
+            padding: 10px 15px 100px 15px; /* সেইফটি প্যাডিং */
             background: #f4f7f6; 
         }
         .k-btn { 
             width: 100%; height: 100%; 
             border-radius: 12px; border: 1px solid #ddd; background: #fff; 
-            font-size: 20px; /* ফন্ট সাইজ কমানো হয়েছে */
+            font-size: 20px; /* ফন্ট একটু ছোট করা হয়েছে */
             font-weight: bold; color: #333; 
             box-shadow: 0 2px 0 #ccc; cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
