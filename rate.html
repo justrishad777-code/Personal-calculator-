@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App - Rate F</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Rate Display Style */
+        .bhori-rate {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            background: #eef2f3;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body onload="appInit()">
 
@@ -24,8 +39,8 @@
 
     <div class="scrollable-page active">
         <div class="card">
-            <label style="font-size:11px; color:var(--text-light);">Screen Rate</label>
-            <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0.00" onclick="focusField(this)">
+            <label style="font-size:11px; color:var(--text-light);">Screen Rate (Oz)</label>
+            <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
 
             <div class="tab-box">
                 <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
@@ -41,7 +56,11 @@
                     <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
+                
+                <div class="bhori-rate">1 Bhori = <span id="rateView22" style="color:var(--primary);">0.00</span></div>
+
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                
                 <div style="display:flex; justify-content:space-between; margin-top:10px;">
                     <span style="color:var(--text-light);">Total</span>
                     <span id="t22" style="font-size:24px; font-weight:bold; color:var(--primary);">0.00</span>
@@ -56,7 +75,11 @@
                     <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
+
+                <div class="bhori-rate">1 Bhori = <span id="rateView21" style="color:var(--secondary);">0.00</span></div>
+
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                
                 <div style="display:flex; justify-content:space-between; margin-top:10px;">
                     <span style="color:var(--text-light);">Total</span>
                     <span id="t21" style="font-size:24px; font-weight:bold; color:var(--secondary);">0.00</span>
@@ -64,6 +87,7 @@
             </div>
 
             <div style="background:var(--bg-color); padding:15px; border-radius:15px; text-align:center; border:1px solid var(--border); margin-top:15px;">
+                <div style="font-size:12px; color:#777;">Grand Total</div>
                 <div id="grandTotal" style="font-size:36px; font-weight:900; color:var(--text-main);">0.00</div>
             </div>
 
@@ -96,9 +120,58 @@
 
 <script src="js/main.js"></script>
 <script>
-    // Rate F Specific Calculations
-    function setTab(t) { document.getElementById('b22').className = 't-btn'; document.getElementById('b21').className = 't-btn'; document.getElementById('bBoth').className = 't-btn'; document.getElementById('sec22').classList.add('hidden'); document.getElementById('sec21').classList.add('hidden'); if(t === '22'){ document.getElementById('b22').classList.add('active-22'); document.getElementById('sec22').classList.remove('hidden'); } else if(t === '21'){ document.getElementById('b21').classList.add('active-21'); document.getElementById('sec21').classList.remove('hidden'); } else { document.getElementById('bBoth').classList.add('active-both'); document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); } calc(); }
-    function calc() { let b = parseFloat(document.getElementById('screenRate').value) || 0; let p22 = 0.926, m22 = parseFloat(document.getElementById('mc22').value)||0, d22 = parseFloat(document.getElementById('dh22').value)||0, c22 = parseFloat(document.getElementById('cr22').value)||0, mg22 = parseFloat(document.getElementById('mg22').value)||0; let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; let w22 = parseFloat(document.getElementById('w22').value) || 0; let t22 = r22 * (w22 / 11.664); document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2}); let p21 = 0.885, m21 = parseFloat(document.getElementById('mc21').value)||0, d21 = parseFloat(document.getElementById('dh21').value)||0, c21 = parseFloat(document.getElementById('cr21').value)||0, mg21 = parseFloat(document.getElementById('mg21').value)||0; let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; let w21 = parseFloat(document.getElementById('w21').value) || 0; let t21 = r21 * (w21 / 11.664); document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2}); let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21); document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2}); }
+    function setTab(t) { 
+        document.getElementById('b22').className = 't-btn'; 
+        document.getElementById('b21').className = 't-btn'; 
+        document.getElementById('bBoth').className = 't-btn'; 
+        document.getElementById('sec22').classList.add('hidden'); 
+        document.getElementById('sec21').classList.add('hidden'); 
+        
+        if(t === '22'){ 
+            document.getElementById('b22').classList.add('active-22'); 
+            document.getElementById('sec22').classList.remove('hidden'); 
+        } else if(t === '21'){ 
+            document.getElementById('b21').classList.add('active-21'); 
+            document.getElementById('sec21').classList.remove('hidden'); 
+        } else { 
+            document.getElementById('bBoth').classList.add('active-both'); 
+            document.getElementById('sec22').classList.remove('hidden'); 
+            document.getElementById('sec21').classList.remove('hidden'); 
+        } 
+        calc(); 
+    }
+
+    function calc() { 
+        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
+        
+        // 22K
+        let p22 = 0.926; 
+        let m22 = parseFloat(document.getElementById('mc22').value) || 0; 
+        let d22 = parseFloat(document.getElementById('dh22').value) || 0; 
+        let c22 = parseFloat(document.getElementById('cr22').value) || 0; 
+        let mg22 = parseFloat(document.getElementById('mg22').value) || 0; 
+        let r22 = (((b * 3.674 / 31.1035 * p22) + m22) * 11.664 * d22) + c22 + mg22; 
+        document.getElementById('rateView22').innerText = r22.toLocaleString(undefined, {minimumFractionDigits: 2});
+        let w22 = parseFloat(document.getElementById('w22').value) || 0; 
+        let t22 = r22 * (w22 / 11.664); 
+        document.getElementById('t22').innerText = t22.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+
+        // 21K
+        let p21 = 0.885; 
+        let m21 = parseFloat(document.getElementById('mc21').value) || 0; 
+        let d21 = parseFloat(document.getElementById('dh21').value) || 0; 
+        let c21 = parseFloat(document.getElementById('cr21').value) || 0; 
+        let mg21 = parseFloat(document.getElementById('mg21').value) || 0; 
+        let r21 = (((b * 3.674 / 31.1035 * p21) + m21) * 11.664 * d21) + c21 + mg21; 
+        document.getElementById('rateView21').innerText = r21.toLocaleString(undefined, {minimumFractionDigits: 2});
+        let w21 = parseFloat(document.getElementById('w21').value) || 0; 
+        let t21 = r21 * (w21 / 11.664); 
+        document.getElementById('t21').innerText = t21.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+
+        let grand = (document.getElementById('sec22').classList.contains('hidden') ? 0 : t22) + 
+                    (document.getElementById('sec21').classList.contains('hidden') ? 0 : t21); 
+        document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2}); 
+    }
 </script>
 </body>
 </html>
