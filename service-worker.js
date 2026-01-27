@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gold-app-v4'; // Bumped version to force update
+const CACHE_NAME = 'gold-app-v3'; // Bumped version to force update
 const ASSETS = [
   './',
   './index.html',
