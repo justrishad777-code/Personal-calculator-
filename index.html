@@ -162,8 +162,42 @@
         function toggleMenu() {
             const m = document.getElementById('menuPopup');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        } 
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  // ব্রাউজার যখন ইন্সটল করার জন্য রেডি হবে, তখন এই ইভেন্ট ফায়ার হবে
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // 1. অটোমেটিক পপ-আপ বন্ধ রাখা হলো (যাতে আমরা বাটনে ক্লিক করে আনতে পারি)
+    e.preventDefault();
+    
+    // 2. ইভেন্টটি ভেরিয়েবলে জমা রাখা হলো
+    deferredPrompt = e;
+    
+    // 3. এবার বাটনটি দৃশ্যমান (Visible) করা হলো
+    installBtn.style.display = 'block';
+
+    // 4. বাটনে ক্লিক করলে যা হবে
+    installBtn.addEventListener('click', (e) => {
+      // ইন্সটল বাটন আবার লুকিয়ে ফেলা
+      installBtn.style.display = 'none';
+      
+      // সেই জমা রাখা পপ-আপটি শো করা
+      deferredPrompt.prompt();
+      
+      // ইউজার কি রেসপন্স দিল তা চেক করা
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
         }
-    </script>
+        deferredPrompt = null;
+      });
+    });
+  });
+</script>
 
 </body>
 </html>
