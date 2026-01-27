@@ -27,8 +27,7 @@
         
         body { 
             margin: 0; padding: 0; 
-            /* Fix for content cutoff on mobile */
-            height: 100vh; height: 100dvh; 
+            height: 100vh; height: 100dvh; /* Dynamic Height for Mobile */
             width: 100%; 
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
@@ -37,73 +36,74 @@
             padding-top: env(safe-area-inset-top);
         }
         
-        /* TOP BAR */
+        /* TOP BAR (Compact) */
         .top-bar { 
-            height: 50px; background: #1a1d24; display: flex; align-items: center; 
+            height: 45px; background: #1a1d24; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
             justify-content: space-between; flex-shrink: 0; position: relative;
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
-        .app-title { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: #fff; }
+        .app-title { font-size: 16px; font-weight: bold; letter-spacing: 1px; color: #fff; }
         
         /* MENU */
         #menuPopup { 
-            display: none; position: absolute; top: 50px; left: 10px; width: 220px; 
+            display: none; position: absolute; top: 45px; left: 10px; width: 200px; 
             background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
             z-index: 2000; flex-direction: column; border: 1px solid #555; 
         }
         .menu-item { padding: 15px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; }
-        .menu-item:hover { background: #444; }
         .menu-icon-span { margin-right: 12px; font-size: 18px; }
         
-        /* SCREEN SECTION */
+        /* SCREEN (Height Reduced to 22%) */
         .screen { 
-            flex: 0 0 25%; background: #222831; padding: 10px 20px; 
+            flex: 0 0 22%; /* Reduced from 25% */
+            background: #222831; padding: 5px 15px; 
             display: flex; flex-direction: column; border-bottom: 1px solid #333; 
         }
-        .indicators { display: flex; justify-content: space-between; color: #777; height: 20px; font-size: 14px; font-weight: bold; }
-        .op-display { text-align: right; color: var(--primary); font-size: 20px; height: 30px; font-family: monospace; margin-top: 5px; }
-        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; padding-bottom: 5px; }
-        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 55px; line-height: 1; letter-spacing: 2px; }
+        .indicators { display: flex; justify-content: space-between; color: #777; height: 18px; font-size: 13px; font-weight: bold; }
+        .op-display { text-align: right; color: var(--primary); font-size: 18px; height: 25px; font-family: monospace; margin-top: 2px; }
+        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
+        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 50px; line-height: 1; letter-spacing: 2px; }
         
-        /* CONTROLS */
+        /* CONTROLS (Compact) */
         .controls { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; /* Gap reduced */
-            padding: 8px 15px; background: var(--bg-color); flex-shrink: 0; 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
+            padding: 6px 10px; background: var(--bg-color); flex-shrink: 0; 
         }
         .c-btn { 
             background: var(--btn-bg); border: 1px solid #555; 
-            padding: 12px 0; /* Padding reduced */
-            border-radius: 8px; font-weight: bold; font-size: 12px; 
-            box-shadow: 0 3px 0 var(--btn-shadow); color: #eee; cursor: pointer;
-            transition: all 0.1s;
+            padding: 10px 0; /* Reduced Padding */
+            border-radius: 8px; font-weight: bold; font-size: 11px; 
+            box-shadow: 0 2px 0 var(--btn-shadow); color: #eee; cursor: pointer;
         }
         .c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow); }
         
-        /* KEYPAD */
+        /* KEYPAD (Takes remaining space) */
         .keypad { 
-            flex: 1; display: grid; 
-            grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); 
-            gap: 8px; /* Gap reduced significantly to fit screen */
-            padding: 5px 15px 15px 15px; 
+            flex: 1; /* Takes all remaining height */
+            min-height: 0; /* Allows shrinking */
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            grid-template-rows: repeat(5, 1fr); 
+            gap: 6px; /* Tighter Gap */
+            padding: 5px 10px 10px 10px; 
             background: var(--bg-color); 
-            /* Ensure bottom padding accounts for iPhone bar */
-            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+            /* Safe area for iPhone bottom bar */
+            padding-bottom: calc(5px + env(safe-area-inset-bottom));
         }
         .k-btn { 
-            width: 100%; height: 100%; border-radius: 10px; 
+            width: 100%; height: 100%; border-radius: 8px; 
             border: 1px solid #555; background: var(--btn-bg); 
-            font-size: 22px; /* Font size adjusted */
+            font-size: 20px; /* Font size adjusted */
             font-weight: bold; color: var(--text-main); 
-            box-shadow: 0 3px 0 var(--btn-shadow); cursor: pointer; 
+            box-shadow: 0 2px 0 var(--btn-shadow); cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.1s;
         }
-        .k-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-shadow); background: #444; }
+        .k-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow); background: #444; }
         
         .ac { color: #ff6b6b; } 
         .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 3px 0 #e67e22; }
+        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 2px 0 #e67e22; }
         .eq:active { box-shadow: 0 1px 0 #e67e22; }
         
         /* DRAWER */
@@ -226,7 +226,7 @@
             renderList(); 
         }
         
-        // --- FIXED INPUT LOGIC FOR ZEROS ---
+        // --- INPUT LOGIC (Prevents premature conversion) ---
         function num(n){ 
             if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } 
             
@@ -236,7 +236,6 @@
             } 
             else {
                 if(input.replace('.','').length >= MAX_DIGITS) return;
-                
                 if(input === "0" && n !== ".") input = n;
                 else if(n === "." && input.includes(".")) return;
                 else input += n;
@@ -275,7 +274,6 @@
                 chain[chain.length - 1].o = o; 
             }
 
-            // When operator is pressed, we calculate result, but display formatted
             input = String(currentTotal);
             isNewStep = true;
             resShown = false;
@@ -366,7 +364,6 @@
             renderList();
         }
 
-        // --- NEW CLEAR HISTORY FUNCTION ---
         function clearHistory() {
             if(confirm("Clear calculation history?")) {
                 tape = [];
@@ -376,7 +373,6 @@
             }
         }
 
-        // --- RENDER FUNCTION (FIXED FOR ZEROS) ---
         function render(){ 
             let dV=input, dO=""; 
             let stepNum=0; 
@@ -401,21 +397,16 @@
                 stepNum=chain.length+(isNewStep?0:1);
             } 
             
-            // --- FIX START: ONLY FORMAT IF RESULT OR HISTORY ---
-            // If user is typing (not reviewing, not editing result), show RAW string
             if(idx === -1 && !resShown && !isNewStep) {
-                ui.main.innerText = dV; // Shows "0.920" exactly as typed
+                ui.main.innerText = dV; 
             } else {
-                // Formatting for results (removes trailing zeros)
                 ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
             }
-            // --- FIX END ---
             
             ui.op.innerText = dO.replace('*','×').replace('/','÷'); 
             ui.step.innerText = String(stepNum).padStart(2,'0'); 
             
-            // Auto-Resize Font
-            let s=55; 
+            let s=50; 
             ui.main.style.fontSize=s+"px";
             while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30){
                 s-=5; 
