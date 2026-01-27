@@ -25,38 +25,46 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            margin: 0; padding: 0; 
-            height: 100vh; height: 100dvh; /* Dynamic Height for Mobile */
-            width: 100%; 
+        /* LOCK THE PAGE (NO BOUNCE/SCROLL) */
+        html, body { 
+            height: 100%; width: 100%; 
+            margin: 0; padding: 0;
+            overflow: hidden; /* Stops scrolling */
+            position: fixed; /* Stops bouncing on iOS/Android */
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; 
-            overflow: hidden; overscroll-behavior: none; 
-            padding-top: env(safe-area-inset-top);
         }
         
-        /* TOP BAR (Compact) */
+        /* SAFE AREA TOP FIX */
+        .safe-area-top {
+            height: env(safe-area-inset-top);
+            background: #1a1d24;
+            flex-shrink: 0;
+        }
+
+        /* TOP BAR */
         .top-bar { 
-            height: 45px; background: #1a1d24; display: flex; align-items: center; 
+            height: 45px; 
+            background: #1a1d24; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
-            justify-content: space-between; flex-shrink: 0; position: relative;
+            justify-content: space-between; flex-shrink: 0;
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .app-title { font-size: 16px; font-weight: bold; letter-spacing: 1px; color: #fff; }
         
         /* MENU */
         #menuPopup { 
-            display: none; position: absolute; top: 45px; left: 10px; width: 200px; 
+            display: none; position: absolute; top: 50px; left: 10px; width: 200px; 
             background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
             z-index: 2000; flex-direction: column; border: 1px solid #555; 
         }
         .menu-item { padding: 15px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; }
         .menu-icon-span { margin-right: 12px; font-size: 18px; }
         
-        /* SCREEN (Height Reduced to 22%) */
+        /* SCREEN (Flexible Height) */
         .screen { 
-            flex: 0 0 22%; /* Reduced from 25% */
+            flex: 0 0 20%; /* Takes 20% of remaining height */
             background: #222831; padding: 5px 15px; 
             display: flex; flex-direction: column; border-bottom: 1px solid #333; 
         }
@@ -65,36 +73,34 @@
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
         .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 50px; line-height: 1; letter-spacing: 2px; }
         
-        /* CONTROLS (Compact) */
+        /* CONTROLS */
         .controls { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
             padding: 6px 10px; background: var(--bg-color); flex-shrink: 0; 
         }
         .c-btn { 
             background: var(--btn-bg); border: 1px solid #555; 
-            padding: 10px 0; /* Reduced Padding */
-            border-radius: 8px; font-weight: bold; font-size: 11px; 
+            padding: 10px 0; 
+            border-radius: 8px; font-weight: bold; font-size: 12px; 
             box-shadow: 0 2px 0 var(--btn-shadow); color: #eee; cursor: pointer;
         }
         .c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow); }
         
-        /* KEYPAD (Takes remaining space) */
+        /* KEYPAD (Fills remaining space) */
         .keypad { 
-            flex: 1; /* Takes all remaining height */
-            min-height: 0; /* Allows shrinking */
+            flex: 1; /* Fills all remaining space */
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             grid-template-rows: repeat(5, 1fr); 
-            gap: 6px; /* Tighter Gap */
-            padding: 5px 10px 10px 10px; 
+            gap: 6px; 
+            padding: 5px 10px; 
             background: var(--bg-color); 
-            /* Safe area for iPhone bottom bar */
-            padding-bottom: calc(5px + env(safe-area-inset-bottom));
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
         .k-btn { 
             width: 100%; height: 100%; border-radius: 8px; 
             border: 1px solid #555; background: var(--btn-bg); 
-            font-size: 20px; /* Font size adjusted */
+            font-size: 20px; 
             font-weight: bold; color: var(--text-main); 
             box-shadow: 0 2px 0 var(--btn-shadow); cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
@@ -104,7 +110,6 @@
         .ac { color: #ff6b6b; } 
         .op { color: var(--primary); } 
         .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 2px 0 #e67e22; }
-        .eq:active { box-shadow: 0 1px 0 #e67e22; }
         
         /* DRAWER */
         .drawer { 
@@ -124,6 +129,7 @@
 </head>
 <body onload="init()">
     
+    <div class="safe-area-top"></div>
     <div class="top-bar"> 
         <div class="menu-icon" onclick="toggleMenu()">☰</div> 
         <span class="app-title">Casio RS-120D</span> 
@@ -198,244 +204,30 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
         }
-
-        function toggleMenu() { 
-            const m = document.getElementById('menuPopup'); 
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
-        }
+        function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
         window.addEventListener('click', function(e) {
-            const m = document.getElementById('menuPopup');
-            const btn = document.querySelector('.menu-icon');
-            if (e.target !== m && e.target !== btn && !m.contains(e.target)) {
-                m.style.display = 'none';
-            }
+            const m = document.getElementById('menuPopup'); const btn = document.querySelector('.menu-icon');
+            if (e.target !== m && e.target !== btn && !m.contains(e.target)) { m.style.display = 'none'; }
         });
-
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
-        let currentTotal = 0;
-        let lastOp = "";
-        const MAX_DIGITS = 12;
-
+        let currentTotal = 0; let lastOp = ""; const MAX_DIGITS = 12;
         const ui={main:document.getElementById('mainDisp'),op:document.getElementById('opDisp'),step:document.getElementById('step'),list:document.getElementById('list')};
-        
-        function init(){ 
-            if(localStorage.getItem('casio_data')) { 
-                try { tape=JSON.parse(localStorage.getItem('casio_data')); } catch(e){tape=[];} 
-            } 
-            render(); 
-            renderList(); 
-        }
-        
-        // --- INPUT LOGIC (Prevents premature conversion) ---
-        function num(n){ 
-            if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } 
-            
-            if(isNewStep){ 
-                input = n === "." ? "0." : n; 
-                isNewStep = false; 
-            } 
-            else {
-                if(input.replace('.','').length >= MAX_DIGITS) return;
-                if(input === "0" && n !== ".") input = n;
-                else if(n === "." && input.includes(".")) return;
-                else input += n;
-            } 
-            render(); 
-        }
-
-        function executePrev(val) {
-            if (chain.length === 0) return;
-            let prevOp = chain[chain.length - 1].o;
-            switch (prevOp) {
-                case '+': currentTotal += val; break;
-                case '-': currentTotal -= val; break;
-                case '*': currentTotal *= val; break;
-                case '/': currentTotal /= val; break;
-                case '%': currentTotal = (currentTotal * val) / 100; break; 
-            }
-        }
-
-        function op(o){ 
-            if(edit)return; 
-            let val = parseFloat(input) || 0;
-
-            if (chain.length === 0) {
-                currentTotal = val;
-            } else if (!isNewStep) {
-                executePrev(val);
-            }
-
-            if (idx !== -1) { idx = -1; chain = []; } 
-
-            if (!isNewStep || o !== lastOp) {
-                chain.push({ v: input, o: o });
-                lastOp = o;
-            } else {
-                chain[chain.length - 1].o = o; 
-            }
-
-            input = String(currentTotal);
-            isNewStep = true;
-            resShown = false;
-            render(); 
-        }
-
-        function eq(){ 
-            if(edit){finishCorr();return;} 
-            if(input==="" || (isNewStep && chain.length === 0)) return; 
-            
-            let val = parseFloat(input) || 0;
-            executePrev(val);
-
-            chain.push({v:input,o:'='}); 
-            chain.push({v:String(currentTotal),o:'ANS'});
-            tape.push([...chain]);
-            save();
-            
-            input = String(currentTotal);
-            resShown = true;
-            isNewStep = true;
-            
-            chain = [];
-            currentTotal = 0;
-            
-            render();
-            renderList();
-        }
-
-        function AC(){ 
-            chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; currentTotal=0; lastOp=""; 
-            render(); 
-        }
-        
-        function del(){ 
-            if(resShown||isNewStep)return; 
-            input=input.toString().slice(0,-1) || "0"; 
-            render(); 
-        }
-        
-        function prev(){ 
-            if(tape.length && idx===-1){ chain=tape[tape.length-1]; idx=chain.length-1; }
-            else if(idx>0) idx--; 
-            render(); 
-        }
-        
-        function next(){ 
-            if(idx!==-1 && idx<chain.length-1) idx++; 
-            render(); 
-        }
-        
-        function correct(){ 
-            if(idx!==-1 && chain[idx].o!=='ANS'){ 
-                edit=true; 
-                input=chain[idx].v; 
-                isNewStep=false; 
-                render(); 
-            } 
-        }
-        
-        function finishCorr(){ 
-            chain[idx].v = input; 
-            let newChain = chain.slice(0, chain.length - 1); 
-            let tempTotal = 0;
-            
-            newChain.forEach((item, i) => {
-                let v = parseFloat(item.v);
-                if (i === 0) tempTotal = v;
-                else {
-                    let pOp = newChain[i-1].o;
-                    if(pOp === '+') tempTotal += v;
-                    else if(pOp === '-') tempTotal -= v;
-                    else if(pOp === '*') tempTotal *= v;
-                    else if(pOp === '/') tempTotal /= v;
-                }
-            });
-
-            newChain.push({v:String(tempTotal),o:'ANS'});
-            chain = newChain;
-            tape[tape.length-1] = chain; 
-            save();
-            
-            edit = false;
-            input = String(tempTotal);
-            resShown = true;
-            idx = -1;
-            render();
-            renderList();
-        }
-
-        function clearHistory() {
-            if(confirm("Clear calculation history?")) {
-                tape = [];
-                save();
-                renderList();
-                toggleDrawer();
-            }
-        }
-
-        function render(){ 
-            let dV=input, dO=""; 
-            let stepNum=0; 
-            
-            if(edit){ 
-                dV=input; dO="EDIT"; 
-                document.getElementById('mode').innerText = "CRT";
-                document.getElementById('mode').style.display="block"; 
-                stepNum=idx+1; 
-            } 
-            else if(idx!==-1){ 
-                let item=chain[idx]; 
-                dV=item.v; 
-                dO=item.o==='ANS'?'=':item.o; 
-                document.getElementById('mode').innerText = "REV";
-                document.getElementById('mode').style.display="block"; 
-                stepNum=idx+1; 
-            } 
-            else{
-                document.getElementById('mode').style.display="none";
-                if(chain.length>0 && !resShown) dO=chain[chain.length-1].o;
-                stepNum=chain.length+(isNewStep?0:1);
-            } 
-            
-            if(idx === -1 && !resShown && !isNewStep) {
-                ui.main.innerText = dV; 
-            } else {
-                ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-            }
-            
-            ui.op.innerText = dO.replace('*','×').replace('/','÷'); 
-            ui.step.innerText = String(stepNum).padStart(2,'0'); 
-            
-            let s=50; 
-            ui.main.style.fontSize=s+"px";
-            while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30){
-                s-=5; 
-                ui.main.style.fontSize=s+"px";
-            } 
-        }
-
+        function init(){ if(localStorage.getItem('casio_data')) { try { tape=JSON.parse(localStorage.getItem('casio_data')); } catch(e){tape=[];} } render(); renderList(); }
+        function num(n){ if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } if(isNewStep){ input = n === "." ? "0." : n; isNewStep = false; } else { if(input.replace('.','').length >= MAX_DIGITS) return; if(input === "0" && n !== ".") input = n; else if(n === "." && input.includes(".")) return; else input += n; } render(); }
+        function executePrev(val) { if (chain.length === 0) return; let prevOp = chain[chain.length - 1].o; switch (prevOp) { case '+': currentTotal += val; break; case '-': currentTotal -= val; break; case '*': currentTotal *= val; break; case '/': currentTotal /= val; break; case '%': currentTotal = (currentTotal * val) / 100; break; } }
+        function op(o){ if(edit)return; let val = parseFloat(input) || 0; if (chain.length === 0) { currentTotal = val; } else if (!isNewStep) { executePrev(val); } if (idx !== -1) { idx = -1; chain = []; } if (!isNewStep || o !== lastOp) { chain.push({ v: input, o: o }); lastOp = o; } else { chain[chain.length - 1].o = o; } input = String(currentTotal); isNewStep = true; resShown = false; render(); }
+        function eq(){ if(edit){finishCorr();return;} if(input==="" || (isNewStep && chain.length === 0)) return; let val = parseFloat(input) || 0; executePrev(val); chain.push({v:input,o:'='}); chain.push({v:String(currentTotal),o:'ANS'}); tape.push([...chain]); save(); input = String(currentTotal); resShown = true; isNewStep = true; chain = []; currentTotal = 0; render(); renderList(); }
+        function AC(){ chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; currentTotal=0; lastOp=""; render(); }
+        function del(){ if(resShown||isNewStep)return; input=input.toString().slice(0,-1) || "0"; render(); }
+        function prev(){ if(tape.length && idx===-1){ chain=tape[tape.length-1]; idx=chain.length-1; } else if(idx>0) idx--; render(); }
+        function next(){ if(idx!==-1 && idx<chain.length-1) idx++; render(); }
+        function correct(){ if(idx!==-1 && chain[idx].o!=='ANS'){ edit=true; input=chain[idx].v; isNewStep=false; render(); } }
+        function finishCorr(){ chain[idx].v = input; let newChain = chain.slice(0, chain.length - 1); let tempTotal = 0; newChain.forEach((item, i) => { let v = parseFloat(item.v); if (i === 0) tempTotal = v; else { let pOp = newChain[i-1].o; if(pOp === '+') tempTotal += v; else if(pOp === '-') tempTotal -= v; else if(pOp === '*') tempTotal *= v; else if(pOp === '/') tempTotal /= v; } }); newChain.push({v:String(tempTotal),o:'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); edit = false; input = String(tempTotal); resShown = true; idx = -1; render(); renderList(); }
+        function clearHistory() { if(confirm("Clear calculation history?")) { tape = []; save(); renderList(); toggleDrawer(); } }
+        function render(){ let dV=input, dO=""; let stepNum=0; if(edit){ dV=input; dO="EDIT"; document.getElementById('mode').innerText = "CRT"; document.getElementById('mode').style.display="block"; stepNum=idx+1; } else if(idx!==-1){ let item=chain[idx]; dV=item.v; dO=item.o==='ANS'?'=':item.o; document.getElementById('mode').innerText = "REV"; document.getElementById('mode').style.display="block"; stepNum=idx+1; } else{ document.getElementById('mode').style.display="none"; if(chain.length>0 && !resShown) dO=chain[chain.length-1].o; stepNum=chain.length+(isNewStep?0:1); } if(idx === -1 && !resShown && !isNewStep) { ui.main.innerText = dV; } else { ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); } ui.op.innerText = dO.replace('*','×').replace('/','÷'); ui.step.innerText = String(stepNum).padStart(2,'0'); let s=50; ui.main.style.fontSize=s+"px"; while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30){ s-=5; ui.main.style.fontSize=s+"px"; } }
         function save(){ localStorage.setItem('casio_data',JSON.stringify(tape)); }
         function toggleDrawer(){ document.getElementById('drawer').classList.toggle('open'); }
-        
-        function renderList(){ 
-            if(!tape.length) { ui.list.innerHTML = "<div style='text-align:center; color:#555;'>Empty</div>"; return; }
-            
-            ui.list.innerHTML = tape.map(t => { 
-                let resObj = t.find(x => x.o==='ANS'); 
-                let result = resObj ? resObj.v : "0"; 
-                let expr = t.reduce((a,c) => {
-                    if(c.o==='ANS') return a;
-                    let sym = c.o.replace('*','×').replace('/','÷');
-                    return a + c.v + (sym==='=' ? '' : ' '+sym+' ');
-                },""); 
-                
-                let formattedRes = parseFloat(result).toLocaleString('en-IN', {maximumFractionDigits: 10});
-                return `<div class="d-row">
-                            <span style="color:#aaa; font-size:14px;">${expr}=</span>
-                            <span style="color:#fff; font-weight:bold; font-size:16px;">${formattedRes}</span>
-                        </div>`; 
-            }).reverse().join(''); 
-        }
+        function renderList(){ if(!tape.length) { ui.list.innerHTML = "<div style='text-align:center; color:#555;'>Empty</div>"; return; } ui.list.innerHTML = tape.map(t => { let resObj = t.find(x => x.o==='ANS'); let result = resObj ? resObj.v : "0"; let expr = t.reduce((a,c) => { if(c.o==='ANS') return a; let sym = c.o.replace('*','×').replace('/','÷'); return a + c.v + (sym==='=' ? '' : ' '+sym+' '); },""); let formattedRes = parseFloat(result).toLocaleString('en-IN', {maximumFractionDigits: 10}); return `<div class="d-row"> <span style="color:#aaa; font-size:14px;">${expr}=</span> <span style="color:#fff; font-weight:bold; font-size:16px;">${formattedRes}</span> </div>`; }).reverse().join(''); }
     </script>
 </body>
 </html>
