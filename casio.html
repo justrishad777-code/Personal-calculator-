@@ -130,7 +130,6 @@
         function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
         
-        // কাসিও স্টাইল হিসাবের জন্য অতিরিক্ত ভেরিয়েবল
         let currentTotal = 0;
         let lastOp = "";
 
@@ -150,7 +149,6 @@
             render(); 
         }
 
-        // কাসিও স্টাইল ইমিডিয়েট এক্সিকিউশন লজিক
         function executePrev(val) {
             if (chain.length === 0) return;
             let prevOp = chain[chain.length - 1].o;
@@ -173,7 +171,7 @@
                 executePrev(val);
             }
 
-            if (idx !== -1) { idx = -1; chain = []; } // রিভিউ মোড থেকে বের হওয়া
+            if (idx !== -1) { idx = -1; chain = []; }
 
             if (!isNewStep || o !== lastOp) {
                 chain.push({ v: input, o: o });
@@ -205,8 +203,6 @@
             resShown = true;
             isNewStep = true;
             
-            // রেজাল্ট দেখানোর পর চেইন ক্লিয়ার করা হয় কাসিও স্টাইলে নতুন হিসাবের জন্য
-            let finalChain = [...chain];
             chain = [];
             currentTotal = 0;
             
@@ -229,7 +225,6 @@
             let newChain = chain.slice(0, chain.length - 1);
             let tempTotal = 0;
             
-            // নতুন করে ধাপে ধাপে হিসাব করা
             newChain.forEach((item, i) => {
                 let v = parseFloat(item.v);
                 if (i === 0) tempTotal = v;
@@ -264,7 +259,10 @@
                 if(chain.length>0 && !resShown) dO=chain[chain.length-1].o;
                 stepNum=chain.length+(isNewStep?0:1);
             } 
-            ui.main.innerText=parseFloat(dV).toLocaleString(undefined,{maximumFractionDigits:10}); 
+            
+            // Indian Style Comma (en-IN) restored
+            ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
+            
             ui.op.innerText=dO.replace('*','×').replace('/','÷'); 
             ui.step.innerText=String(stepNum).padStart(2,'0'); 
             let s=45;ui.main.style.fontSize=s+"px";while(ui.main.scrollWidth>ui.main.parentElement.clientWidth&&s>30){s-=5;ui.main.style.fontSize=s+"px";} 
@@ -282,7 +280,10 @@
                     let sym=c.o.replace('*','×').replace('/','÷');
                     return a+c.v+(sym==='='?'':' '+sym+' ');
                 },""); 
-                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${expr}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${parseFloat(result).toLocaleString()}</span></div>`; 
+                
+                // History Indian Formatting
+                let formattedRes = parseFloat(result).toLocaleString('en-IN', {maximumFractionDigits: 10});
+                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${expr}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${formattedRes}</span></div>`; 
             }).reverse().join(''); 
         }
     </script>
