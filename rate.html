@@ -27,28 +27,29 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* --- CRITICAL FIX: STOP SHAKING/MOVING --- */
+        /* --- FIX: REMOVED 'position: fixed' to solve FREEZING --- */
         html, body { 
-            height: 100%; width: 100%; 
+            height: 100vh; 
+            height: 100dvh; /* Dynamic Height */
+            width: 100%; 
             margin: 0; padding: 0;
-            overflow: hidden;         /* পুরো বডি স্ক্রল বন্ধ */
-            position: fixed;          /* বাউন্স বন্ধ করার জন্য ফিক্সড */
-            overscroll-behavior: none; 
+            overflow: hidden; /* Body scroll off */
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            display: flex; flex-direction: column;
+            overscroll-behavior: none; /* Anti-bounce */
         }
 
         .app-container {
             display: flex; flex-direction: column;
             height: 100%; width: 100%;
+            overflow: hidden;
         }
 
-        /* SAFE AREA TOP (For Notch) */
+        /* SAFE AREA TOP */
         .safe-area-top { height: env(safe-area-inset-top); background: #1a1d24; flex-shrink: 0; }
 
-        /* HEADER (Fixed at top) */
+        /* HEADER */
         .header {
             height: 50px; background: #1a1d24; 
             display: flex; align-items: center; padding: 0 15px;
@@ -69,13 +70,13 @@
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
 
-        /* SCROLLABLE CONTENT (Only this part scrolls) */
+        /* SCROLLABLE CONTENT (Internal Scroll Enabled) */
         .scrollable-page { 
             flex: 1; 
-            overflow-y: auto; 
+            overflow-y: auto; /* Scroll ON */
             padding: 15px; 
-            padding-bottom: 300px; /* কিপ্যাডের জন্য জায়গা */
-            -webkit-overflow-scrolling: touch;
+            padding-bottom: 300px; 
+            -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
         }
         
         .card {
@@ -143,15 +144,15 @@
         .casio-k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 22px; font-weight: bold; border-radius: 8px; color: #eee; }
         .casio-k-btn:active { background: #555; }
 
-        /* --- INVOICE LAYOUT FIX (Hidden Overlay) --- */
+        /* INVOICE LAYOUT */
         #invoice-layout {
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%;
             background: #fff; 
             padding: 20px; 
             font-family: 'Segoe UI', sans-serif; color: #000;
-            z-index: 9999; /* সবার উপরে শো করবে */
-            display: none; /* ডিফল্টভাবে লুকানো */
+            z-index: 9999; 
+            display: none; 
             overflow-y: auto;
         }
         .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
@@ -349,4 +350,5 @@
 
     function focusField(el) { document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); el.classList.add('active-field'); currentInput = el; document.getElementById('customKeypad').classList.add('open'); }
     function closeKeypad() { document.getElementById('customKeypad').classList.remove('open'); if(currentInput) { currentInput.classList.remove('active-field'); if(currentInput.classList.contains('editing')) { currentInput.classList.remove('editing'); currentInput.style.pointerEvents = "none"; } currentInput = null; } }
-    function enableEdit(id) { let el = document.getEl
+    function enableEdit(id) { let el = document.getElementById(id); el.style.pointerEvents = "auto"; el.classList.add('editing'); focusField(el); }
+    f
