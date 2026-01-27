@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gold-app-v2'; // I changed v1 to v2 to force a fresh update
+const CACHE_NAME = 'gold-app-v3'; // Bumped version to force update
 const ASSETS = [
   './',
   './index.html',
@@ -8,47 +8,56 @@ const ASSETS = [
   './settings.html',
   './manifest.json',
   './logo.png',
-  // External library you are using
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 
-// 1. INSTALL EVENT
-// Caches the files when the app is first loaded
+// 1. INSTALL: Cache resources
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Forces this SW to become active immediately
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching all files');
       return cache.addAll(ASSETS);
     })
   );
 });
 
-// 2. ACTIVATE EVENT (CRITICAL FOR UPDATES)
-// Deletes old cache versions so the app doesn't freeze on old code
+// 2. ACTIVATE: Cleanup old caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[Service Worker] Removing old cache', key);
             return caches.delete(key);
           }
         })
       );
     })
   );
-  return self.clients.claim(); // Takes control of the page immediately
+  return self.clients.claim();
 });
 
-// 3. FETCH EVENT
-// Serve from Cache first, then fall back to Network
+// 3. FETCH: The CRITICAL part for installation
+// We use a "Stale-While-Revalidate" strategy here.
+// It tries to serve from cache fast, but also updates the cache in the background.
 self.addEventListener('fetch', (e) => {
+  // Only handle http/https requests
+  if (!e.request.url.startsWith('http')) return;
+
   e.respondWith(
-    caches.match(e.request).then((response) => {
-      // Return cached file if found, otherwise try to fetch from network
-      return response || fetch(e.request);
+    caches.match(e.request).then((cachedResponse) => {
+      // Even if we find it in cache, we kick off a fetch to update it for next time
+      const fetchPromise = fetch(e.request).then((networkResponse) => {
+        // Clone response to put in cache
+        const clone = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, clone);
+        });
+        return networkResponse;
+      });
+
+      // Return cached response right away if we have it, otherwise wait for network
+      return cachedResponse || fetchPromise;
     })
   );
 });
