@@ -14,7 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 
     <style>
-        /* --- DARK COMFORT THEME --- */
         :root { 
             --primary: #ffaf40;    
             --secondary: #48dbfb;  
@@ -28,18 +27,30 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            margin: 0; padding: 0; 
-            font-family: 'Segoe UI', sans-serif; 
+        /* --- CRITICAL FIX: STOP SHAKING/MOVING --- */
+        html, body { 
+            height: 100%; width: 100%; 
+            margin: 0; padding: 0;
+            overflow: hidden;         /* পুরো বডি স্ক্রল বন্ধ */
+            position: fixed;          /* বাউন্স বন্ধ করার জন্য ফিক্সড */
+            overscroll-behavior: none; 
             background: var(--bg-color); 
+            font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            display: flex; flex-direction: column; height: 100vh;
-            padding-top: env(safe-area-inset-top);
+            display: flex; flex-direction: column;
         }
 
-        /* HEADER */
+        .app-container {
+            display: flex; flex-direction: column;
+            height: 100%; width: 100%;
+        }
+
+        /* SAFE AREA TOP (For Notch) */
+        .safe-area-top { height: env(safe-area-inset-top); background: #1a1d24; flex-shrink: 0; }
+
+        /* HEADER (Fixed at top) */
         .header {
-            height: 60px; background: #1a1d24; 
+            height: 50px; background: #1a1d24; 
             display: flex; align-items: center; padding: 0 15px;
             border-bottom: 1px solid #333; color: white;
             justify-content: space-between; z-index: 100; flex-shrink: 0;
@@ -47,9 +58,9 @@
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .logo-img { height: 35px; }
 
-        /* MENU POPUP */
+        /* MENU */
         #menuPopup {
-            display: none; position: absolute; top: 60px; left: 10px; width: 200px;
+            display: none; position: absolute; top: 50px; left: 10px; width: 200px;
             background: #393e46; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 2000; flex-direction: column; border: 1px solid #555;
         }
@@ -58,8 +69,14 @@
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
 
-        /* SCROLLABLE CONTENT */
-        .scrollable-page { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 300px; } /* Extra padding for keypad */
+        /* SCROLLABLE CONTENT (Only this part scrolls) */
+        .scrollable-page { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px; 
+            padding-bottom: 300px; /* কিপ্যাডের জন্য জায়গা */
+            -webkit-overflow-scrolling: touch;
+        }
         
         .card {
             background: var(--card-bg); border-radius: 15px; padding: 20px;
@@ -83,75 +100,36 @@
             margin-top: 15px; font-weight: bold; background: var(--input-bg); color: var(--text-main);
         }
 
-        /* TABS */
         .tab-box { display: flex; gap: 10px; margin-bottom: 20px; }
-        .t-btn {
-            flex: 1; padding: 10px; border: none; border-radius: 8px;
-            background: #222831; color: #aaa; font-weight: bold; cursor: pointer; border: 1px solid #444;
-        }
+        .t-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: #222831; color: #aaa; font-weight: bold; cursor: pointer; border: 1px solid #444; }
         .active-22 { background: var(--primary); color: #000; border: none; }
         .active-21 { background: var(--secondary); color: #000; border: none; }
         .active-both { background: #fff; color: #333; border: none; }
         .hidden { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-        /* RESULT BOXES */
         .rate-box {
             font-size: 14px; font-weight: bold; color: #ccc; 
             background: #2a3038; 
             padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 5px;
-            display: flex; align-items: center; border: 1px solid #444;
-            height: 50px;
+            display: flex; align-items: center; border: 1px solid #444; height: 50px;
         }
         .rate-label { white-space: nowrap; margin-right: 10px; color: #aaa; }
-        .result-group {
-            display: flex; align-items: center; justify-content: flex-end;
-            flex: 1; min-width: 0; position: relative; height: 100%;
-        }
-        .dynamic-input {
-            border: none; background: transparent; font-weight: bold; text-align: right;
-            width: 100%; padding: 0; margin: 0;
-            color: inherit; font-size: 20px; pointer-events: none;
-        }
-        .edit-btn {
-            font-size: 10px; color: #000; background: #ccc; padding: 4px 8px;
-            border-radius: 4px; cursor: pointer; text-transform: uppercase;
-            font-weight: bold; border: none; margin-left: 10px; flex-shrink: 0;
-        }
+        .result-group { display: flex; align-items: center; justify-content: flex-end; flex: 1; height: 100%; }
+        .dynamic-input { border: none; background: transparent; font-weight: bold; text-align: right; width: 100%; color: inherit; font-size: 20px; pointer-events: none; }
+        .edit-btn { font-size: 10px; color: #000; background: #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; margin-left: 10px; flex-shrink: 0; }
         
-        /* GRAND TOTAL */
-        .grand-box {
-            background: #2a3038; padding: 15px; border-radius: 15px;
-            text-align: center; border: 1px solid #444; margin-top: 15px;
-            position: relative; display: flex; flex-direction: column; align-items: center;
-        }
-        .grand-input {
-            width: 100%; border: none; background: transparent; font-size: 30px;
-            font-weight: 900; color: #fff; text-align: center;
-            pointer-events: none; margin-top: 5px;
-        }
+        .grand-box { background: #2a3038; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #444; margin-top: 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .grand-input { width: 100%; border: none; background: transparent; font-size: 30px; font-weight: 900; color: #fff; text-align: center; pointer-events: none; margin-top: 5px; }
 
-        /* PURITY RADIO */
         .purity-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
         .p-radio { display: none; }
-        .p-label {
-            padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;
-            border: 1px solid #555; cursor: pointer; color: #aaa; background: #222831;
-            transition: 0.2s;
-        }
+        .p-label { padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 1px solid #555; cursor: pointer; color: #aaa; background: #222831; transition: 0.2s; }
         .p-radio:checked + .p-label { background: #eee; color: #000; border-color: #eee; }
         
-        /* ACTIVE & EDIT STATES */
-        .active-field {
-            border: 2px solid var(--primary) !important; background: #4a3b2a !important; 
-            box-shadow: 0 0 10px rgba(255, 175, 64, 0.3); color: #fff !important;
-        }
+        .active-field { border: 2px solid var(--primary) !important; background: #4a3b2a !important; color: #fff !important; }
         .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; background: rgba(255, 255, 255, 0.1); }
-        .btn-action {
-            width: 100%; padding: 15px; background: #fff; color: #333;
-            border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
-            margin-top: 20px; cursor: pointer;
-        }
+        .btn-action { width: 100%; padding: 15px; background: #fff; color: #333; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
         /* KEYPAD */
         #customKeypad {
@@ -162,16 +140,19 @@
         }
         #customKeypad.open { bottom: 0; }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .casio-k-btn {
-            background: #393e46; border: 1px solid #555; padding: 15px; 
-            font-size: 22px; font-weight: bold; border-radius: 8px; color: #eee;
-        }
+        .casio-k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 22px; font-weight: bold; border-radius: 8px; color: #eee; }
         .casio-k-btn:active { background: #555; }
 
-        /* INVOICE LAYOUT (HIDDEN) */
+        /* --- INVOICE LAYOUT FIX (Hidden Overlay) --- */
         #invoice-layout {
-            display: none; width: 100%; background: #fff; padding: 20px; 
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: #fff; 
+            padding: 20px; 
             font-family: 'Segoe UI', sans-serif; color: #000;
+            z-index: 9999; /* সবার উপরে শো করবে */
+            display: none; /* ডিফল্টভাবে লুকানো */
+            overflow-y: auto;
         }
         .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
         .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
@@ -186,6 +167,7 @@
 </head>
 <body onload="appInit()">
 
+<div class="safe-area-top"></div>
 <div class="app-container">
     <div class="header">
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
@@ -216,14 +198,8 @@
                 <div style="color:var(--primary); font-weight:bold; margin-bottom:5px; text-align:center;">22 Karat</div>
                 
                 <div class="purity-box">
-                    <label>
-                        <input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()">
-                        <span class="p-label">92.6%</span>
-                    </label>
-                    <label>
-                        <input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()">
-                        <span class="p-label">92.0%</span>
-                    </label>
+                    <label><input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()"><span class="p-label">92.6%</span></label>
+                    <label><input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()"><span class="p-label">92.0%</span></label>
                 </div>
 
                 <div class="grid-2">
@@ -254,16 +230,9 @@
 
             <div id="sec21" class="sec-21 hidden">
                 <div style="color:var(--secondary); font-weight:bold; margin-bottom:5px; text-align:center;">21 Karat</div>
-
                 <div class="purity-box">
-                    <label>
-                        <input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()">
-                        <span class="p-label">88.5%</span>
-                    </label>
-                    <label>
-                        <input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()">
-                        <span class="p-label">88.0%</span>
-                    </label>
+                    <label><input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()"><span class="p-label">88.5%</span></label>
+                    <label><input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()"><span class="p-label">88.0%</span></label>
                 </div>
 
                 <div class="grid-2">
@@ -319,20 +288,11 @@
     </div>
     <table class="inv-table">
         <thead>
-            <tr>
-                <th>Description</th>
-                <th class="text-right">Rate/Bhori</th>
-                <th class="text-right">Weight (gm)</th>
-                <th class="text-right">Total</th>
-            </tr>
+            <tr><th>Description</th><th class="text-right">Rate/Bhori</th><th class="text-right">Weight (gm)</th><th class="text-right">Total</th></tr>
         </thead>
-        <tbody id="inv-body">
-            </tbody>
+        <tbody id="inv-body"></tbody>
         <tfoot>
-            <tr class="inv-total-row">
-                <td colspan="3" class="text-right">Grand Total</td>
-                <td class="text-right" id="inv-grand">0.00</td>
-            </tr>
+            <tr class="inv-total-row"><td colspan="3" class="text-right">Grand Total</td><td class="text-right" id="inv-grand">0.00</td></tr>
         </tfoot>
     </table>
     <div style="margin-top:30px; font-size:12px; text-align:center;">
@@ -363,28 +323,17 @@
     let currentInput = null;
     let currentTab = '22';
 
-    // 1. REGISTER SERVICE WORKER
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then(reg => console.log('SW Registered'))
-                .catch(err => console.log('SW Fail', err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
     }
 
-    // 2. INITIALIZATION
-    function appInit() {
-        setTab('22'); 
-        // Set today's date in invoice
-        document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
-    }
+    function appInit() { setTab('22'); document.getElementById('inv-date').innerText = new Date().toLocaleDateString(); }
+    function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+    window.addEventListener('click', function(e) {
+        const m = document.getElementById('menuPopup'); const btn = document.querySelector('.menu-icon');
+        if (e.target !== m && e.target !== btn && !m.contains(e.target)) { m.style.display = 'none'; }
+    });
 
-    function toggleMenu() {
-        const m = document.getElementById('menuPopup');
-        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    // 3. TAB LOGIC
     function setTab(tab) {
         currentTab = tab;
         document.getElementById('sec22').classList.add('hidden');
@@ -393,148 +342,11 @@
         document.getElementById('b21').className = 't-btn';
         document.getElementById('bBoth').className = 't-btn';
 
-        if(tab === '22') {
-            document.getElementById('sec22').classList.remove('hidden');
-            document.getElementById('b22').classList.add('active-22');
-        } else if(tab === '21') {
-            document.getElementById('sec21').classList.remove('hidden');
-            document.getElementById('b21').classList.add('active-21');
-        } else {
-            document.getElementById('sec22').classList.remove('hidden');
-            document.getElementById('sec21').classList.remove('hidden');
-            document.getElementById('bBoth').classList.add('active-both');
-        }
+        if(tab === '22') { document.getElementById('sec22').classList.remove('hidden'); document.getElementById('b22').classList.add('active-22'); }
+        else if(tab === '21') { document.getElementById('sec21').classList.remove('hidden'); document.getElementById('b21').classList.add('active-21'); }
+        else { document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); document.getElementById('bBoth').classList.add('active-both'); }
     }
 
-    // 4. KEYPAD LOGIC
-    function focusField(el) { 
-        document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); 
-        el.classList.add('active-field'); 
-        currentInput = el; 
-        document.getElementById('customKeypad').classList.add('open'); 
-    }
-
-    function closeKeypad() { 
-        document.getElementById('customKeypad').classList.remove('open'); 
-        if(currentInput) { 
-            currentInput.classList.remove('active-field'); 
-            if(currentInput.classList.contains('editing')) { 
-                currentInput.classList.remove('editing'); 
-                currentInput.style.pointerEvents = "none"; 
-            } 
-            currentInput = null; 
-        } 
-    }
-
-    function enableEdit(id) { 
-        let el = document.getElementById(id); 
-        el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); 
-        focusField(el); 
-    }
-
-    function press(key) { 
-        if(!currentInput) return; 
-        if(key === 'back') { 
-            currentInput.value = currentInput.value.slice(0, -1); 
-        } else if(key === '.') { 
-            if(!currentInput.value.includes('.')) currentInput.value += key; 
-        } else { 
-            currentInput.value += key; 
-        } 
-        calc(); 
-    }
-
-    // 5. CALCULATION LOGIC
-    function calc() { 
-        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
-
-        // --- 22K CALC ---
-        let p22Val = document.querySelector('input[name="p22"]:checked').value; 
-        let r22 = (((b * 3.674 / 31.1035 * parseFloat(p22Val)) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
-        
-        let rf22 = document.getElementById('rateView22'); 
-        if(!rf22.classList.contains('editing')) rf22.value = r22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-        
-        let w22 = parseFloat(document.getElementById('w22').value) || 0;
-        let t22 = r22 * (w22 / 11.664); 
-        let tf22 = document.getElementById('t22'); 
-        if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        // --- 21K CALC ---
-        let p21Val = document.querySelector('input[name="p21"]:checked').value; 
-        let r21 = (((b * 3.674 / 31.1035 * parseFloat(p21Val)) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
-        
-        let rf21 = document.getElementById('rateView21'); 
-        if(!rf21.classList.contains('editing')) rf21.value = r21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        let w21 = parseFloat(document.getElementById('w21').value) || 0;
-        let t21 = r21 * (w21 / 11.664); 
-        let tf21 = document.getElementById('t21'); 
-        if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        // --- GRAND TOTAL ---
-        // Clean strings (remove commas) to parse float
-        let total22 = parseFloat(tf22.value.replace(/,/g, '')) || 0;
-        let total21 = parseFloat(tf21.value.replace(/,/g, '')) || 0;
-        
-        let grand = 0;
-        if(currentTab === '22') grand = total22;
-        else if(currentTab === '21') grand = total21;
-        else grand = total22 + total21;
-
-        let gInput = document.getElementById('grandTotal');
-        if(!gInput.classList.contains('editing')) gInput.value = grand.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
-
-    // 6. PDF DOWNLOAD LOGIC
-    function downloadPDF() {
-        // 1. Populate Invoice Data
-        document.getElementById('inv-cName').innerText = document.getElementById('cName').value || 'Guest';
-        document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
-        
-        let tbody = document.getElementById('inv-body');
-        tbody.innerHTML = ''; // Clear old rows
-
-        // Add 22K Row if visible
-        if(currentTab === '22' || currentTab === 'both') {
-            let r = document.getElementById('rateView22').value;
-            let w = document.getElementById('w22').value || '0';
-            let t = document.getElementById('t22').value;
-            if(t !== '0.00') {
-                tbody.innerHTML += `<tr><td>22K Gold</td><td class="text-right">${r}</td><td class="text-right">${w}</td><td class="text-right">${t}</td></tr>`;
-            }
-        }
-
-        // Add 21K Row if visible
-        if(currentTab === '21' || currentTab === 'both') {
-            let r = document.getElementById('rateView21').value;
-            let w = document.getElementById('w21').value || '0';
-            let t = document.getElementById('t21').value;
-            if(t !== '0.00') {
-                tbody.innerHTML += `<tr><td>21K Gold</td><td class="text-right">${r}</td><td class="text-right">${w}</td><td class="text-right">${t}</td></tr>`;
-            }
-        }
-
-        document.getElementById('inv-grand').innerText = document.getElementById('grandTotal').value;
-
-        // 2. Generate PDF
-        const element = document.getElementById('invoice-layout');
-        element.style.display = 'block'; // Show momentarily for capture
-        
-        var opt = {
-            margin:       0.5,
-            filename:     'Invoice_' + new Date().getTime() + '.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none'; // Hide again
-        });
-    }
-</script>
-
-</body>
-</html>
+    function focusField(el) { document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); el.classList.add('active-field'); currentInput = el; document.getElementById('customKeypad').classList.add('open'); }
+    function closeKeypad() { document.getElementById('customKeypad').classList.remove('open'); if(currentInput) { currentInput.classList.remove('active-field'); if(currentInput.classList.contains('editing')) { currentInput.classList.remove('editing'); currentInput.style.pointerEvents = "none"; } currentInput = null; } }
+    function enableEdit(id) { let el = document.getEl
