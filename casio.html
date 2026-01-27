@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Casio Calculator</title>
+    <title>Casio RS-120D</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,20 +14,20 @@
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     
     <style>
-        /* --- DARK THEME VARIABLES --- */
         :root { 
-            --primary: #ffaf40;   /* Orange */
-            --secondary: #48dbfb; /* Blue */
-            --bg-color: #222831;  /* Dark Background */
-            --btn-bg: #393e46;    /* Dark Button */
-            --btn-shadow: #222;   /* Button Shadow */
-            --text-main: #eeeeee; /* White Text */
+            --primary: #ffaf40;   
+            --secondary: #48dbfb; 
+            --bg-color: #222831;  
+            --btn-bg: #393e46;    
+            --btn-shadow: #222;   
+            --text-main: #eeeeee; 
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             margin: 0; padding: 0; 
+            /* Fix for content cutoff on mobile */
             height: 100vh; height: 100dvh; 
             width: 100%; 
             background: var(--bg-color); 
@@ -52,10 +52,7 @@
             background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
             z-index: 2000; flex-direction: column; border: 1px solid #555; 
         }
-        .menu-item { 
-            padding: 15px; text-decoration: none; color: #eee; 
-            border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; 
-        }
+        .menu-item { padding: 15px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; }
         .menu-item:hover { background: #444; }
         .menu-icon-span { margin-right: 12px; font-size: 18px; }
         
@@ -64,31 +61,20 @@
             flex: 0 0 25%; background: #222831; padding: 10px 20px; 
             display: flex; flex-direction: column; border-bottom: 1px solid #333; 
         }
-        .indicators { 
-            display: flex; justify-content: space-between; color: #777; 
-            height: 20px; font-size: 14px; font-weight: bold;
-        }
-        .op-display { 
-            text-align: right; color: var(--primary); font-size: 20px; 
-            height: 30px; font-family: monospace; margin-top: 5px;
-        }
-        .main-display { 
-            flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; 
-            overflow: hidden; padding-bottom: 5px;
-        }
-        .main-text { 
-            font-family: 'Digital-7 Mono', monospace; color: #fff; 
-            font-size: 55px; line-height: 1; letter-spacing: 2px;
-        }
+        .indicators { display: flex; justify-content: space-between; color: #777; height: 20px; font-size: 14px; font-weight: bold; }
+        .op-display { text-align: right; color: var(--primary); font-size: 20px; height: 30px; font-family: monospace; margin-top: 5px; }
+        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; padding-bottom: 5px; }
+        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 55px; line-height: 1; letter-spacing: 2px; }
         
-        /* CONTROLS (FUNCTION KEYS) */
+        /* CONTROLS */
         .controls { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
-            padding: 10px 15px; background: var(--bg-color); flex-shrink: 0; 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; /* Gap reduced */
+            padding: 8px 15px; background: var(--bg-color); flex-shrink: 0; 
         }
         .c-btn { 
             background: var(--btn-bg); border: 1px solid #555; 
-            padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 13px; 
+            padding: 12px 0; /* Padding reduced */
+            border-radius: 8px; font-weight: bold; font-size: 12px; 
             box-shadow: 0 3px 0 var(--btn-shadow); color: #eee; cursor: pointer;
             transition: all 0.1s;
         }
@@ -98,27 +84,29 @@
         .keypad { 
             flex: 1; display: grid; 
             grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); 
-            gap: 12px; padding: 10px 15px 30px 15px; 
+            gap: 8px; /* Gap reduced significantly to fit screen */
+            padding: 5px 15px 15px 15px; 
             background: var(--bg-color); 
-            padding-bottom: calc(30px + env(safe-area-inset-bottom));
+            /* Ensure bottom padding accounts for iPhone bar */
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
         }
         .k-btn { 
-            width: 100%; height: 100%; border-radius: 12px; 
+            width: 100%; height: 100%; border-radius: 10px; 
             border: 1px solid #555; background: var(--btn-bg); 
-            font-size: 24px; font-weight: bold; color: var(--text-main); 
-            box-shadow: 0 4px 0 var(--btn-shadow); cursor: pointer; 
+            font-size: 22px; /* Font size adjusted */
+            font-weight: bold; color: var(--text-main); 
+            box-shadow: 0 3px 0 var(--btn-shadow); cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
             transition: all 0.1s;
         }
         .k-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-shadow); background: #444; }
         
-        /* ACCENT COLORS */
         .ac { color: #ff6b6b; } 
         .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 4px 0 #e67e22; }
+        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 3px 0 #e67e22; }
         .eq:active { box-shadow: 0 1px 0 #e67e22; }
         
-        /* DRAWER (HISTORY) */
+        /* DRAWER */
         .drawer { 
             position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; 
             background: #393e46; z-index: 3000; transition: 0.3s; color: #fff; 
@@ -130,13 +118,15 @@
         .d-head { padding: 15px; border-bottom: 1px solid #555; display: flex; justify-content: space-between; align-items: center; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 50px; }
         .d-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #555; font-family: monospace; font-size: 14px; }
+        
+        .btn-clear-hist { background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body onload="init()">
     
     <div class="top-bar"> 
         <div class="menu-icon" onclick="toggleMenu()">☰</div> 
-        <span class="app-title">Casio DJ-120D</span> 
+        <span class="app-title">Casio RS-120D</span> 
         <div style="width: 40px;"></div> 
     </div>
     
@@ -196,20 +186,19 @@
     <div class="drawer" id="drawer"> 
         <div class="d-head"> 
             <span style="color:#fff; font-weight:bold;">History Tape</span> 
-            <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b; font-weight:bold;">✕ Close</span> 
+            <div>
+                <button class="btn-clear-hist" onclick="clearHistory()">🗑️ Clear</button>
+                <span onclick="toggleDrawer()" style="cursor:pointer; color:#aaa; font-weight:bold; margin-left:15px;">✕</span> 
+            </div>
         </div> 
         <div class="d-body" id="list"></div> 
     </div>
     
     <script>
-        // --- 1. SERVICE WORKER REGISTRATION ---
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js');
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
         }
 
-        // --- 2. MENU LOGIC ---
         function toggleMenu() { 
             const m = document.getElementById('menuPopup'); 
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
@@ -222,7 +211,6 @@
             }
         });
 
-        // --- 3. CALCULATOR VARIABLES ---
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
         let currentTotal = 0;
         let lastOp = "";
@@ -238,17 +226,20 @@
             renderList(); 
         }
         
-        // --- INPUT LOGIC (12 DIGIT LIMIT) ---
+        // --- FIXED INPUT LOGIC FOR ZEROS ---
         function num(n){ 
-            if(resShown){AC();input=n==="."?"0.":n;render();return;} 
-            if(isNewStep){input=n==="."?"0.":n;isNewStep=false;} 
-            else{
-                // Strict 12-digit check (excluding dot)
+            if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } 
+            
+            if(isNewStep){ 
+                input = n === "." ? "0." : n; 
+                isNewStep = false; 
+            } 
+            else {
                 if(input.replace('.','').length >= MAX_DIGITS) return;
                 
-                if(input==="0" && n!==".") input=n;
-                else if(n==="." && input.includes(".")) return;
-                else input+=n;
+                if(input === "0" && n !== ".") input = n;
+                else if(n === "." && input.includes(".")) return;
+                else input += n;
             } 
             render(); 
         }
@@ -261,7 +252,6 @@
                 case '-': currentTotal -= val; break;
                 case '*': currentTotal *= val; break;
                 case '/': currentTotal /= val; break;
-                // Standard Calculator Percent Logic
                 case '%': currentTotal = (currentTotal * val) / 100; break; 
             }
         }
@@ -276,15 +266,16 @@
                 executePrev(val);
             }
 
-            if (idx !== -1) { idx = -1; chain = []; } // Reset if interrupting review
+            if (idx !== -1) { idx = -1; chain = []; } 
 
             if (!isNewStep || o !== lastOp) {
                 chain.push({ v: input, o: o });
                 lastOp = o;
             } else {
-                chain[chain.length - 1].o = o; // Change operator if pressed twice
+                chain[chain.length - 1].o = o; 
             }
 
+            // When operator is pressed, we calculate result, but display formatted
             input = String(currentTotal);
             isNewStep = true;
             resShown = false;
@@ -298,7 +289,6 @@
             let val = parseFloat(input) || 0;
             executePrev(val);
 
-            // Save calculation to history
             chain.push({v:input,o:'='}); 
             chain.push({v:String(currentTotal),o:'ANS'});
             tape.push([...chain]);
@@ -308,7 +298,6 @@
             resShown = true;
             isNewStep = true;
             
-            // Clear chain for next calculation, but keep result displayed
             chain = [];
             currentTotal = 0;
             
@@ -327,9 +316,7 @@
             render(); 
         }
         
-        // --- CHECK & CORRECT (DJ-120D LOGIC) ---
         function prev(){ 
-            // If we are fresh, load the last tape
             if(tape.length && idx===-1){ chain=tape[tape.length-1]; idx=chain.length-1; }
             else if(idx>0) idx--; 
             render(); 
@@ -341,7 +328,6 @@
         }
         
         function correct(){ 
-            // Only allow correct on numbers, not on the ANS/Result step
             if(idx!==-1 && chain[idx].o!=='ANS'){ 
                 edit=true; 
                 input=chain[idx].v; 
@@ -351,11 +337,8 @@
         }
         
         function finishCorr(){ 
-            // 1. Update the value in the chain
             chain[idx].v = input; 
-            
-            // 2. Re-calculate the ENTIRE chain
-            let newChain = chain.slice(0, chain.length - 1); // Remove old answer
+            let newChain = chain.slice(0, chain.length - 1); 
             let tempTotal = 0;
             
             newChain.forEach((item, i) => {
@@ -370,13 +353,11 @@
                 }
             });
 
-            // 3. Save new answer
             newChain.push({v:String(tempTotal),o:'ANS'});
             chain = newChain;
-            tape[tape.length-1] = chain; // Update storage
+            tape[tape.length-1] = chain; 
             save();
             
-            // 4. Reset UI
             edit = false;
             input = String(tempTotal);
             resShown = true;
@@ -385,12 +366,21 @@
             renderList();
         }
 
-        // --- RENDERING ---
+        // --- NEW CLEAR HISTORY FUNCTION ---
+        function clearHistory() {
+            if(confirm("Clear calculation history?")) {
+                tape = [];
+                save();
+                renderList();
+                toggleDrawer();
+            }
+        }
+
+        // --- RENDER FUNCTION (FIXED FOR ZEROS) ---
         function render(){ 
             let dV=input, dO=""; 
             let stepNum=0; 
             
-            // Mode Handling
             if(edit){ 
                 dV=input; dO="EDIT"; 
                 document.getElementById('mode').innerText = "CRT";
@@ -411,8 +401,15 @@
                 stepNum=chain.length+(isNewStep?0:1);
             } 
             
-            // Indian Style Comma (en-IN)
-            ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
+            // --- FIX START: ONLY FORMAT IF RESULT OR HISTORY ---
+            // If user is typing (not reviewing, not editing result), show RAW string
+            if(idx === -1 && !resShown && !isNewStep) {
+                ui.main.innerText = dV; // Shows "0.920" exactly as typed
+            } else {
+                // Formatting for results (removes trailing zeros)
+                ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
+            }
+            // --- FIX END ---
             
             ui.op.innerText = dO.replace('*','×').replace('/','÷'); 
             ui.step.innerText = String(stepNum).padStart(2,'0'); 
