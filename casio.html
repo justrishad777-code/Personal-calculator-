@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rishad's Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Casio Calculator</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="theme-color" content="#1a1d24">
+
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
+    
     <style>
         /* --- DARK THEME VARIABLES --- */
         :root { 
@@ -26,87 +34,129 @@
             font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; 
             overflow: hidden; overscroll-behavior: none; 
+            padding-top: env(safe-area-inset-top);
         }
         
         /* TOP BAR */
         .top-bar { 
-            height: 45px; background: #1a1d24; display: flex; align-items: center; 
+            height: 50px; background: #1a1d24; display: flex; align-items: center; 
             padding: 0 15px; border-bottom: 1px solid #333; color: white; 
             justify-content: space-between; flex-shrink: 0; position: relative;
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
-        .app-title { font-size: 16px; font-weight: bold; letter-spacing: 1px; color: #fff; }
+        .app-title { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: #fff; }
         
         /* MENU */
         #menuPopup { 
-            display: none; position: absolute; top: 45px; left: 10px; width: 200px; 
-            background: #393e46; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
+            display: none; position: absolute; top: 50px; left: 10px; width: 220px; 
+            background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
             z-index: 2000; flex-direction: column; border: 1px solid #555; 
         }
-        .menu-item { padding: 12px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; font-weight: 600; display: block; font-size: 14px; }
+        .menu-item { 
+            padding: 15px; text-decoration: none; color: #eee; 
+            border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; 
+        }
+        .menu-item:hover { background: #444; }
+        .menu-icon-span { margin-right: 12px; font-size: 18px; }
         
-        /* SCREEN */
+        /* SCREEN SECTION */
         .screen { 
-            flex: 0 0 20%; background: #222831; padding: 5px 20px; 
+            flex: 0 0 25%; background: #222831; padding: 10px 20px; 
             display: flex; flex-direction: column; border-bottom: 1px solid #333; 
         }
-        .indicators { display: flex; justify-content: space-between; color: #777; height: 18px; font-size: 12px; }
-        .op-display { text-align: right; color: var(--primary); font-size: 16px; height: 20px; font-family: monospace; }
-        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
-        .main-text { font-family: 'Digital-7 Mono', monospace; color: #fff; font-size: 45px; line-height: 1; }
+        .indicators { 
+            display: flex; justify-content: space-between; color: #777; 
+            height: 20px; font-size: 14px; font-weight: bold;
+        }
+        .op-display { 
+            text-align: right; color: var(--primary); font-size: 20px; 
+            height: 30px; font-family: monospace; margin-top: 5px;
+        }
+        .main-display { 
+            flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; 
+            overflow: hidden; padding-bottom: 5px;
+        }
+        .main-text { 
+            font-family: 'Digital-7 Mono', monospace; color: #fff; 
+            font-size: 55px; line-height: 1; letter-spacing: 2px;
+        }
         
-        /* CONTROLS (DARK BUTTONS) */
+        /* CONTROLS (FUNCTION KEYS) */
         .controls { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
             padding: 10px 15px; background: var(--bg-color); flex-shrink: 0; 
         }
         .c-btn { 
             background: var(--btn-bg); border: 1px solid #555; 
-            padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 12px; 
-            box-shadow: 0 2px 0 var(--btn-shadow); color: #eee; 
+            padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 13px; 
+            box-shadow: 0 3px 0 var(--btn-shadow); color: #eee; cursor: pointer;
+            transition: all 0.1s;
         }
+        .c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow); }
         
-        /* KEYPAD (DARK BUTTONS) */
+        /* KEYPAD */
         .keypad { 
             flex: 1; display: grid; 
             grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); 
-            gap: 15px; padding: 10px 15px 100px 15px; 
+            gap: 12px; padding: 10px 15px 30px 15px; 
             background: var(--bg-color); 
+            padding-bottom: calc(30px + env(safe-area-inset-bottom));
         }
         .k-btn { 
             width: 100%; height: 100%; border-radius: 12px; 
             border: 1px solid #555; background: var(--btn-bg); 
-            font-size: 20px; font-weight: bold; color: var(--text-main); 
-            box-shadow: 0 2px 0 var(--btn-shadow); cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: bold; color: var(--text-main); 
+            box-shadow: 0 4px 0 var(--btn-shadow); cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.1s;
         }
-        .k-btn:active { transform: translateY(2px); box-shadow: none; background: #444; }
+        .k-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-shadow); background: #444; }
         
         /* ACCENT COLORS */
         .ac { color: #ff6b6b; } 
         .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 3px 0 #e67e22; }
+        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 4px 0 #e67e22; }
+        .eq:active { box-shadow: 0 1px 0 #e67e22; }
         
-        /* DRAWER */
-        .drawer { position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; background: #393e46; z-index: 3000; transition: 0.3s; color: #fff; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; border-top: 2px solid var(--primary); }
+        /* DRAWER (HISTORY) */
+        .drawer { 
+            position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%; 
+            background: #393e46; z-index: 3000; transition: 0.3s; color: #fff; 
+            border-radius: 20px 20px 0 0; display: flex; flex-direction: column; 
+            border-top: 3px solid var(--primary); 
+            box-shadow: 0 -10px 50px rgba(0,0,0,0.5);
+        }
         .drawer.open { bottom: 0; }
         .d-head { padding: 15px; border-bottom: 1px solid #555; display: flex; justify-content: space-between; align-items: center; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 50px; }
-        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #555; font-family: monospace; font-size: 14px; }
+        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #555; font-family: monospace; font-size: 14px; }
     </style>
-
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
-
 </head>
 <body onload="init()">
-    <div class="top-bar"> <div class="menu-icon" onclick="toggleMenu()">☰</div> <span class="app-title">Rishad's Calculator</span> <div style="width: 40px;"></div> </div>
-    <div id="menuPopup"> <a href="index.html" class="menu-item">🏠 Dashboard</a> <a href="rate.html" class="menu-item">📝 Rate F</a> <a href="converter.html" class="menu-item">⚖️ Converter</a> <a href="settings.html" class="menu-item">⚙️ Settings</a> </div>
+    
+    <div class="top-bar"> 
+        <div class="menu-icon" onclick="toggleMenu()">☰</div> 
+        <span class="app-title">Casio DJ-120D</span> 
+        <div style="width: 40px;"></div> 
+    </div>
+    
+    <div id="menuPopup">
+        <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
+        <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
+        <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
+        <a href="casio.html" class="menu-item" style="background:#444;"><span class="menu-icon-span">🔢</span> Casio Calc</a>
+        <a href="settings.html" class="menu-item"><span class="menu-icon-span">⚙️</span> Settings</a>
+    </div>
     
     <div class="screen"> 
-        <div class="indicators"> <span class="step" id="step">00</span> <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> </div> 
+        <div class="indicators"> 
+            <span class="step" id="step">00</span> 
+            <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> 
+        </div> 
         <div class="op-display" id="opDisp"></div> 
-        <div class="main-display"> <span class="main-text" id="mainDisp">0</span> </div> 
+        <div class="main-display"> 
+            <span class="main-text" id="mainDisp">0</span> 
+        </div> 
     </div>
     
     <div class="controls"> 
@@ -117,33 +167,87 @@
     </div>
     
     <div class="keypad"> 
-        <button class="k-btn ac" onclick="AC()">AC</button> <button class="k-btn op" onclick="del()">⌫</button> <button class="k-btn op" onclick="op('%')">%</button> <button class="k-btn op" onclick="op('/')">÷</button> 
-        <button class="k-btn" onclick="num('7')">7</button> <button class="k-btn" onclick="num('8')">8</button> <button class="k-btn" onclick="num('9')">9</button> <button class="k-btn op" onclick="op('*')">×</button> 
-        <button class="k-btn" onclick="num('4')">4</button> <button class="k-btn" onclick="num('5')">5</button> <button class="k-btn" onclick="num('6')">6</button> <button class="k-btn op" onclick="op('-')">−</button> 
-        <button class="k-btn" onclick="num('1')">1</button> <button class="k-btn" onclick="num('2')">2</button> <button class="k-btn" onclick="num('3')">3</button> <button class="k-btn op" onclick="op('+')">+</button> 
-        <button class="k-btn" onclick="num('00')">00</button> <button class="k-btn" onclick="num('0')">0</button> <button class="k-btn" onclick="num('.')">.</button> <button class="k-btn eq" onclick="eq()">=</button> 
+        <button class="k-btn ac" onclick="AC()">AC</button> 
+        <button class="k-btn op" onclick="del()">⌫</button> 
+        <button class="k-btn op" onclick="op('%')">%</button> 
+        <button class="k-btn op" onclick="op('/')">÷</button> 
+        
+        <button class="k-btn" onclick="num('7')">7</button> 
+        <button class="k-btn" onclick="num('8')">8</button> 
+        <button class="k-btn" onclick="num('9')">9</button> 
+        <button class="k-btn op" onclick="op('*')">×</button> 
+        
+        <button class="k-btn" onclick="num('4')">4</button> 
+        <button class="k-btn" onclick="num('5')">5</button> 
+        <button class="k-btn" onclick="num('6')">6</button> 
+        <button class="k-btn op" onclick="op('-')">−</button> 
+        
+        <button class="k-btn" onclick="num('1')">1</button> 
+        <button class="k-btn" onclick="num('2')">2</button> 
+        <button class="k-btn" onclick="num('3')">3</button> 
+        <button class="k-btn op" onclick="op('+')">+</button> 
+        
+        <button class="k-btn" onclick="num('00')">00</button> 
+        <button class="k-btn" onclick="num('0')">0</button> 
+        <button class="k-btn" onclick="num('.')">.</button> 
+        <button class="k-btn eq" onclick="eq()">=</button> 
     </div>
     
-    <div class="drawer" id="drawer"> <div class="d-head"> <span style="color:#fff; font-weight:bold;">History</span> <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b; font-weight:bold;">✕ Close</span> </div> <div class="d-body" id="list"></div> </div>
+    <div class="drawer" id="drawer"> 
+        <div class="d-head"> 
+            <span style="color:#fff; font-weight:bold;">History Tape</span> 
+            <span onclick="toggleDrawer()" style="cursor:pointer; color:#ff6b6b; font-weight:bold;">✕ Close</span> 
+        </div> 
+        <div class="d-body" id="list"></div> 
+    </div>
     
     <script>
-        function toggleMenu() { const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+        // --- 1. SERVICE WORKER REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js');
+            });
+        }
+
+        // --- 2. MENU LOGIC ---
+        function toggleMenu() { 
+            const m = document.getElementById('menuPopup'); 
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
+        }
+        window.addEventListener('click', function(e) {
+            const m = document.getElementById('menuPopup');
+            const btn = document.querySelector('.menu-icon');
+            if (e.target !== m && e.target !== btn && !m.contains(e.target)) {
+                m.style.display = 'none';
+            }
+        });
+
+        // --- 3. CALCULATOR VARIABLES ---
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
-        
         let currentTotal = 0;
         let lastOp = "";
+        const MAX_DIGITS = 12;
 
         const ui={main:document.getElementById('mainDisp'),op:document.getElementById('opDisp'),step:document.getElementById('step'),list:document.getElementById('list')};
         
-        function init(){ if(localStorage.getItem('casio_data')) { try { tape=JSON.parse(localStorage.getItem('casio_data')); } catch(e){tape=[];} } render(); renderList(); }
+        function init(){ 
+            if(localStorage.getItem('casio_data')) { 
+                try { tape=JSON.parse(localStorage.getItem('casio_data')); } catch(e){tape=[];} 
+            } 
+            render(); 
+            renderList(); 
+        }
         
+        // --- INPUT LOGIC (12 DIGIT LIMIT) ---
         function num(n){ 
             if(resShown){AC();input=n==="."?"0.":n;render();return;} 
             if(isNewStep){input=n==="."?"0.":n;isNewStep=false;} 
             else{
-                if(input.replace('.','').length>=12)return;
-                if(input==="0"&&n!==".")input=n;
-                else if(n==="."&&input.includes("."))return;
+                // Strict 12-digit check (excluding dot)
+                if(input.replace('.','').length >= MAX_DIGITS) return;
+                
+                if(input==="0" && n!==".") input=n;
+                else if(n==="." && input.includes(".")) return;
                 else input+=n;
             } 
             render(); 
@@ -157,7 +261,8 @@
                 case '-': currentTotal -= val; break;
                 case '*': currentTotal *= val; break;
                 case '/': currentTotal /= val; break;
-                case '%': currentTotal = (currentTotal * val) / 100; break;
+                // Standard Calculator Percent Logic
+                case '%': currentTotal = (currentTotal * val) / 100; break; 
             }
         }
 
@@ -171,13 +276,13 @@
                 executePrev(val);
             }
 
-            if (idx !== -1) { idx = -1; chain = []; }
+            if (idx !== -1) { idx = -1; chain = []; } // Reset if interrupting review
 
             if (!isNewStep || o !== lastOp) {
                 chain.push({ v: input, o: o });
                 lastOp = o;
             } else {
-                chain[chain.length - 1].o = o;
+                chain[chain.length - 1].o = o; // Change operator if pressed twice
             }
 
             input = String(currentTotal);
@@ -193,9 +298,9 @@
             let val = parseFloat(input) || 0;
             executePrev(val);
 
+            // Save calculation to history
             chain.push({v:input,o:'='}); 
             chain.push({v:String(currentTotal),o:'ANS'});
-            
             tape.push([...chain]);
             save();
             
@@ -203,6 +308,7 @@
             resShown = true;
             isNewStep = true;
             
+            // Clear chain for next calculation, but keep result displayed
             chain = [];
             currentTotal = 0;
             
@@ -210,19 +316,46 @@
             renderList();
         }
 
-        function AC(){ chain=[];input="0";idx=-1;edit=false;resShown=false;isNewStep=false;currentTotal=0;lastOp="";render(); }
+        function AC(){ 
+            chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; currentTotal=0; lastOp=""; 
+            render(); 
+        }
         
-        function del(){ if(resShown||isNewStep)return; input=input.toString().slice(0,-1)||"0";render(); }
+        function del(){ 
+            if(resShown||isNewStep)return; 
+            input=input.toString().slice(0,-1) || "0"; 
+            render(); 
+        }
         
-        function prev(){ if(tape.length&&idx===-1){chain=tape[tape.length-1];idx=chain.length-1;}else if(idx>0)idx--;render(); }
+        // --- CHECK & CORRECT (DJ-120D LOGIC) ---
+        function prev(){ 
+            // If we are fresh, load the last tape
+            if(tape.length && idx===-1){ chain=tape[tape.length-1]; idx=chain.length-1; }
+            else if(idx>0) idx--; 
+            render(); 
+        }
         
-        function next(){ if(idx!==-1&&idx<chain.length-1)idx++;render(); }
+        function next(){ 
+            if(idx!==-1 && idx<chain.length-1) idx++; 
+            render(); 
+        }
         
-        function correct(){ if(idx!==-1&&chain[idx].o!=='ANS'){edit=true;input=chain[idx].v;isNewStep=false;render();} }
+        function correct(){ 
+            // Only allow correct on numbers, not on the ANS/Result step
+            if(idx!==-1 && chain[idx].o!=='ANS'){ 
+                edit=true; 
+                input=chain[idx].v; 
+                isNewStep=false; 
+                render(); 
+            } 
+        }
         
         function finishCorr(){ 
-            chain[idx].v=input; 
-            let newChain = chain.slice(0, chain.length - 1);
+            // 1. Update the value in the chain
+            chain[idx].v = input; 
+            
+            // 2. Re-calculate the ENTIRE chain
+            let newChain = chain.slice(0, chain.length - 1); // Remove old answer
             let tempTotal = 0;
             
             newChain.forEach((item, i) => {
@@ -237,10 +370,13 @@
                 }
             });
 
+            // 3. Save new answer
             newChain.push({v:String(tempTotal),o:'ANS'});
             chain = newChain;
-            tape[tape.length-1] = chain;
+            tape[tape.length-1] = chain; // Update storage
             save();
+            
+            // 4. Reset UI
             edit = false;
             input = String(tempTotal);
             resShown = true;
@@ -249,41 +385,67 @@
             renderList();
         }
 
+        // --- RENDERING ---
         function render(){ 
-            let dV=input,dO=""; 
+            let dV=input, dO=""; 
             let stepNum=0; 
-            if(edit){dV=input;dO="EDIT";document.getElementById('mode').style.display="block";stepNum=idx+1;} 
-            else if(idx!==-1){let item=chain[idx];dV=item.v;dO=item.o==='ANS'?'=':item.o;document.getElementById('mode').style.display="block";stepNum=idx+1;} 
+            
+            // Mode Handling
+            if(edit){ 
+                dV=input; dO="EDIT"; 
+                document.getElementById('mode').innerText = "CRT";
+                document.getElementById('mode').style.display="block"; 
+                stepNum=idx+1; 
+            } 
+            else if(idx!==-1){ 
+                let item=chain[idx]; 
+                dV=item.v; 
+                dO=item.o==='ANS'?'=':item.o; 
+                document.getElementById('mode').innerText = "REV";
+                document.getElementById('mode').style.display="block"; 
+                stepNum=idx+1; 
+            } 
             else{
                 document.getElementById('mode').style.display="none";
                 if(chain.length>0 && !resShown) dO=chain[chain.length-1].o;
                 stepNum=chain.length+(isNewStep?0:1);
             } 
             
-            // Indian Style Comma (en-IN) restored
+            // Indian Style Comma (en-IN)
             ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
             
-            ui.op.innerText=dO.replace('*','×').replace('/','÷'); 
-            ui.step.innerText=String(stepNum).padStart(2,'0'); 
-            let s=45;ui.main.style.fontSize=s+"px";while(ui.main.scrollWidth>ui.main.parentElement.clientWidth&&s>30){s-=5;ui.main.style.fontSize=s+"px";} 
+            ui.op.innerText = dO.replace('*','×').replace('/','÷'); 
+            ui.step.innerText = String(stepNum).padStart(2,'0'); 
+            
+            // Auto-Resize Font
+            let s=55; 
+            ui.main.style.fontSize=s+"px";
+            while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30){
+                s-=5; 
+                ui.main.style.fontSize=s+"px";
+            } 
         }
 
         function save(){ localStorage.setItem('casio_data',JSON.stringify(tape)); }
         function toggleDrawer(){ document.getElementById('drawer').classList.toggle('open'); }
         
         function renderList(){ 
-            ui.list.innerHTML=tape.map(t=>{ 
-                let resObj=t.find(x=>x.o==='ANS'); 
-                let result=resObj?resObj.v:"0"; 
-                let expr=t.reduce((a,c)=>{
-                    if(c.o==='ANS')return a;
-                    let sym=c.o.replace('*','×').replace('/','÷');
-                    return a+c.v+(sym==='='?'':' '+sym+' ');
+            if(!tape.length) { ui.list.innerHTML = "<div style='text-align:center; color:#555;'>Empty</div>"; return; }
+            
+            ui.list.innerHTML = tape.map(t => { 
+                let resObj = t.find(x => x.o==='ANS'); 
+                let result = resObj ? resObj.v : "0"; 
+                let expr = t.reduce((a,c) => {
+                    if(c.o==='ANS') return a;
+                    let sym = c.o.replace('*','×').replace('/','÷');
+                    return a + c.v + (sym==='=' ? '' : ' '+sym+' ');
                 },""); 
                 
-                // History Indian Formatting
                 let formattedRes = parseFloat(result).toLocaleString('en-IN', {maximumFractionDigits: 10});
-                return `<div class="d-row"><span style="color:#aaa; font-size:14px;">${expr}=</span><span style="color:#fff; font-weight:bold; font-size:16px;">${formattedRes}</span></div>`; 
+                return `<div class="d-row">
+                            <span style="color:#aaa; font-size:14px;">${expr}=</span>
+                            <span style="color:#fff; font-weight:bold; font-size:16px;">${formattedRes}</span>
+                        </div>`; 
             }).reverse().join(''); 
         }
     </script>
