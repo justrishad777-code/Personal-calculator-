@@ -56,6 +56,28 @@
         if(t.primary) document.getElementById('clr-primary').value = t.primary;
         // ... set others if needed
     }
+      // --- Install Logic ---
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if(installBtn) installBtn.style.display = 'block';
+  });
+
+  if(installBtn) {
+      installBtn.addEventListener('click', (e) => {
+        installBtn.style.display = 'none';
+        if(deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              deferredPrompt = null;
+            });
+        }
+      });
+  }
+    
 </script>
 </body>
 </html>
