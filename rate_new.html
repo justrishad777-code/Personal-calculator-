@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Gold App - Rate F</title>
     
     <link rel="manifest" href="manifest.json">
@@ -27,15 +27,16 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* --- 1. NO FREEZE LAYOUT --- */
-        /* We removed 'overflow: hidden' and fixed positioning on body */
+        /* --- 1. SAFE LAYOUT (NO FREEZE) --- */
         body { 
             margin: 0; padding: 0;
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            padding-bottom: 350px; /* Extra space at bottom for scrolling */
+            padding-bottom: 350px; /* কিপ্যাডের জন্য নিচে জায়গা */
             min-height: 100vh;
+            /* বাউন্স বন্ধ করবে কিন্তু টাচ সচল রাখবে */
+            overscroll-behavior-y: none; 
         }
 
         /* --- 2. HEADER --- */
@@ -45,6 +46,7 @@
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 15px; border-bottom: 1px solid #333;
             position: sticky; top: 0; z-index: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         .menu-icon { font-size: 28px; cursor: pointer; color: white; padding: 5px; }
         .logo-img { height: 40px; }
@@ -68,8 +70,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- 5. INPUTS (High Contrast) --- */
-        input { color: #fff; }
+        /* --- 5. INPUTS --- */
+        input { color: #fff; pointer-events: auto !important; }
         .main-input {
             width: 100%; font-size: 32px; font-weight: bold; text-align: center;
             border: none; border-bottom: 2px solid var(--border);
@@ -146,11 +148,11 @@
         #invoice-layout {
             display: none; /* Hidden normally */
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; overflow-y: auto;
+            background: #fff !important; z-index: 9999; overflow-y: auto;
             color: #000 !important;
         }
         
-        .inv-container { padding: 40px; max-width: 800px; margin: 0 auto; background: #fff; }
+        .inv-container { padding: 30px; max-width: 800px; margin: 0 auto; background: #fff; }
         
         /* Header Box */
         .inv-header-box { 
@@ -166,7 +168,7 @@
         /* Table */
         .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
         .inv-table th { 
-            background: #000; color: #fff; padding: 10px; 
+            background: #e0e0e0; color: #000; padding: 10px; 
             text-align: left; font-size: 12px; border: 1px solid #000; 
         }
         .inv-table td { 
@@ -176,9 +178,9 @@
         .text-right { text-align: right !important; }
 
         /* Total Section */
-        .inv-total-row td { background: #eee; font-size: 18px; font-weight: 900; }
+        .inv-total-row td { background: #000; color: #fff; font-size: 18px; font-weight: 900; border: none; }
         
-        .inv-footer { text-align: center; margin-top: 50px; font-size: 12px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px; }
+        .inv-footer { text-align: center; margin-top: 50px; font-size: 12px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px; color: #000; }
     </style>
 </head>
 <body onload="appInit()">
@@ -477,13 +479,19 @@
                 margin: 0, 
                 filename: 'Estimate.pdf', 
                 image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2 }, 
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    scrollY: 0, 
+                    windowWidth: document.documentElement.offsetWidth 
+                }, 
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
             };
+            
             html2pdf().set(opt).from(element).save().then(() => {
-                element.style.display = 'none'; // Hide after
+                element.style.display = 'none'; // Hide after download
             });
-        }, 800); // 800ms Delay to be safe
+        }, 1000); 
     }
 </script>
 </body>
