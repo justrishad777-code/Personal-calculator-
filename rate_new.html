@@ -4,339 +4,230 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App - Rate F</title>
-    
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.png">
     <meta name="theme-color" content="#1a1d24">
 
     <style>
-        :root { 
-            --primary: #ffaf40;    
-            --secondary: #48dbfb;  
-            --bg-color: #222831;   
-            --card-bg: #393e46;    
-            --text-main: #eeeeee;  
-            --border: #4b5563;     
-            --input-bg: #222831;   
+        body {
+            background-color: #222831;
+            color: #eeeeee;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 50px;
         }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; padding: 0;
-            background: var(--bg-color); 
-            font-family: 'Segoe UI', sans-serif; 
-            color: var(--text-main);
-            padding-bottom: 350px; 
-            min-height: 100vh;
-            /* Allow normal scrolling */
-            overflow-y: auto; 
-        }
-
-        /* --- HEADER --- */
+        /* Header */
         .header {
-            background: #1a1d24; 
-            height: 60px;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 15px; border-bottom: 1px solid #333;
-            position: sticky; top: 0; z-index: 50;
+            background: #1a1d24;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .menu-icon { font-size: 30px; padding: 10px; cursor: pointer; color: white; }
-        .logo-img { height: 40px; }
+        .header h3 { margin: 0; font-size: 18px; }
+        .home-btn { text-decoration: none; color: #ffaf40; font-weight: bold; }
 
-        /* --- MENU --- */
-        #menuPopup {
-            display: none; position: fixed; top: 60px; left: 10px; width: 220px;
-            background: #393e46; border: 1px solid #555;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9); 
-            z-index: 2000; flex-direction: column;
-        }
-        .menu-btn { padding: 15px; text-decoration: none; color: #eee; border-bottom: 1px solid #555; display: block; font-weight: bold; }
-
-        /* --- CONTAINER --- */
+        /* Container */
         .container { padding: 15px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
-        /* --- INPUTS --- */
-        input { pointer-events: auto !important; color: #fff; }
-        .main-input { width: 100%; font-size: 32px; font-weight: bold; text-align: center; border: none; border-bottom: 2px solid var(--border); margin-bottom: 20px; background: transparent; }
-        .small-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--input-bg); font-weight: bold; text-align: center; }
-        .weight-input { width: 100%; padding: 15px; border: 2px solid var(--border); border-radius: 10px; background: var(--input-bg); text-align: center; font-size: 26px; font-weight: bold; margin-top: 15px; }
-
-        /* --- TABS --- */
-        .tab-box { display: flex; gap: 10px; margin-bottom: 20px; }
-        .t-btn { flex: 1; padding: 12px; border: 1px solid #555; border-radius: 8px; background: #222831; color: #aaa; font-weight: bold; }
-        .active-22 { background: var(--primary); color: #000; border: none; }
-        .active-21 { background: var(--secondary); color: #000; border: none; }
-        .active-both { background: #fff; color: #333; border: none; }
-        
-        .hidden { display: none !important; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-
-        /* --- RATE ROW --- */
-        .rate-box { background: #2a3038; padding: 12px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #444; }
-        .dynamic-input { border: none; background: transparent; font-weight: bold; text-align: right; width: 100px; font-size: 20px; color: inherit; pointer-events: none; }
-        .edit-btn { background: #ccc; color: #000; padding: 5px 10px; border-radius: 4px; font-size: 12px; border: none; font-weight: bold; }
-
-        .grand-box { background: #222831; padding: 20px; border-radius: 15px; text-align: center; border: 2px solid var(--border); margin-top: 20px; position: relative; }
-        .grand-input { width: 100%; border: none; background: transparent; font-size: 35px; font-weight: 900; color: #fff; text-align: center; pointer-events: none; }
-
-        .purity-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .p-radio { display: none; }
-        .p-label { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid #555; color: #aaa; background: #222831; }
-        .p-radio:checked + .p-label { background: #eee; color: #000; border-color: #eee; }
-
-        .active-field { border: 2px solid var(--primary) !important; background: #4a3b2a !important; }
-        .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; }
-        
-        .btn-action { width: 100%; padding: 15px; background: #fff; color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
-
-        /* --- KEYPAD --- */
-        #customKeypad {
-            position: fixed; bottom: -100%; left: 0; width: 100%;
-            background: #1a1d24; padding: 10px; z-index: 3000;
-            border-top: 1px solid #444; transition: bottom 0.2s ease;
-            padding-bottom: env(safe-area-inset-bottom);
+        /* Card */
+        .card {
+            background: #393e46;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        #customKeypad.open { bottom: 0; }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 24px; font-weight: bold; border-radius: 8px; color: #eee; }
-        .k-btn:active { background: #555; }
 
-        /* --- PREVIEW LAYOUT (For Screenshot) --- */
-        #preview-layout {
-            display: none; 
+        /* Inputs */
+        label { display: block; font-size: 12px; color: #adb5bd; margin-bottom: 5px; }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: #222831;
+            border: 1px solid #4b5563;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        input:focus { outline: 2px solid #ffaf40; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 5px;
+            background: #222831; color: #aaa; font-weight: bold;
+        }
+        .tab-btn.active { background: #ffaf40; color: #000; }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Result Box */
+        .result-box {
+            background: #222831; padding: 15px; border-radius: 8px;
+            text-align: center; margin-top: 10px; border: 1px solid #555;
+        }
+        .result-val { font-size: 24px; font-weight: bold; color: #ffaf40; }
+
+        /* Action Button */
+        .btn-main {
+            width: 100%; padding: 15px; background: #fff; color: #000;
+            border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
+            margin-top: 20px; cursor: pointer;
+        }
+
+        /* INVOICE PREVIEW (Hidden initially) */
+        #invoice-view {
+            display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; overflow-y: auto;
-            color: #000;
+            background: #fff; color: #000; z-index: 2000;
+            overflow-y: auto; padding: 20px; box-sizing: border-box;
         }
         
-        .inv-container { padding: 20px; max-width: 800px; margin: 0 auto; background: #fff; min-height: 90vh; }
-        
-        /* Close Button for Preview */
+        .inv-header { background: #000; color: #fff; padding: 15px; text-align: center; margin-bottom: 20px; }
+        .inv-row { display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding: 8px 0; font-size: 14px; font-weight: bold; }
         .close-btn {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #ff4757; color: #fff; padding: 12px 30px; 
-            border-radius: 25px; border: none; font-weight: bold; 
-            font-size: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 10001; cursor: pointer;
+            background: #ff4757; color: white; padding: 10px 30px; border-radius: 25px; border: none; font-weight: bold;
         }
-
-        .inv-header-box { background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 30px; }
-        .inv-title { font-size: 30px; font-weight: 900; margin: 0; letter-spacing: 3px; }
-        .inv-sub { font-size: 12px; letter-spacing: 1px; margin-top: 5px; opacity: 0.8; }
-
-        .inv-info { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; font-weight: bold; font-size: 14px; }
-        .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-        .inv-table th { background: #e0e0e0; color: #000; padding: 10px; text-align: left; font-size: 12px; border: 1px solid #000; }
-        .inv-table td { border: 1px solid #000; padding: 12px; font-size: 14px; font-weight: bold; color: #000; }
-        .text-right { text-align: right; }
-        .inv-total-row td { background: #000; color: #fff; font-size: 18px; border: none; }
-        .inv-footer { text-align: center; margin-top: 50px; font-size: 12px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px; }
     </style>
 </head>
-<body onload="appInit()">
+<body>
 
-    <div id="main-app">
+    <div id="app-view">
         <div class="header">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-weight:bold; font-size:18px;">Gold App Rate F</span>
-            <div style="width:30px;"></div>
-        </div>
-
-        <div id="menuPopup">
-            <a href="index.html" class="menu-btn">Home</a>
-            <a href="rate.html" class="menu-btn" style="background:#555;">Rate F</a>
-            <a href="converter.html" class="menu-btn">Converter</a>
-            <a href="casio.html" class="menu-btn">Calculator</a>
-            <a href="settings.html" class="menu-btn">Settings</a>
+            <h3>Rate F</h3>
+            <a href="index.html" class="home-btn">Home 🏠</a>
         </div>
 
         <div class="container">
             <div class="card">
-                <label style="color:#aaa; font-size:12px;">Screen Rate (Oz)</label>
-                <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
+                <label>Screen Rate (Oz)</label>
+                <input type="number" id="screenRate" placeholder="0000" oninput="calc()">
 
-                <div class="tab-box">
-                    <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
-                    <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
-                    <button class="t-btn active-both" id="bBoth" onclick="setTab('both')">Both</button>
+                <div class="tabs">
+                    <button class="tab-btn active">22K / 21K Calculator</button>
                 </div>
 
-                <div id="sec22">
-                    <div style="color:var(--primary); text-align:center; font-weight:bold; margin-bottom:10px;">22 Karat</div>
-                    <div class="purity-box">
-                        <label><input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()"><span class="p-label">92.6%</span></label>
-                        <label><input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()"><span class="p-label">92.0%</span></label>
-                    </div>
-                    <div class="grid-2">
-                        <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
-                    </div>
-                    <div class="rate-box">
-                        <span style="color:#aaa;">1 Bhori =</span>
-                        <div style="display:flex; align-items:center;">
-                            <input type="text" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
-                            <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
-                        </div>
-                    </div>
-                    <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                    <div class="rate-box" style="background:transparent; border:none;">
-                        <span style="color:#aaa;">Total</span>
-                        <div style="display:flex; align-items:center;">
-                            <input type="text" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:24px; width:150px;" value="0.00">
-                            <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
-                        </div>
-                    </div>
+                <div style="text-align:center; color:#ffaf40; font-weight:bold; margin-bottom:10px;">22 Karat (92.6%)</div>
+                
+                <div class="grid-2">
+                    <div><label>MC</label><input type="number" id="mc22" placeholder="MC" oninput="calc()"></div>
+                    <div><label>Dh</label><input type="number" id="dh22" placeholder="Dh" oninput="calc()"></div>
+                    <div><label>CR</label><input type="number" id="cr22" placeholder="CR" oninput="calc()"></div>
+                    <div><label>MG</label><input type="number" id="mg22" placeholder="MG" oninput="calc()"></div>
                 </div>
 
-                <div id="sec21" class="hidden">
-                    <div style="color:var(--secondary); text-align:center; font-weight:bold; margin-bottom:10px; margin-top:20px;">21 Karat</div>
-                    <div class="purity-box">
-                        <label><input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()"><span class="p-label">88.5%</span></label>
-                        <label><input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()"><span class="p-label">88.0%</span></label>
-                    </div>
-                    <div class="grid-2">
-                        <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
-                        <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
-                    </div>
-                    <div class="rate-box">
-                        <span style="color:#aaa;">1 Bhori =</span>
-                        <div style="display:flex; align-items:center;">
-                            <input type="text" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
-                            <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
-                        </div>
-                    </div>
-                    <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                    <div class="rate-box" style="background:transparent; border:none;">
-                        <span style="color:#aaa;">Total</span>
-                        <div style="display:flex; align-items:center;">
-                            <input type="text" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:24px; width:150px;" value="0.00">
-                            <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
-                        </div>
-                    </div>
+                <div class="result-box">
+                    <div style="font-size:12px; color:#aaa;">1 Bhori Rate</div>
+                    <div id="rate22" class="result-val">0.00</div>
                 </div>
 
-                <div class="grand-box">
-                    <div style="font-size:12px; color:#aaa;">Grand Total</div>
-                    <input type="text" readonly id="grandTotal" class="grand-input" value="0.00">
-                    <button class="edit-btn" style="position:absolute; bottom:10px; right:10px;" onclick="enableEdit('grandTotal')">Edit</button>
+                <label style="margin-top:15px;">Weight (gm)</label>
+                <input type="number" id="w22" placeholder="Enter Weight" style="font-size:24px;" oninput="calc()">
+
+                <div class="result-box" style="border-color:#ffaf40;">
+                    <div style="font-size:12px; color:#aaa;">TOTAL PRICE</div>
+                    <div id="total22" class="result-val" style="font-size:30px;">0.00</div>
                 </div>
 
                 <div style="margin-top:20px;">
-                    <input id="cName" class="small-input" style="width:100%; margin-bottom:10px; text-align:left;" placeholder="Customer Name">
-                    <input id="authName" class="small-input" style="width:100%; text-align:left;" placeholder="Authorized By">
+                    <input type="text" id="cName" placeholder="Customer Name">
+                    <input type="text" id="authName" placeholder="Authorized By">
                 </div>
 
-                <button class="btn-action" onclick="showPreview()">SHOW INVOICE</button>
-            </div>
-        </div>
-
-        <div id="customKeypad">
-            <button style="width:100%; padding:10px; background:#4a3b2a; color:#fff; border:none; margin-bottom:10px; border-radius:5px; font-weight:bold;" onclick="closeKeypad()">Done ▼</button>
-            <div class="keypad-grid">
-                <button class="k-btn" onclick="press('1')">1</button><button class="k-btn" onclick="press('2')">2</button><button class="k-btn" onclick="press('3')">3</button>
-                <button class="k-btn" onclick="press('4')">4</button><button class="k-btn" onclick="press('5')">5</button><button class="k-btn" onclick="press('6')">6</button>
-                <button class="k-btn" onclick="press('7')">7</button><button class="k-btn" onclick="press('8')">8</button><button class="k-btn" onclick="press('9')">9</button>
-                <button class="k-btn" onclick="press('.')">.</button><button class="k-btn" onclick="press('0')">0</button><button class="k-btn" onclick="press('back')" style="color:#ff6b6b;">⌫</button>
+                <button class="btn-main" onclick="showInvoice()">📄 SHOW INVOICE</button>
             </div>
         </div>
     </div>
 
-    <div id="preview-layout">
-        <div class="inv-container">
-            <div class="inv-header-box">
-                <h1 class="inv-title">INVOICE</h1>
-                <div class="inv-sub">Computer Generated Receipt</div>
-            </div>
-            <div class="inv-info">
-                <div>CUSTOMER: <span id="inv-cName" style="font-weight:normal">-</span><br>DATE: <span id="inv-date" style="font-weight:normal">-</span></div>
-                <div style="text-align:right">AUTHORIZED BY: <span id="inv-auth" style="font-weight:normal">Admin</span></div>
-            </div>
-            <table class="inv-table">
-                <thead><tr><th style="width:40%">ITEM</th><th style="width:20%">RATE</th><th style="width:15%">WT(g)</th><th style="text-align:right; width:25%">TOTAL</th></tr></thead>
-                <tbody id="inv-body"></tbody>
-                <tfoot><tr class="inv-total-row"><td colspan="3" style="text-align:right">GRAND TOTAL</td><td style="text-align:right" id="inv-grand">0.00</td></tr></tfoot>
-            </table>
-            <div class="inv-footer">THANK YOU FOR YOUR BUSINESS</div>
+    <div id="invoice-view">
+        <div class="inv-header">
+            <h1 style="margin:0;">INVOICE</h1>
+            <small>Computer Generated Receipt</small>
         </div>
-        
-        <button class="close-btn" onclick="closePreview()">CLOSE ✖</button>
+
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:bold;">
+            <div>
+                CUSTOMER: <span id="inv-name" style="font-weight:normal">Guest</span><br>
+                DATE: <span id="inv-date" style="font-weight:normal">--</span>
+            </div>
+            <div style="text-align:right;">
+                AUTH BY: <span id="inv-auth" style="font-weight:normal">Admin</span>
+            </div>
+        </div>
+
+        <div style="border-top: 2px solid #000; border-bottom: 2px solid #000;">
+            <div class="inv-row" style="background:#ddd;">
+                <span>ITEM</span> <span>RATE</span> <span>WT(g)</span> <span>TOTAL</span>
+            </div>
+            <div class="inv-row" id="inv-item-row">
+                <span>22K GOLD</span> <span id="inv-rate">0</span> <span id="inv-wt">0</span> <span id="inv-total">0</span>
+            </div>
+        </div>
+
+        <div style="margin-top:20px; text-align:right; font-size:20px; font-weight:bold; background:#000; color:#fff; padding:10px;">
+            GRAND TOTAL: <span id="inv-grand">0.00</span>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; font-size:12px; font-weight:bold;">
+            THANK YOU FOR YOUR BUSINESS
+        </div>
+
+        <button class="close-btn" onclick="closeInvoice()">CLOSE ✖</button>
     </div>
 
-<script>
-    let currentInput = null;
-    let currentTab = '22';
+    <script>
+        // SERVICE WORKER UPDATE (V20)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
+        }
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
-    }
+        function calc() {
+            // Get Values
+            let b = parseFloat(document.getElementById('screenRate').value) || 0;
+            let mc = parseFloat(document.getElementById('mc22').value) || 0;
+            let dh = parseFloat(document.getElementById('dh22').value) || 0;
+            let cr = parseFloat(document.getElementById('cr22').value) || 0;
+            let mg = parseFloat(document.getElementById('mg22').value) || 0;
+            let w = parseFloat(document.getElementById('w22').value) || 0;
 
-    function appInit() { setTab('22'); document.getElementById('inv-date').innerText = new Date().toLocaleDateString(); }
-    
-    function toggleMenu() { 
-        const m = document.getElementById('menuPopup'); 
-        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
-    }
-    window.addEventListener('click', function(e) {
-        const m = document.getElementById('menuPopup'); 
-        const btn = document.querySelector('.menu-icon');
-        if (e.target !== m && e.target !== btn && !m.contains(e.target)) { m.style.display = 'none'; }
-    });
+            // 22K (92.6%) Logic
+            let rate = (((b * 3.674 / 31.1035 * 0.926) + mc) * 11.664 * dh) + cr + mg;
+            let total = rate * (w / 11.664);
 
-    function setTab(tab) {
-        currentTab = tab;
-        document.getElementById('sec22').classList.add('hidden');
-        document.getElementById('sec21').classList.add('hidden');
-        document.getElementById('b22').className = 't-btn';
-        document.getElementById('b21').className = 't-btn';
-        document.getElementById('bBoth').className = 't-btn';
+            // Update UI
+            document.getElementById('rate22').innerText = rate.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('total22').innerText = total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+        }
 
-        if(tab === '22') { document.getElementById('sec22').classList.remove('hidden'); document.getElementById('b22').classList.add('active-22'); }
-        else if(tab === '21') { document.getElementById('sec21').classList.remove('hidden'); document.getElementById('b21').classList.add('active-21'); }
-        else { document.getElementById('sec22').classList.remove('hidden'); document.getElementById('sec21').classList.remove('hidden'); document.getElementById('bBoth').classList.add('active-both'); }
-        calc();
-    }
+        function showInvoice() {
+            // Transfer Data
+            document.getElementById('inv-name').innerText = document.getElementById('cName').value || 'Guest';
+            document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
+            document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
+            
+            document.getElementById('inv-rate').innerText = document.getElementById('rate22').innerText;
+            document.getElementById('inv-wt').innerText = document.getElementById('w22').value;
+            document.getElementById('inv-total').innerText = document.getElementById('total22').innerText;
+            document.getElementById('inv-grand').innerText = document.getElementById('total22').innerText;
 
-    function focusField(el) { 
-        document.querySelectorAll('input').forEach(i => i.classList.remove('active-field')); 
-        el.classList.add('active-field'); 
-        currentInput = el; 
-        document.getElementById('customKeypad').classList.add('open'); 
-    }
-    
-    function closeKeypad() { 
-        document.getElementById('customKeypad').classList.remove('open'); 
-        if(currentInput) { 
-            currentInput.classList.remove('active-field'); 
-            if(currentInput.classList.contains('editing')) { 
-                currentInput.classList.remove('editing'); 
-                currentInput.style.pointerEvents = "none"; 
-            } 
-            currentInput = null; 
-        } 
-    }
-    
-    function enableEdit(id) { 
-        let el = document.getElementById(id); 
-        el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); 
-        focusField(el); 
-    }
-    
-    function press(key) { 
-        if(!currentInput) return; 
-        if(key === 'back') { currentInput.value = currentInput.value.slice(0, -1); } 
-        else if(key === '.') { if(!currentInput.value.includes('.')) currentInput.value += key; } 
-        else { currentInput.value += key; } 
-        calc(); 
-    }
+            // Show Invoice, Hide App
+            document.getElementById('app-view').style.display = 'none';
+            document.getElementById('invoice-view').style.display = 'block';
+        }
 
-    function calc() { 
-        let b 
+        function closeInvoice() {
+            document.getElementById('invoice-view').style.display = 'none';
+            document.getElementById('app-view').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
