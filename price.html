@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gold App - Price Calc</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1d24">
+
+    <style>
+        /* --- THEME --- */
+        :root { 
+            --primary: #ffaf40;    
+            --secondary: #48dbfb;  
+            --bg-color: #222831;   
+            --card-bg: #393e46;    
+            --text-main: #eeeeee;  
+            --input-bg: #222831;
+            --border: #4b5563;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; padding: 0;
+            background: var(--bg-color); 
+            color: var(--text-main);
+            font-family: sans-serif;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: #1a1d24; padding: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #444; position: sticky; top: 0; z-index: 100;
+        }
+        .menu-icon { font-size: 28px; cursor: pointer; color: #fff; padding: 5px; }
+
+        /* --- MENU --- */
+        #menu-box {
+            display: none; background: #393e46; border-bottom: 2px solid #555;
+            padding: 10px;
+        }
+        .menu-link {
+            display: block; padding: 12px; color: #fff; text-decoration: none;
+            font-weight: bold; border-bottom: 1px solid #444;
+        }
+
+        /* --- CONTAINER --- */
+        .container { padding: 15px; padding-bottom: 50px; }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; padding: 20px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 20px;
+        }
+
+        /* --- INPUTS --- */
+        label { font-size: 12px; color: #adb5bd; margin-bottom: 5px; display: block; text-transform: uppercase; }
+        input { 
+            width: 100%; padding: 15px; 
+            background: var(--input-bg); border: 2px solid var(--border); 
+            color: #fff; border-radius: 8px; font-size: 22px; 
+            font-weight: bold; text-align: center; margin-bottom: 15px;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        /* --- RESULT --- */
+        .result-box {
+            text-align: center; padding: 20px; 
+            background: #222831; border-radius: 10px; border: 1px solid #555;
+        }
+        .result-label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
+        .result-val { font-size: 30px; font-weight: 900; color: var(--primary); word-break: break-all; }
+        .sub-res { font-size: 14px; color: #adb5bd; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <h3 style="margin:0; color:var(--primary);">Price Calc</h3>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div id="menu-box">
+        <a href="index.html" class="menu-link">🏠 Home</a>
+        <a href="rate.html" class="menu-link">📝 Rate F</a>
+        <a href="converter.html" class="menu-link">⚖️ Converter (Unit)</a>
+        <a href="price.html" class="menu-link" style="color:var(--primary);">💰 Price Calc</a>
+        <a href="casio.html" class="menu-link">🔢 Calculator</a>
+        <a href="settings.html" class="menu-link">⚙️ Settings</a>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <label style="color:var(--secondary);">1. Price Per Vori (Tk)</label>
+            <input type="number" id="priceVori" placeholder="e.g. 200000" oninput="calc()">
+
+            <label style="color:#ffaf40;">2. Weight (Grams)</label>
+            <input type="number" id="weightGm" placeholder="e.g. 50" oninput="calc()">
+
+            <div class="result-box">
+                <div class="result-label">TOTAL PRICE</div>
+                <div class="result-val" id="totalPrice">0.00</div>
+                <div class="sub-res">Weight: <span id="totalVori">0.0000</span> Vori</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // SW
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
+        }
+
+        function toggleMenu() {
+            const m = document.getElementById('menu-box');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function calc() {
+            let price = parseFloat(document.getElementById('priceVori').value);
+            let gm = parseFloat(document.getElementById('weightGm').value);
+
+            if (!price || !gm) {
+                document.getElementById('totalPrice').innerText = "0.00";
+                document.getElementById('totalVori').innerText = "0.0000";
+                return;
+            }
+
+            // Formula: (Gram / 11.664) * Price
+            let vori = gm / 11.664;
+            let total = vori * price;
+
+            document.getElementById('totalPrice').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('totalVori').innerText = vori.toFixed(4);
+        }
+    </script>
+
+</body>
+</html>
