@@ -27,31 +27,29 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* --- SAFE LAYOUT: NO FIXED BODY --- */
         html, body {
             margin: 0; padding: 0;
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            /* পেজ বাউন্স বন্ধ করবে, কিন্তু টাচ আটকাবে না */
             overscroll-behavior-y: none; 
             min-height: 100vh;
         }
 
-        /* HEADER (Sticky - Scroll করলে আটকে থাকবে) */
+        /* HEADER */
         .header {
             position: sticky; top: 0;
             height: 55px; background: #1a1d24; 
             display: flex; align-items: center; padding: 0 15px;
             border-bottom: 1px solid #333; color: white;
             justify-content: space-between; 
-            z-index: 500; /* মেনুর নিচে থাকবে */
+            z-index: 500; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
         .logo-img { height: 35px; }
 
-        /* MENU (Popup) */
+        /* MENU */
         #menuPopup {
             display: none; position: fixed; top: 55px; left: 10px; width: 200px;
             background: #393e46; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
@@ -62,10 +60,10 @@
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
 
-        /* CONTENT AREA */
+        /* CONTENT */
         .content-area {
             padding: 15px;
-            padding-bottom: 300px; /* কিপ্যাডের জন্য জায়গা */
+            padding-bottom: 300px; 
         }
         
         .card {
@@ -121,7 +119,7 @@
         .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; background: rgba(255, 255, 255, 0.1); }
         .btn-action { width: 100%; padding: 15px; background: #fff; color: #333; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
-        /* KEYPAD (Fixed at bottom) */
+        /* KEYPAD */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
             background: #222831; padding: 10px; z-index: 3000;
@@ -134,14 +132,17 @@
         .casio-k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 22px; font-weight: bold; border-radius: 8px; color: #eee; }
         .casio-k-btn:active { background: #555; }
 
-        /* INVOICE LAYOUT (Hidden Overlay) */
+        /* --- INVOICE LAYOUT FIX --- */
         #invoice-layout {
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%;
-            background: #fff; 
+            background: #ffffff !important; /* Force White Background */
+            color: #000000 !important; /* Force Black Text */
             padding: 20px; 
-            font-family: 'Segoe UI', sans-serif; color: #000;
-            z-index: 9999; display: none; overflow-y: auto;
+            font-family: 'Segoe UI', sans-serif;
+            z-index: 10000; /* Ensure it's on TOP */
+            display: none; 
+            overflow-y: auto;
         }
         .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
         .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
@@ -183,19 +184,16 @@
 
             <div id="sec22" class="sec-22">
                 <div style="color:var(--primary); font-weight:bold; margin-bottom:5px; text-align:center;">22 Karat</div>
-                
                 <div class="purity-box">
                     <label><input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()"><span class="p-label">92.6%</span></label>
                     <label><input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()"><span class="p-label">92.0%</span></label>
                 </div>
-
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
-                
                 <div class="rate-box">
                     <span class="rate-label">1 Bhori =</span> 
                     <div class="result-group">
@@ -203,9 +201,7 @@
                         <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
                     </div>
                 </div>
-
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                
                 <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
                     <span class="rate-label" style="color:var(--text-light);">Total</span>
                     <div class="result-group">
@@ -221,14 +217,12 @@
                     <label><input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()"><span class="p-label">88.5%</span></label>
                     <label><input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()"><span class="p-label">88.0%</span></label>
                 </div>
-
                 <div class="grid-2">
                     <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
                     <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
-
                 <div class="rate-box">
                     <span class="rate-label">1 Bhori =</span> 
                     <div class="result-group">
@@ -236,9 +230,7 @@
                         <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
                     </div>
                 </div>
-
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                
                 <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
                     <span class="rate-label" style="color:var(--text-light);">Total</span>
                     <div class="result-group">
@@ -315,7 +307,6 @@
 
     function appInit() { setTab('22'); document.getElementById('inv-date').innerText = new Date().toLocaleDateString(); }
     
-    // MENU LOGIC
     function toggleMenu() { 
         const m = document.getElementById('menuPopup'); 
         m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
@@ -368,57 +359,4 @@
     function press(key) { 
         if(!currentInput) return; 
         if(key === 'back') { currentInput.value = currentInput.value.slice(0, -1); } 
-        else if(key === '.') { if(!currentInput.value.includes('.')) currentInput.value += key; } 
-        else { currentInput.value += key; } 
-        calc(); 
-    }
-
-    function calc() { 
-        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
-        
-        // 22K CALC
-        let p22Val = document.querySelector('input[name="p22"]:checked') ? document.querySelector('input[name="p22"]:checked').value : 0.926; 
-        let r22 = (((b * 3.674 / 31.1035 * parseFloat(p22Val)) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
-        let rf22 = document.getElementById('rateView22'); if(!rf22.classList.contains('editing')) rf22.value = r22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-        let w22 = parseFloat(document.getElementById('w22').value) || 0; let t22 = r22 * (w22 / 11.664); 
-        let tf22 = document.getElementById('t22'); if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        // 21K CALC
-        let p21Val = document.querySelector('input[name="p21"]:checked') ? document.querySelector('input[name="p21"]:checked').value : 0.885; 
-        let r21 = (((b * 3.674 / 31.1035 * parseFloat(p21Val)) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
-        let rf21 = document.getElementById('rateView21'); if(!rf21.classList.contains('editing')) rf21.value = r21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-        let w21 = parseFloat(document.getElementById('w21').value) || 0; let t21 = r21 * (w21 / 11.664); 
-        let tf21 = document.getElementById('t21'); if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        let total22 = parseFloat(tf22.value.replace(/,/g, '')) || 0; let total21 = parseFloat(tf21.value.replace(/,/g, '')) || 0;
-        let grand = 0; if(currentTab === '22') grand = total22; else if(currentTab === '21') grand = total21; else grand = total22 + total21;
-        let gInput = document.getElementById('grandTotal'); if(!gInput.classList.contains('editing')) gInput.value = grand.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
-
-    function downloadPDF() {
-        document.getElementById('inv-cName').innerText = document.getElementById('cName').value || 'Guest';
-        document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
-        
-        let tbody = document.getElementById('inv-body'); tbody.innerHTML = '';
-        if(currentTab === '22' || currentTab === 'both') {
-            let r = document.getElementById('rateView22').value; let w = document.getElementById('w22').value || '0'; let t = document.getElementById('t22').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td>22K Gold</td><td class="text-right">${r}</td><td class="text-right">${w}</td><td class="text-right">${t}</td></tr>`;
-        }
-        if(currentTab === '21' || currentTab === 'both') {
-            let r = document.getElementById('rateView21').value; let w = document.getElementById('w21').value || '0'; let t = document.getElementById('t21').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td>21K Gold</td><td class="text-right">${r}</td><td class="text-right">${w}</td><td class="text-right">${t}</td></tr>`;
-        }
-        document.getElementById('inv-grand').innerText = document.getElementById('grandTotal').value;
-
-        // SHOW OVERLAY
-        const element = document.getElementById('invoice-layout');
-        element.style.display = 'block';
-
-        var opt = { margin: 0.5, filename: 'Invoice_' + new Date().getTime() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-        html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
-        });
-    }
-</script>
-</body>
-</html>
+ 
