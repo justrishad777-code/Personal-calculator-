@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gold App - Rate F</title>
     
     <link rel="manifest" href="manifest.json">
@@ -20,39 +20,37 @@
             --bg-color: #222831;   
             --card-bg: #393e46;    
             --text-main: #eeeeee;  
-            --text-light: #adb5bd; 
             --border: #4b5563;     
             --input-bg: #222831;   
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        html, body {
+        /* --- NO FREEZE FIX: Allow Normal Scrolling --- */
+        body { 
             margin: 0; padding: 0;
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            overscroll-behavior-y: none; 
-            min-height: 100vh;
+            padding-bottom: 300px; /* Space for Keypad */
         }
 
         /* HEADER */
         .header {
             position: sticky; top: 0;
-            height: 55px; background: #1a1d24; 
+            height: 60px; background: #1a1d24; 
             display: flex; align-items: center; padding: 0 15px;
-            border-bottom: 1px solid #333; color: white;
-            justify-content: space-between; 
+            border-bottom: 1px solid #333; 
             z-index: 500; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
-        .logo-img { height: 35px; }
+        .menu-icon { font-size: 26px; cursor: pointer; color: #fff; width: 40px; }
+        .logo-img { height: 40px; display: block; margin: 0 auto; }
 
         /* MENU */
         #menuPopup {
-            display: none; position: fixed; top: 55px; left: 10px; width: 200px;
-            background: #393e46; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: none; position: fixed; top: 60px; left: 10px; width: 220px;
+            background: #393e46; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             z-index: 2000; flex-direction: column; border: 1px solid #555;
         }
         .menu-btn { 
@@ -61,14 +59,11 @@
         }
 
         /* CONTENT */
-        .content-area {
-            padding: 15px;
-            padding-bottom: 300px; 
-        }
+        .container { padding: 15px; }
         
         .card {
             background: var(--card-bg); border-radius: 15px; padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 20px;
         }
 
         /* INPUTS */
@@ -97,17 +92,13 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
         .rate-box {
-            font-size: 14px; font-weight: bold; color: #ccc; 
-            background: #2a3038; 
-            padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 5px;
-            display: flex; align-items: center; border: 1px solid #444; height: 50px;
+            background: #2a3038; padding: 10px; border-radius: 5px; 
+            margin-top: 10px; display: flex; align-items: center; border: 1px solid #444;
         }
-        .rate-label { white-space: nowrap; margin-right: 10px; color: #aaa; }
-        .result-group { display: flex; align-items: center; justify-content: flex-end; flex: 1; height: 100%; }
         .dynamic-input { border: none; background: transparent; font-weight: bold; text-align: right; width: 100%; color: inherit; font-size: 20px; pointer-events: none; }
-        .edit-btn { font-size: 10px; color: #000; background: #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; margin-left: 10px; flex-shrink: 0; }
+        .edit-btn { font-size: 10px; color: #000; background: #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; margin-left: 10px; }
         
-        .grand-box { background: #2a3038; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #444; margin-top: 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .grand-box { background: #2a3038; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #444; margin-top: 15px; position: relative; }
         .grand-input { width: 100%; border: none; background: transparent; font-size: 30px; font-weight: 900; color: #fff; text-align: center; pointer-events: none; margin-top: 5px; }
 
         .purity-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
@@ -132,27 +123,59 @@
         .casio-k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 22px; font-weight: bold; border-radius: 8px; color: #eee; }
         .casio-k-btn:active { background: #555; }
 
-        /* --- INVOICE LAYOUT FIX --- */
+        /* --- NEW INVOICE DESIGN (High Contrast) --- */
         #invoice-layout {
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%;
-            background: #ffffff !important; /* Force White Background */
-            color: #000000 !important; /* Force Black Text */
-            padding: 20px; 
+            background: #f4f4f4 !important; /* Off-White Background */
+            color: #000 !important;
+            padding: 30px; 
             font-family: 'Segoe UI', sans-serif;
-            z-index: 10000; /* Ensure it's on TOP */
+            z-index: 10000; 
             display: none; 
             overflow-y: auto;
         }
-        .inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-        .inv-logo { width: 60px; height: 60px; margin-bottom: 5px; }
-        .inv-title { font-size: 22px; font-weight: bold; text-transform: uppercase; color: #000; }
-        .inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .inv-table th { background: #333; color: #fff; padding: 8px; font-size: 12px; text-align: left; }
-        .inv-table td { border-bottom: 1px solid #ddd; padding: 8px; font-size: 14px; color: #000; }
-        .inv-total-row { font-weight: bold; background: #f9f9f9; color: #000; }
+        
+        .inv-box {
+            border: 2px solid #000;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .inv-header { 
+            text-align: center; margin-bottom: 20px; 
+            background: #000; /* Black Box */
+            color: #fff;      /* White Text */
+            padding: 15px;
+        }
+        .inv-title { font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .inv-info { 
+            display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; 
+            margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px;
+        }
+
+        .inv-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        
+        .inv-table th { 
+            background: #000; /* Black Header */
+            color: #fff;      /* White Text */
+            padding: 10px; 
+            font-size: 12px; text-align: center; 
+            border: 1px solid #000;
+        }
+        
+        .inv-table td { 
+            border: 1px solid #000; 
+            padding: 10px; 
+            font-size: 14px; 
+            color: #000; 
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .inv-total-row { background: #ddd; color: #000; font-size: 16px; }
         .text-right { text-align: right !important; }
-        .inv-info { display: flex; justify-content: space-between; font-size: 14px; }
     </style>
 </head>
 <body onload="appInit()">
@@ -171,7 +194,7 @@
         <a href="settings.html" class="menu-btn">Settings</a>
     </div>
 
-    <div class="content-area">
+    <div class="container">
         <div class="card">
             <label style="font-size:11px; color:var(--text-light);">Screen Rate (Oz)</label>
             <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
@@ -195,16 +218,16 @@
                     <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
                 <div class="rate-box">
-                    <span class="rate-label">1 Bhori =</span> 
-                    <div class="result-group">
+                    <span style="color:#aaa; margin-right:10px;">1 Bhori =</span> 
+                    <div class="result-group" style="flex:1; display:flex; justify-content:flex-end;">
                         <input type="text" inputmode="none" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
                     </div>
                 </div>
                 <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
-                    <span class="rate-label" style="color:var(--text-light);">Total</span>
-                    <div class="result-group">
+                <div class="rate-box" style="background:transparent; border:none; padding:0;">
+                    <span style="color:#aaa;">Total</span>
+                    <div class="result-group" style="flex:1; display:flex; justify-content:flex-end;">
                         <input type="text" inputmode="none" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:24px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
                     </div>
@@ -224,16 +247,16 @@
                     <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
                 </div>
                 <div class="rate-box">
-                    <span class="rate-label">1 Bhori =</span> 
-                    <div class="result-group">
+                    <span style="color:#aaa; margin-right:10px;">1 Bhori =</span> 
+                    <div class="result-group" style="flex:1; display:flex; justify-content:flex-end;">
                         <input type="text" inputmode="none" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
                     </div>
                 </div>
                 <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="rate-box" style="margin-top:10px; border:none; background:transparent; padding:0;">
-                    <span class="rate-label" style="color:var(--text-light);">Total</span>
-                    <div class="result-group">
+                <div class="rate-box" style="background:transparent; border:none; padding:0;">
+                    <span style="color:#aaa;">Total</span>
+                    <div class="result-group" style="flex:1; display:flex; justify-content:flex-end;">
                         <input type="text" inputmode="none" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:24px;" value="0.00">
                         <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
                     </div>
@@ -255,27 +278,43 @@
     </div>
 
     <div id="invoice-layout">
-        <div class="inv-header">
-            <img src="logo.png" alt="Logo" class="inv-logo">
-            <div class="inv-title">Gold Estimate</div>
-            <div style="font-size:12px; margin-top:5px;">Estimated Rate Calculation</div>
-        </div>
-        <div class="inv-info">
-            <div><strong>Customer:</strong> <span id="inv-cName"></span><br><strong>Date:</strong> <span id="inv-date"></span></div>
-            <div style="text-align:right;"><strong>Auth By:</strong> <span id="inv-auth"></span></div>
-        </div>
-        <table class="inv-table">
-            <thead>
-                <tr><th>Description</th><th class="text-right">Rate/Bhori</th><th class="text-right">Weight (gm)</th><th class="text-right">Total</th></tr>
-            </thead>
-            <tbody id="inv-body"></tbody>
-            <tfoot>
-                <tr class="inv-total-row"><td colspan="3" class="text-right">Grand Total</td><td class="text-right" id="inv-grand">0.00</td></tr>
-            </tfoot>
-        </table>
-        <div style="margin-top:30px; font-size:12px; text-align:center;">
-            <p>This is a computer generated estimate.</p>
-            <p>Thank you for your business!</p>
+        <div class="inv-box">
+            <div class="inv-header">
+                <div class="inv-title">GOLD ESTIMATE</div>
+                <div style="font-size:12px;">Computer Generated Receipt</div>
+            </div>
+            
+            <div class="inv-info">
+                <div>
+                    Name: <span id="inv-cName" style="font-weight:normal;">Guest</span><br>
+                    Date: <span id="inv-date" style="font-weight:normal;">--</span>
+                </div>
+                <div class="text-right">
+                    Auth: <span id="inv-auth" style="font-weight:normal;">Admin</span>
+                </div>
+            </div>
+
+            <table class="inv-table">
+                <thead>
+                    <tr>
+                        <th style="width:40%;">ITEM</th>
+                        <th style="width:25%;">RATE</th>
+                        <th style="width:15%;">WT(g)</th>
+                        <th style="width:20%;">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody id="inv-body"></tbody>
+                <tfoot>
+                    <tr class="inv-total-row">
+                        <td colspan="3" class="text-right">GRAND TOTAL</td>
+                        <td class="text-right" id="inv-grand">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="margin-top:40px; text-align:center; font-size:12px; font-weight:bold;">
+                <p>THANK YOU FOR YOUR BUSINESS</p>
+            </div>
         </div>
     </div>
 
@@ -341,22 +380,4 @@
         document.getElementById('customKeypad').classList.remove('open'); 
         if(currentInput) { 
             currentInput.classList.remove('active-field'); 
-            if(currentInput.classList.contains('editing')) { 
-                currentInput.classList.remove('editing'); 
-                currentInput.style.pointerEvents = "none"; 
-            } 
-            currentInput = null; 
-        } 
-    }
     
-    function enableEdit(id) { 
-        let el = document.getElementById(id); 
-        el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); 
-        focusField(el); 
-    }
-    
-    function press(key) { 
-        if(!currentInput) return; 
-        if(key === 'back') { currentInput.value = currentInput.value.slice(0, -1); } 
- 
