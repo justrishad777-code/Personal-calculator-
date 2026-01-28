@@ -8,102 +8,111 @@
     <meta name="theme-color" content="#1a1d24">
 
     <style>
-        body {
-            background-color: #222831;
-            color: #eeeeee;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            padding-bottom: 50px;
-        }
-        /* Header */
-        .header {
-            background: #1a1d24;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #444;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header h3 { margin: 0; font-size: 18px; }
-        .home-btn { text-decoration: none; color: #ffaf40; font-weight: bold; }
-
-        /* Container */
-        .container { padding: 15px; }
-
-        /* Card */
-        .card {
-            background: #393e46;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        /* Inputs */
-        label { display: block; font-size: 12px; color: #adb5bd; margin-bottom: 5px; }
-        input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            background: #222831;
-            border: 1px solid #4b5563;
-            color: #fff;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        input:focus { outline: 2px solid #ffaf40; }
-
-        /* Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; padding: 10px; border: none; border-radius: 5px;
-            background: #222831; color: #aaa; font-weight: bold;
-        }
-        .tab-btn.active { background: #ffaf40; color: #000; }
-
-        /* Grid */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-        /* Result Box */
-        .result-box {
-            background: #222831; padding: 15px; border-radius: 8px;
-            text-align: center; margin-top: 10px; border: 1px solid #555;
-        }
-        .result-val { font-size: 24px; font-weight: bold; color: #ffaf40; }
-
-        /* Action Button */
-        .btn-main {
-            width: 100%; padding: 15px; background: #fff; color: #000;
-            border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
-            margin-top: 20px; cursor: pointer;
-        }
-
-        /* INVOICE PREVIEW (Hidden initially) */
-        #invoice-view {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; color: #000; z-index: 2000;
-            overflow-y: auto; padding: 20px; box-sizing: border-box;
+        /* --- THEME & RESET --- */
+        :root { 
+            --primary: #ffaf40;    
+            --secondary: #48dbfb;  
+            --bg-color: #222831;   
+            --card-bg: #393e46;    
+            --text-main: #eeeeee;  
+            --input-bg: #222831;
+            --border: #4b5563;
         }
         
-        .inv-header { background: #000; color: #fff; padding: 15px; text-align: center; margin-bottom: 20px; }
-        .inv-row { display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding: 8px 0; font-size: 14px; font-weight: bold; }
-        .close-btn {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #ff4757; color: white; padding: 10px 30px; border-radius: 25px; border: none; font-weight: bold;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; padding: 0;
+            background: var(--bg-color); 
+            color: var(--text-main);
+            font-family: sans-serif;
+            padding-bottom: 50px; 
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: #1a1d24; padding: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #444; position: sticky; top: 0; z-index: 100;
+        }
+        .home-btn { text-decoration: none; color: #ffaf40; font-weight: bold; }
+
+        /* --- CONTAINER & CARDS --- */
+        .container { padding: 15px; }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; padding: 15px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 15px;
+        }
+
+        /* --- INPUTS --- */
+        label { font-size: 12px; color: #adb5bd; margin-bottom: 4px; display: block; }
+        input { 
+            width: 100%; padding: 12px; 
+            background: var(--input-bg); border: 1px solid var(--border); 
+            color: #fff; border-radius: 6px; font-size: 18px; 
+            font-weight: bold; text-align: center; margin-bottom: 10px;
+        }
+        input:focus { outline: 2px solid var(--primary); }
+
+        /* --- TABS --- */
+        .tab-box { display: flex; gap: 8px; margin-bottom: 20px; }
+        .t-btn { 
+            flex: 1; padding: 10px; border: 1px solid #555; 
+            border-radius: 6px; background: #222831; color: #aaa; 
+            font-weight: bold; cursor: pointer;
+        }
+        .active-22 { background: var(--primary); color: #000; border: none; }
+        .active-21 { background: var(--secondary); color: #000; border: none; }
+        .active-both { background: #fff; color: #333; border: none; }
+
+        /* --- GRID LAYOUTS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .hidden { display: none; }
+
+        /* --- RESULT BOXES --- */
+        .rate-display {
+            background: #2a3038; padding: 10px; border-radius: 6px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #555; margin-top: 5px;
+        }
+        .val-text { font-size: 20px; font-weight: bold; }
+        
+        .section-title { text-align: center; font-weight: bold; margin: 10px 0; font-size: 14px; }
+
+        /* --- GRAND TOTAL --- */
+        .grand-box {
+            background: #222831; padding: 15px; border-radius: 10px;
+            text-align: center; border: 1px solid #555; margin-top: 20px;
+        }
+        .grand-val { font-size: 32px; font-weight: 900; color: #fff; }
+
+        .btn-action { 
+            width: 100%; padding: 15px; background: #fff; color: #000; 
+            border: none; border-radius: 8px; font-size: 16px; 
+            font-weight: bold; margin-top: 20px; cursor: pointer;
+        }
+
+        /* --- INVOICE PREVIEW --- */
+        #invoice-view {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; color: #000; z-index: 2000; overflow-y: auto; padding: 20px;
+        }
+        .inv-header { background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .inv-table th { background: #eee; padding: 8px; text-align: left; border-bottom: 1px solid #000; font-size: 12px; }
+        .inv-table td { padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; font-size: 14px; }
+        .close-btn { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: #ff4757; color: #fff; padding: 12px 30px; 
+            border-radius: 30px; border: none; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
     </style>
 </head>
-<body>
+<body onload="appInit()">
 
     <div id="app-view">
         <div class="header">
-            <h3>Rate F</h3>
+            <h3 style="margin:0;">Rate F</h3>
             <a href="index.html" class="home-btn">Home 🏠</a>
         </div>
 
@@ -112,49 +121,80 @@
                 <label>Screen Rate (Oz)</label>
                 <input type="number" id="screenRate" placeholder="0000" oninput="calc()">
 
-                <div class="tabs">
-                    <button class="tab-btn active">22K / 21K Calculator</button>
+                <div class="tab-box">
+                    <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
+                    <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
+                    <button class="t-btn" id="bBoth" onclick="setTab('both')">Both</button>
                 </div>
 
-                <div style="text-align:center; color:#ffaf40; font-weight:bold; margin-bottom:10px;">22 Karat (92.6%)</div>
-                
-                <div class="grid-2">
-                    <div><label>MC</label><input type="number" id="mc22" placeholder="MC" oninput="calc()"></div>
-                    <div><label>Dh</label><input type="number" id="dh22" placeholder="Dh" oninput="calc()"></div>
-                    <div><label>CR</label><input type="number" id="cr22" placeholder="CR" oninput="calc()"></div>
-                    <div><label>MG</label><input type="number" id="mg22" placeholder="MG" oninput="calc()"></div>
+                <div id="sec22">
+                    <div class="section-title" style="color:var(--primary);">22 Karat (92.6%)</div>
+                    
+                    <div class="grid-2">
+                        <div><input type="number" id="mc22" placeholder="MC" oninput="calc()"></div>
+                        <div><input type="number" id="dh22" placeholder="Dh" oninput="calc()"></div>
+                        <div><input type="number" id="cr22" placeholder="CR" oninput="calc()"></div>
+                        <div><input type="number" id="mg22" placeholder="MG" oninput="calc()"></div>
+                    </div>
+
+                    <div class="rate-display">
+                        <span style="color:#aaa; font-size:12px;">1 Bhori =</span>
+                        <span id="rate22" class="val-text" style="color:var(--primary);">0.00</span>
+                    </div>
+
+                    <input type="number" id="w22" placeholder="Weight (gm)" style="margin-top:10px; font-size:22px;" oninput="calc()">
+                    
+                    <div class="rate-display" style="background:transparent; border:none; padding:0;">
+                        <span style="color:#aaa; font-size:12px;">Total</span>
+                        <span id="total22" class="val-text" style="color:var(--primary);">0.00</span>
+                    </div>
                 </div>
 
-                <div class="result-box">
-                    <div style="font-size:12px; color:#aaa;">1 Bhori Rate</div>
-                    <div id="rate22" class="result-val">0.00</div>
+                <div id="sec21" class="hidden">
+                    <div class="section-title" style="color:var(--secondary); margin-top:20px;">21 Karat (88.5%)</div>
+                    
+                    <div class="grid-2">
+                        <div><input type="number" id="mc21" placeholder="MC" oninput="calc()"></div>
+                        <div><input type="number" id="dh21" placeholder="Dh" oninput="calc()"></div>
+                        <div><input type="number" id="cr21" placeholder="CR" oninput="calc()"></div>
+                        <div><input type="number" id="mg21" placeholder="MG" oninput="calc()"></div>
+                    </div>
+
+                    <div class="rate-display">
+                        <span style="color:#aaa; font-size:12px;">1 Bhori =</span>
+                        <span id="rate21" class="val-text" style="color:var(--secondary);">0.00</span>
+                    </div>
+
+                    <input type="number" id="w21" placeholder="Weight (gm)" style="margin-top:10px; font-size:22px;" oninput="calc()">
+                    
+                    <div class="rate-display" style="background:transparent; border:none; padding:0;">
+                        <span style="color:#aaa; font-size:12px;">Total</span>
+                        <span id="total21" class="val-text" style="color:var(--secondary);">0.00</span>
+                    </div>
                 </div>
 
-                <label style="margin-top:15px;">Weight (gm)</label>
-                <input type="number" id="w22" placeholder="Enter Weight" style="font-size:24px;" oninput="calc()">
-
-                <div class="result-box" style="border-color:#ffaf40;">
-                    <div style="font-size:12px; color:#aaa;">TOTAL PRICE</div>
-                    <div id="total22" class="result-val" style="font-size:30px;">0.00</div>
+                <div class="grand-box">
+                    <div style="font-size:12px; color:#aaa;">GRAND TOTAL</div>
+                    <div id="grandTotal" class="grand-val">0.00</div>
                 </div>
 
                 <div style="margin-top:20px;">
-                    <input type="text" id="cName" placeholder="Customer Name">
-                    <input type="text" id="authName" placeholder="Authorized By">
+                    <input type="text" id="cName" placeholder="Customer Name" style="text-align:left;">
+                    <input type="text" id="authName" placeholder="Authorized By" style="text-align:left;">
                 </div>
 
-                <button class="btn-main" onclick="showInvoice()">📄 SHOW INVOICE</button>
+                <button class="btn-action" onclick="showInvoice()">SHOW INVOICE</button>
             </div>
         </div>
     </div>
 
     <div id="invoice-view">
         <div class="inv-header">
-            <h1 style="margin:0;">INVOICE</h1>
+            <h1 style="margin:0; letter-spacing:2px;">INVOICE</h1>
             <small>Computer Generated Receipt</small>
         </div>
 
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:bold;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:14px; font-weight:bold;">
             <div>
                 CUSTOMER: <span id="inv-name" style="font-weight:normal">Guest</span><br>
                 DATE: <span id="inv-date" style="font-weight:normal">--</span>
@@ -164,62 +204,132 @@
             </div>
         </div>
 
-        <div style="border-top: 2px solid #000; border-bottom: 2px solid #000;">
-            <div class="inv-row" style="background:#ddd;">
-                <span>ITEM</span> <span>RATE</span> <span>WT(g)</span> <span>TOTAL</span>
-            </div>
-            <div class="inv-row" id="inv-item-row">
-                <span>22K GOLD</span> <span id="inv-rate">0</span> <span id="inv-wt">0</span> <span id="inv-total">0</span>
-            </div>
-        </div>
+        <table class="inv-table">
+            <thead>
+                <tr>
+                    <th style="width:40%">ITEM</th>
+                    <th>RATE</th>
+                    <th>WT(g)</th>
+                    <th style="text-align:right;">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="inv-body">
+                </tbody>
+            <tfoot>
+                <tr style="background:#000; color:#fff;">
+                    <td colspan="3" style="text-align:right; padding:15px;">GRAND TOTAL</td>
+                    <td style="text-align:right; padding:15px;" id="inv-grand">0.00</td>
+                </tr>
+            </tfoot>
+        </table>
 
-        <div style="margin-top:20px; text-align:right; font-size:20px; font-weight:bold; background:#000; color:#fff; padding:10px;">
-            GRAND TOTAL: <span id="inv-grand">0.00</span>
-        </div>
-
-        <div style="text-align:center; margin-top:50px; font-size:12px; font-weight:bold;">
-            THANK YOU FOR YOUR BUSINESS
-        </div>
+        <div style="text-align:center; margin-top:50px; font-weight:bold; font-size:12px;">THANK YOU FOR YOUR BUSINESS</div>
 
         <button class="close-btn" onclick="closeInvoice()">CLOSE ✖</button>
     </div>
 
     <script>
-        // SERVICE WORKER UPDATE (V20)
+        let currentTab = '22';
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
         }
 
+        function appInit() { setTab('22'); }
+
+        function setTab(tab) {
+            currentTab = tab;
+            // Hide/Show Sections
+            document.getElementById('sec22').classList.add('hidden');
+            document.getElementById('sec21').classList.add('hidden');
+            
+            // Reset Buttons
+            document.getElementById('b22').className = 't-btn';
+            document.getElementById('b21').className = 't-btn';
+            document.getElementById('bBoth').className = 't-btn';
+
+            // Logic
+            if(tab === '22') {
+                document.getElementById('sec22').classList.remove('hidden');
+                document.getElementById('b22').classList.add('active-22');
+            } else if(tab === '21') {
+                document.getElementById('sec21').classList.remove('hidden');
+                document.getElementById('b21').classList.add('active-21');
+            } else {
+                document.getElementById('sec22').classList.remove('hidden');
+                document.getElementById('sec21').classList.remove('hidden');
+                document.getElementById('bBoth').classList.add('active-both');
+            }
+            calc();
+        }
+
         function calc() {
-            // Get Values
             let b = parseFloat(document.getElementById('screenRate').value) || 0;
-            let mc = parseFloat(document.getElementById('mc22').value) || 0;
-            let dh = parseFloat(document.getElementById('dh22').value) || 0;
-            let cr = parseFloat(document.getElementById('cr22').value) || 0;
-            let mg = parseFloat(document.getElementById('mg22').value) || 0;
-            let w = parseFloat(document.getElementById('w22').value) || 0;
 
-            // 22K (92.6%) Logic
-            let rate = (((b * 3.674 / 31.1035 * 0.926) + mc) * 11.664 * dh) + cr + mg;
-            let total = rate * (w / 11.664);
+            // --- 22K Calc ---
+            let mc22 = parseFloat(document.getElementById('mc22').value) || 0;
+            let dh22 = parseFloat(document.getElementById('dh22').value) || 0;
+            let cr22 = parseFloat(document.getElementById('cr22').value) || 0;
+            let mg22 = parseFloat(document.getElementById('mg22').value) || 0;
+            let w22 = parseFloat(document.getElementById('w22').value) || 0;
 
-            // Update UI
-            document.getElementById('rate22').innerText = rate.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-            document.getElementById('total22').innerText = total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            let rate22 = (((b * 3.674 / 31.1035 * 0.926) + mc22) * 11.664 * (dh22 || 1)) + cr22 + mg22;
+            let total22 = rate22 * (w22 / 11.664);
+
+            document.getElementById('rate22').innerText = rate22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('total22').innerText = total22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+
+            // --- 21K Calc ---
+            let mc21 = parseFloat(document.getElementById('mc21').value) || 0;
+            let dh21 = parseFloat(document.getElementById('dh21').value) || 0;
+            let cr21 = parseFloat(document.getElementById('cr21').value) || 0;
+            let mg21 = parseFloat(document.getElementById('mg21').value) || 0;
+            let w21 = parseFloat(document.getElementById('w21').value) || 0;
+
+            let rate21 = (((b * 3.674 / 31.1035 * 0.885) + mc21) * 11.664 * (dh21 || 1)) + cr21 + mg21;
+            let total21 = rate21 * (w21 / 11.664);
+
+            document.getElementById('rate21').innerText = rate21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('total21').innerText = total21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+
+            // --- GRAND TOTAL ---
+            let grand = 0;
+            if(currentTab === '22') grand = total22;
+            else if(currentTab === '21') grand = total21;
+            else grand = total22 + total21;
+
+            document.getElementById('grandTotal').innerText = grand.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
         }
 
         function showInvoice() {
-            // Transfer Data
             document.getElementById('inv-name').innerText = document.getElementById('cName').value || 'Guest';
             document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
             document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
-            
-            document.getElementById('inv-rate').innerText = document.getElementById('rate22').innerText;
-            document.getElementById('inv-wt').innerText = document.getElementById('w22').value;
-            document.getElementById('inv-total').innerText = document.getElementById('total22').innerText;
-            document.getElementById('inv-grand').innerText = document.getElementById('total22').innerText;
 
-            // Show Invoice, Hide App
+            let tbody = document.getElementById('inv-body');
+            tbody.innerHTML = '';
+
+            let r22 = document.getElementById('rate22').innerText;
+            let w22 = document.getElementById('w22').value;
+            let t22 = document.getElementById('total22').innerText;
+
+            let r21 = document.getElementById('rate21').innerText;
+            let w21 = document.getElementById('w21').value;
+            let t21 = document.getElementById('total21').innerText;
+
+            if(currentTab === '22' || currentTab === 'both') {
+                if(t22 !== "0.00") {
+                    tbody.innerHTML += `<tr><td>22K GOLD</td><td>${r22}</td><td>${w22}</td><td style="text-align:right;">${t22}</td></tr>`;
+                }
+            }
+            if(currentTab === '21' || currentTab === 'both') {
+                if(t21 !== "0.00") {
+                    tbody.innerHTML += `<tr><td>21K GOLD</td><td>${r21}</td><td>${w21}</td><td style="text-align:right;">${t21}</td></tr>`;
+                }
+            }
+
+            document.getElementById('inv-grand').innerText = document.getElementById('grandTotal').innerText;
+
             document.getElementById('app-view').style.display = 'none';
             document.getElementById('invoice-view').style.display = 'block';
         }
