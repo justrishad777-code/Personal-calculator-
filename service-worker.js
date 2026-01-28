@@ -1,5 +1,5 @@
 // ভার্সন পরিবর্তন করা হয়েছে যাতে ব্রাউজার নতুন ফাইল নেয়
-const CACHE_NAME = 'gold-app-v21';
+const CACHE_NAME = 'gold-app-v22';
 
 const ASSETS = [
   './',
