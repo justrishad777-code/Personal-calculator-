@@ -27,19 +27,18 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* --- 1. SAFE LAYOUT (NO FREEZE) --- */
+        /* --- NO FREEZE LAYOUT --- */
         body { 
             margin: 0; padding: 0;
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            padding-bottom: 350px; /* কিপ্যাডের জন্য নিচে জায়গা */
+            padding-bottom: 350px; 
             min-height: 100vh;
-            /* বাউন্স বন্ধ করবে কিন্তু টাচ সচল রাখবে */
             overscroll-behavior-y: none; 
         }
 
-        /* --- 2. HEADER --- */
+        /* --- HEADER --- */
         .header {
             background: #1a1d24; 
             height: 60px;
@@ -51,7 +50,7 @@
         .menu-icon { font-size: 28px; cursor: pointer; color: white; padding: 5px; }
         .logo-img { height: 40px; }
 
-        /* --- 3. MENU --- */
+        /* --- MENU --- */
         #menuPopup {
             display: none; position: fixed; top: 60px; left: 10px; width: 220px;
             background: #393e46; border-radius: 8px; border: 1px solid #555;
@@ -63,14 +62,14 @@
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
 
-        /* --- 4. MAIN CARD --- */
+        /* --- CONTENT --- */
         .container { padding: 15px; }
         .card {
             background: var(--card-bg); border-radius: 15px; padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- 5. INPUTS --- */
+        /* --- INPUTS --- */
         input { color: #fff; pointer-events: auto !important; }
         .main-input {
             width: 100%; font-size: 32px; font-weight: bold; text-align: center;
@@ -88,7 +87,7 @@
             margin-top: 15px; font-weight: bold; background: var(--input-bg); color: #fff;
         }
 
-        /* --- 6. BUTTONS & TABS --- */
+        /* --- TABS --- */
         .tab-box { display: flex; gap: 10px; margin-bottom: 20px; }
         .t-btn { flex: 1; padding: 12px; border: 1px solid #555; border-radius: 8px; background: #222831; color: #aaa; font-weight: bold; cursor: pointer; }
         .active-22 { background: var(--primary); color: #000; border: none; }
@@ -98,7 +97,7 @@
         .hidden { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-        /* Rate Row */
+        /* --- RATE BOX --- */
         .rate-box {
             background: #2a3038; padding: 12px; border-radius: 8px; margin-top: 10px; 
             display: flex; align-items: center; justify-content: space-between;
@@ -107,7 +106,6 @@
         .dynamic-input { border: none; background: transparent; font-weight: bold; text-align: right; width: 100px; font-size: 20px; color: inherit; pointer-events: none; }
         .edit-btn { font-size: 11px; background: #ccc; color: #000; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: none; font-weight: bold; }
 
-        /* Grand Total */
         .grand-box { 
             background: #222831; padding: 20px; border-radius: 15px; 
             text-align: center; border: 2px solid var(--border); margin-top: 20px; 
@@ -115,13 +113,11 @@
         }
         .grand-input { width: 100%; border: none; background: transparent; font-size: 35px; font-weight: 900; color: #fff; text-align: center; pointer-events: none; }
 
-        /* Purity Radio */
         .purity-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
         .p-radio { display: none; }
         .p-label { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid #555; color: #aaa; background: #222831; }
         .p-radio:checked + .p-label { background: #eee; color: #000; border-color: #eee; }
 
-        /* Active Field Highlight */
         .active-field { border: 2px solid var(--primary) !important; background: #4a3b2a !important; }
         .editing { border-bottom: 2px solid red !important; pointer-events: auto !important; }
         
@@ -131,7 +127,7 @@
             margin-top: 25px; cursor: pointer; 
         }
 
-        /* --- 7. KEYPAD (Fixed Bottom) --- */
+        /* --- KEYPAD --- */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
             background: #1a1d24; padding: 10px; z-index: 3000;
@@ -144,17 +140,21 @@
         .k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 24px; font-weight: bold; border-radius: 8px; color: #eee; }
         .k-btn:active { background: #555; }
 
-        /* --- 8. INVOICE DESIGN (Black & White PDF) --- */
+        /* --- INVOICE LAYOUT --- */
         #invoice-layout {
-            display: none; /* Hidden normally */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff !important; z-index: 9999; overflow-y: auto;
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: #fff !important; 
+            z-index: 9999; 
+            overflow-y: auto;
             color: #000 !important;
         }
         
-        .inv-container { padding: 30px; max-width: 800px; margin: 0 auto; background: #fff; }
+        .inv-container { padding: 30px; max-width: 800px; margin: 0 auto; background: #fff; min-height: 100%; }
         
-        /* Header Box */
+        /* Header Box (Black) */
         .inv-header-box { 
             background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 30px; 
         }
@@ -163,7 +163,7 @@
 
         /* Info Section */
         .inv-info { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-        .inv-info-text { font-size: 14px; font-weight: bold; line-height: 1.5; color: #000; }
+        .inv-info-text { font-size: 14px; font-weight: bold; line-height: 1.6; color: #000; }
 
         /* Table */
         .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
@@ -177,7 +177,7 @@
         }
         .text-right { text-align: right !important; }
 
-        /* Total Section */
+        /* Total */
         .inv-total-row td { background: #000; color: #fff; font-size: 18px; font-weight: 900; border: none; }
         
         .inv-footer { text-align: center; margin-top: 50px; font-size: 12px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px; color: #000; }
@@ -286,17 +286,17 @@
     <div id="invoice-layout">
         <div class="inv-container">
             <div class="inv-header-box">
-                <h1 class="inv-title">ESTIMATE</h1>
+                <h1 class="inv-title">INVOICE</h1>
                 <div class="inv-sub">Computer Generated Receipt</div>
             </div>
 
             <div class="inv-info">
                 <div class="inv-info-text">
-                    NAME: <span id="inv-cName" style="font-weight:normal">Guest</span><br>
+                    CUSTOMER: <span id="inv-cName" style="font-weight:normal">Guest</span><br>
                     DATE: <span id="inv-date" style="font-weight:normal">--</span>
                 </div>
                 <div class="inv-info-text text-right">
-                    AUTH BY: <span id="inv-auth" style="font-weight:normal">Admin</span>
+                    AUTHORIZED BY: <span id="inv-auth" style="font-weight:normal">Admin</span>
                 </div>
             </div>
 
@@ -413,7 +413,6 @@
     function calc() { 
         let b = parseFloat(document.getElementById('screenRate').value) || 0; 
         
-        // 22K Logic
         let p22Val = document.querySelector('input[name="p22"]:checked') ? document.querySelector('input[name="p22"]:checked').value : 0.926; 
         let r22 = (((b * 3.674 / 31.1035 * parseFloat(p22Val)) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
         let rf22 = document.getElementById('rateView22'); 
@@ -424,7 +423,6 @@
         let tf22 = document.getElementById('t22'); 
         if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 
-        // 21K Logic
         let p21Val = document.querySelector('input[name="p21"]:checked') ? document.querySelector('input[name="p21"]:checked').value : 0.885; 
         let r21 = (((b * 3.674 / 31.1035 * parseFloat(p21Val)) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
         let rf21 = document.getElementById('rateView21'); 
@@ -435,7 +433,6 @@
         let tf21 = document.getElementById('t21'); 
         if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 
-        // Grand Total
         let total22 = parseFloat(tf22.value.replace(/,/g, '')) || 0; 
         let total21 = parseFloat(tf21.value.replace(/,/g, '')) || 0;
         let grand = 0; 
@@ -448,7 +445,6 @@
     }
 
     function downloadPDF() {
-        // Set Data
         document.getElementById('inv-cName').innerText = document.getElementById('cName').value || 'Guest';
         document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
         
@@ -459,13 +455,13 @@
             let r = document.getElementById('rateView22').value; 
             let w = document.getElementById('w22').value || '0'; 
             let t = document.getElementById('t22').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td>22K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
+            if(t !== '0.00') tbody.innerHTML += `<tr><td class="text-left">22K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
         }
         if(currentTab === '21' || currentTab === 'both') {
             let r = document.getElementById('rateView21').value; 
             let w = document.getElementById('w21').value || '0'; 
             let t = document.getElementById('t21').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td>21K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
+            if(t !== '0.00') tbody.innerHTML += `<tr><td class="text-left">21K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
         }
         document.getElementById('inv-grand').innerText = document.getElementById('grandTotal').value;
 
