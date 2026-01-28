@@ -27,21 +27,18 @@
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* --- NO FREEZE LAYOUT --- */
         body { 
             margin: 0; padding: 0;
             background: var(--bg-color); 
             font-family: 'Segoe UI', sans-serif; 
             color: var(--text-main);
-            padding-bottom: 350px; 
             min-height: 100vh;
             overscroll-behavior-y: none; 
         }
 
-        /* --- HEADER --- */
+        /* --- STYLES FOR MAIN APP --- */
         .header {
-            background: #1a1d24; 
-            height: 60px;
+            background: #1a1d24; height: 60px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 15px; border-bottom: 1px solid #333;
             position: sticky; top: 0; z-index: 500;
@@ -50,7 +47,6 @@
         .menu-icon { font-size: 28px; cursor: pointer; color: white; padding: 5px; }
         .logo-img { height: 40px; }
 
-        /* --- MENU --- */
         #menuPopup {
             display: none; position: fixed; top: 60px; left: 10px; width: 220px;
             background: #393e46; border-radius: 8px; border: 1px solid #555;
@@ -62,14 +58,13 @@
             border-bottom: 1px solid #555; font-weight: 600; display: block; 
         }
 
-        /* --- CONTENT --- */
-        .container { padding: 15px; }
+        .container { padding: 15px; padding-bottom: 350px; } /* Keypad space */
+        
         .card {
             background: var(--card-bg); border-radius: 15px; padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- INPUTS --- */
         input { color: #fff; pointer-events: auto !important; }
         .main-input {
             width: 100%; font-size: 32px; font-weight: bold; text-align: center;
@@ -87,7 +82,6 @@
             margin-top: 15px; font-weight: bold; background: var(--input-bg); color: #fff;
         }
 
-        /* --- TABS --- */
         .tab-box { display: flex; gap: 10px; margin-bottom: 20px; }
         .t-btn { flex: 1; padding: 12px; border: 1px solid #555; border-radius: 8px; background: #222831; color: #aaa; font-weight: bold; cursor: pointer; }
         .active-22 { background: var(--primary); color: #000; border: none; }
@@ -97,7 +91,6 @@
         .hidden { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-        /* --- RATE BOX --- */
         .rate-box {
             background: #2a3038; padding: 12px; border-radius: 8px; margin-top: 10px; 
             display: flex; align-items: center; justify-content: space-between;
@@ -127,7 +120,6 @@
             margin-top: 25px; cursor: pointer; 
         }
 
-        /* --- KEYPAD --- */
         #customKeypad {
             position: fixed; bottom: -100%; left: 0; width: 100%;
             background: #1a1d24; padding: 10px; z-index: 3000;
@@ -140,32 +132,27 @@
         .k-btn { background: #393e46; border: 1px solid #555; padding: 15px; font-size: 24px; font-weight: bold; border-radius: 8px; color: #eee; }
         .k-btn:active { background: #555; }
 
-        /* --- INVOICE LAYOUT --- */
+        /* --- INVOICE LAYOUT (The Clean Sheet) --- */
         #invoice-layout {
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: #fff !important; 
-            z-index: 9999; 
-            overflow-y: auto;
-            color: #000 !important;
+            display: none; /* Initially Hidden */
+            background: #fff;
+            color: #000;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
         }
         
-        .inv-container { padding: 30px; max-width: 800px; margin: 0 auto; background: #fff; min-height: 100%; }
+        .inv-container { padding: 30px; max-width: 800px; margin: 0 auto; }
         
-        /* Header Box (Black) */
         .inv-header-box { 
             background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 30px; 
         }
         .inv-title { font-size: 30px; font-weight: 900; margin: 0; letter-spacing: 3px; }
         .inv-sub { font-size: 12px; letter-spacing: 1px; margin-top: 5px; opacity: 0.8; }
 
-        /* Info Section */
         .inv-info { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
         .inv-info-text { font-size: 14px; font-weight: bold; line-height: 1.6; color: #000; }
 
-        /* Table */
         .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
         .inv-table th { 
             background: #e0e0e0; color: #000; padding: 10px; 
@@ -177,7 +164,6 @@
         }
         .text-right { text-align: right !important; }
 
-        /* Total */
         .inv-total-row td { background: #000; color: #fff; font-size: 18px; font-weight: 900; border: none; }
         
         .inv-footer { text-align: center; margin-top: 50px; font-size: 12px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px; color: #000; }
@@ -185,104 +171,123 @@
 </head>
 <body onload="appInit()">
 
-    <div class="header">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <span style="font-weight:bold; font-size:18px;">Gold App Rate F</span>
-        <div style="width:30px;"></div>
-    </div>
+    <div id="main-app-wrapper">
+        <div class="header">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span style="font-weight:bold; font-size:18px;">Gold App Rate F</span>
+            <div style="width:30px;"></div>
+        </div>
 
-    <div id="menuPopup">
-        <a href="index.html" class="menu-btn">Home</a>
-        <a href="rate_new.html" class="menu-btn" style="background:#555;">Rate F</a>
-        <a href="converter.html" class="menu-btn">Converter</a>
-        <a href="casio.html" class="menu-btn">Calculator</a>
-        <a href="settings.html" class="menu-btn">Settings</a>
-    </div>
+        <div id="menuPopup">
+            <a href="index.html" class="menu-btn">Home</a>
+            <a href="rate_new.html" class="menu-btn" style="background:#555;">Rate F</a>
+            <a href="converter.html" class="menu-btn">Converter</a>
+            <a href="casio.html" class="menu-btn">Calculator</a>
+            <a href="settings.html" class="menu-btn">Settings</a>
+        </div>
 
-    <div class="container">
-        <div class="card">
-            <label style="color:#aaa; font-size:12px;">Screen Rate (Oz)</label>
-            <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
+        <div class="container">
+            <div class="card">
+                <label style="color:#aaa; font-size:12px;">Screen Rate (Oz)</label>
+                <input type="text" inputmode="none" readonly id="screenRate" class="main-input" placeholder="0000" onclick="focusField(this)">
 
-            <div class="tab-box">
-                <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
-                <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
-                <button class="t-btn active-both" id="bBoth" onclick="setTab('both')">Both</button>
-            </div>
-
-            <div id="sec22" class="sec-22">
-                <div style="color:var(--primary); text-align:center; font-weight:bold; margin-bottom:10px;">22 Karat</div>
-                <div class="purity-box">
-                    <label><input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()"><span class="p-label">92.6%</span></label>
-                    <label><input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()"><span class="p-label">92.0%</span></label>
+                <div class="tab-box">
+                    <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
+                    <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
+                    <button class="t-btn active-both" id="bBoth" onclick="setTab('both')">Both</button>
                 </div>
-                <div class="grid-2">
-                    <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
-                </div>
-                <div class="rate-box">
-                    <span style="color:#aaa;">1 Bhori =</span>
-                    <div style="display:flex; align-items:center;">
-                        <input type="text" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
-                        <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
+
+                <div id="sec22" class="sec-22">
+                    <div style="color:var(--primary); text-align:center; font-weight:bold; margin-bottom:10px;">22 Karat</div>
+                    <div class="purity-box">
+                        <label><input type="radio" name="p22" value="0.926" class="p-radio" checked onchange="calc()"><span class="p-label">92.6%</span></label>
+                        <label><input type="radio" name="p22" value="0.920" class="p-radio" onchange="calc()"><span class="p-label">92.0%</span></label>
+                    </div>
+                    <div class="grid-2">
+                        <input type="text" inputmode="none" readonly id="mc22" class="small-input" placeholder="MC" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="dh22" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="cr22" class="small-input" placeholder="CR" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="mg22" class="small-input" placeholder="MG" onclick="focusField(this)">
+                    </div>
+                    <div class="rate-box">
+                        <span style="color:#aaa;">1 Bhori =</span>
+                        <div style="display:flex; align-items:center;">
+                            <input type="text" readonly id="rateView22" class="dynamic-input" style="color:var(--primary);" value="0.00">
+                            <button class="edit-btn" onclick="enableEdit('rateView22')">Edit</button>
+                        </div>
+                    </div>
+                    <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                    <div class="rate-box" style="background:transparent; border:none;">
+                        <span style="color:#aaa;">Total</span>
+                        <div style="display:flex; align-items:center;">
+                            <input type="text" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:24px; width:150px;" value="0.00">
+                            <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
+                        </div>
                     </div>
                 </div>
-                <input type="text" inputmode="none" readonly id="w22" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="rate-box" style="background:transparent; border:none;">
-                    <span style="color:#aaa;">Total</span>
-                    <div style="display:flex; align-items:center;">
-                        <input type="text" readonly id="t22" class="dynamic-input" style="color:var(--primary); font-size:24px; width:150px;" value="0.00">
-                        <button class="edit-btn" onclick="enableEdit('t22')">Edit</button>
+
+                <div id="sec21" class="hidden">
+                    <div style="color:var(--secondary); text-align:center; font-weight:bold; margin-bottom:10px; margin-top:20px;">21 Karat</div>
+                    <div class="purity-box">
+                        <label><input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()"><span class="p-label">88.5%</span></label>
+                        <label><input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()"><span class="p-label">88.0%</span></label>
+                    </div>
+                    <div class="grid-2">
+                        <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
+                        <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
+                    </div>
+                    <div class="rate-box">
+                        <span style="color:#aaa;">1 Bhori =</span>
+                        <div style="display:flex; align-items:center;">
+                            <input type="text" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
+                            <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
+                        </div>
+                    </div>
+                    <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
+                    <div class="rate-box" style="background:transparent; border:none;">
+                        <span style="color:#aaa;">Total</span>
+                        <div style="display:flex; align-items:center;">
+                            <input type="text" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:24px; width:150px;" value="0.00">
+                            <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="sec21" class="hidden">
-                <div style="color:var(--secondary); text-align:center; font-weight:bold; margin-bottom:10px; margin-top:20px;">21 Karat</div>
-                <div class="purity-box">
-                    <label><input type="radio" name="p21" value="0.885" class="p-radio" checked onchange="calc()"><span class="p-label">88.5%</span></label>
-                    <label><input type="radio" name="p21" value="0.880" class="p-radio" onchange="calc()"><span class="p-label">88.0%</span></label>
+                <div class="grand-box">
+                    <div style="font-size:12px; color:#aaa;">Grand Total</div>
+                    <input type="text" readonly id="grandTotal" class="grand-input" value="0.00">
+                    <button class="edit-btn" style="position:absolute; bottom:10px; right:10px;" onclick="enableEdit('grandTotal')">Edit</button>
                 </div>
-                <div class="grid-2">
-                    <input type="text" inputmode="none" readonly id="mc21" class="small-input" placeholder="MC" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="dh21" class="small-input" placeholder="Dh" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="cr21" class="small-input" placeholder="CR" onclick="focusField(this)">
-                    <input type="text" inputmode="none" readonly id="mg21" class="small-input" placeholder="MG" onclick="focusField(this)">
-                </div>
-                <div class="rate-box">
-                    <span style="color:#aaa;">1 Bhori =</span>
-                    <div style="display:flex; align-items:center;">
-                        <input type="text" readonly id="rateView21" class="dynamic-input" style="color:var(--secondary);" value="0.00">
-                        <button class="edit-btn" onclick="enableEdit('rateView21')">Edit</button>
-                    </div>
-                </div>
-                <input type="text" inputmode="none" readonly id="w21" class="weight-input" placeholder="Weight (gm)" onclick="focusField(this)">
-                <div class="rate-box" style="background:transparent; border:none;">
-                    <span style="color:#aaa;">Total</span>
-                    <div style="display:flex; align-items:center;">
-                        <input type="text" readonly id="t21" class="dynamic-input" style="color:var(--secondary); font-size:24px; width:150px;" value="0.00">
-                        <button class="edit-btn" onclick="enableEdit('t21')">Edit</button>
-                    </div>
-                </div>
-            </div>
 
-            <div class="grand-box">
-                <div style="font-size:12px; color:#aaa;">Grand Total</div>
-                <input type="text" readonly id="grandTotal" class="grand-input" value="0.00">
-                <button class="edit-btn" style="position:absolute; bottom:10px; right:10px;" onclick="enableEdit('grandTotal')">Edit</button>
-            </div>
+                <div style="margin-top:20px;">
+                    <input id="cName" class="small-input" style="width:100%; margin-bottom:10px; text-align:left;" placeholder="Customer Name">
+                    <input id="authName" class="small-input" style="width:100%; text-align:left;" placeholder="Authorized By">
+                </div>
 
-            <div style="margin-top:20px;">
-                <input id="cName" class="small-input" style="width:100%; margin-bottom:10px; text-align:left;" placeholder="Customer Name">
-                <input id="authName" class="small-input" style="width:100%; text-align:left;" placeholder="Authorized By">
+                <button class="btn-action" onclick="downloadPDF()">DOWNLOAD INVOICE (PDF)</button>
             </div>
+        </div>
 
-            <button class="btn-action" onclick="downloadPDF()">DOWNLOAD INVOICE (PDF)</button>
+        <div id="customKeypad">
+            <button style="width:100%; padding:10px; background:#4a3b2a; color:#fff; border:none; margin-bottom:10px; border-radius:5px; font-weight:bold;" onclick="closeKeypad()">Done ▼</button>
+            <div class="keypad-grid">
+                <button class="k-btn" onclick="press('1')">1</button>
+                <button class="k-btn" onclick="press('2')">2</button>
+                <button class="k-btn" onclick="press('3')">3</button>
+                <button class="k-btn" onclick="press('4')">4</button>
+                <button class="k-btn" onclick="press('5')">5</button>
+                <button class="k-btn" onclick="press('6')">6</button>
+                <button class="k-btn" onclick="press('7')">7</button>
+                <button class="k-btn" onclick="press('8')">8</button>
+                <button class="k-btn" onclick="press('9')">9</button>
+                <button class="k-btn" onclick="press('.')">.</button>
+                <button class="k-btn" onclick="press('0')">0</button>
+                <button class="k-btn" onclick="press('back')" style="color:#ff6b6b;">⌫</button>
+            </div>
         </div>
     </div>
-
     <div id="invoice-layout">
         <div class="inv-container">
             <div class="inv-header-box">
@@ -321,24 +326,6 @@
             <div class="inv-footer">
                 THANK YOU FOR YOUR BUSINESS
             </div>
-        </div>
-    </div>
-
-    <div id="customKeypad">
-        <button style="width:100%; padding:10px; background:#4a3b2a; color:#fff; border:none; margin-bottom:10px; border-radius:5px; font-weight:bold;" onclick="closeKeypad()">Done ▼</button>
-        <div class="keypad-grid">
-            <button class="k-btn" onclick="press('1')">1</button>
-            <button class="k-btn" onclick="press('2')">2</button>
-            <button class="k-btn" onclick="press('3')">3</button>
-            <button class="k-btn" onclick="press('4')">4</button>
-            <button class="k-btn" onclick="press('5')">5</button>
-            <button class="k-btn" onclick="press('6')">6</button>
-            <button class="k-btn" onclick="press('7')">7</button>
-            <button class="k-btn" onclick="press('8')">8</button>
-            <button class="k-btn" onclick="press('9')">9</button>
-            <button class="k-btn" onclick="press('.')">.</button>
-            <button class="k-btn" onclick="press('0')">0</button>
-            <button class="k-btn" onclick="press('back')" style="color:#ff6b6b;">⌫</button>
         </div>
     </div>
 
@@ -386,109 +373,4 @@
     function closeKeypad() { 
         document.getElementById('customKeypad').classList.remove('open'); 
         if(currentInput) { 
-            currentInput.classList.remove('active-field'); 
-            if(currentInput.classList.contains('editing')) { 
-                currentInput.classList.remove('editing'); 
-                currentInput.style.pointerEvents = "none"; 
-            } 
-            currentInput = null; 
-        } 
-    }
-    
-    function enableEdit(id) { 
-        let el = document.getElementById(id); 
-        el.style.pointerEvents = "auto"; 
-        el.classList.add('editing'); 
-        focusField(el); 
-    }
-    
-    function press(key) { 
-        if(!currentInput) return; 
-        if(key === 'back') { currentInput.value = currentInput.value.slice(0, -1); } 
-        else if(key === '.') { if(!currentInput.value.includes('.')) currentInput.value += key; } 
-        else { currentInput.value += key; } 
-        calc(); 
-    }
-
-    function calc() { 
-        let b = parseFloat(document.getElementById('screenRate').value) || 0; 
-        
-        let p22Val = document.querySelector('input[name="p22"]:checked') ? document.querySelector('input[name="p22"]:checked').value : 0.926; 
-        let r22 = (((b * 3.674 / 31.1035 * parseFloat(p22Val)) + (parseFloat(document.getElementById('mc22').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh22').value)||0)) + (parseFloat(document.getElementById('cr22').value)||0) + (parseFloat(document.getElementById('mg22').value)||0); 
-        let rf22 = document.getElementById('rateView22'); 
-        if(!rf22.classList.contains('editing')) rf22.value = r22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-        
-        let w22 = parseFloat(document.getElementById('w22').value) || 0; 
-        let t22 = r22 * (w22 / 11.664); 
-        let tf22 = document.getElementById('t22'); 
-        if(!tf22.classList.contains('editing')) tf22.value = t22.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        let p21Val = document.querySelector('input[name="p21"]:checked') ? document.querySelector('input[name="p21"]:checked').value : 0.885; 
-        let r21 = (((b * 3.674 / 31.1035 * parseFloat(p21Val)) + (parseFloat(document.getElementById('mc21').value)||0)) * 11.664 * (parseFloat(document.getElementById('dh21').value)||0)) + (parseFloat(document.getElementById('cr21').value)||0) + (parseFloat(document.getElementById('mg21').value)||0); 
-        let rf21 = document.getElementById('rateView21'); 
-        if(!rf21.classList.contains('editing')) rf21.value = r21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-        
-        let w21 = parseFloat(document.getElementById('w21').value) || 0; 
-        let t21 = r21 * (w21 / 11.664); 
-        let tf21 = document.getElementById('t21'); 
-        if(!tf21.classList.contains('editing')) tf21.value = t21.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-        let total22 = parseFloat(tf22.value.replace(/,/g, '')) || 0; 
-        let total21 = parseFloat(tf21.value.replace(/,/g, '')) || 0;
-        let grand = 0; 
-        if(currentTab === '22') grand = total22; 
-        else if(currentTab === '21') grand = total21; 
-        else grand = total22 + total21;
-        
-        let gInput = document.getElementById('grandTotal'); 
-        if(!gInput.classList.contains('editing')) gInput.value = grand.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
-
-    function downloadPDF() {
-        document.getElementById('inv-cName').innerText = document.getElementById('cName').value || 'Guest';
-        document.getElementById('inv-auth').innerText = document.getElementById('authName').value || 'Admin';
-        
-        let tbody = document.getElementById('inv-body'); 
-        tbody.innerHTML = '';
-        
-        if(currentTab === '22' || currentTab === 'both') {
-            let r = document.getElementById('rateView22').value; 
-            let w = document.getElementById('w22').value || '0'; 
-            let t = document.getElementById('t22').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td class="text-left">22K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
-        }
-        if(currentTab === '21' || currentTab === 'both') {
-            let r = document.getElementById('rateView21').value; 
-            let w = document.getElementById('w21').value || '0'; 
-            let t = document.getElementById('t21').value;
-            if(t !== '0.00') tbody.innerHTML += `<tr><td class="text-left">21K GOLD</td><td>${r}</td><td>${w}</td><td class="text-right">${t}</td></tr>`;
-        }
-        document.getElementById('inv-grand').innerText = document.getElementById('grandTotal').value;
-
-        // Show Invoice Layer
-        const element = document.getElementById('invoice-layout');
-        element.style.display = 'block';
-
-        // Wait a bit, then print
-        setTimeout(() => {
-            var opt = { 
-                margin: 0, 
-                filename: 'Estimate.pdf', 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    scrollY: 0, 
-                    windowWidth: document.documentElement.offsetWidth 
-                }, 
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
-            };
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.style.display = 'none'; // Hide after download
-            });
-        }, 1000); 
-    }
-</script>
-</body>
-</html>
+            currentInput.classList.remove('acti
