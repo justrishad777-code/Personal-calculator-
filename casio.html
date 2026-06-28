@@ -11,8 +11,10 @@
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="theme-color" content="#1a1d24">
 
+    <!-- Digital Font -->
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     
+    <!-- DYNAMIC THEME LOADER -->
     <script>
         (function() {
             try {
@@ -32,7 +34,6 @@
 
     <style>
         :root { 
-            /* Default Colors (Jodi settings theke kono color set na kora thake) */
             --primary: #ffaf40;   
             --secondary: #48dbfb; 
             --bg-color: #222831;  
@@ -235,6 +236,7 @@
         <button class="k-btn eq" onclick="eq()">=</button> 
     </div>
     
+    <!-- Drawer Overlay -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
 
     <div class="drawer" id="drawer"> 
@@ -249,6 +251,7 @@
     </div>
     
     <script>
+        // PWA er cache theke problem hole shetar jonno
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
         }
@@ -265,21 +268,35 @@
             }
         });
 
+        // Safe Initialization
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
         let currentTotal = 0; 
         let lastOp = ""; 
         const MAX_DIGITS = 12;
-        
-        const ui = {
-            main: document.getElementById('mainDisp'),
-            op: document.getElementById('opDisp'),
-            step: document.getElementById('step'),
-            list: document.getElementById('list')
-        };
+        let ui = {}; // Blank rakha holo prothome
 
+        // Page ekdom perfectly load howar por 'init' run hobe
         function init(){ 
+            // Screen elements ekhon safe bhabe capture korbe
+            ui = {
+                main: document.getElementById('mainDisp'),
+                op: document.getElementById('opDisp'),
+                step: document.getElementById('step'),
+                list: document.getElementById('list')
+            };
+
+            // Purano cache data thakle sheta check korbe, corrupted hole muche dibe
             if(localStorage.getItem('casio_data')) { 
-                try { tape=JSON.parse(localStorage.getItem('casio_data')); } catch(e){ tape=[]; } 
+                try { 
+                    let parsedData = JSON.parse(localStorage.getItem('casio_data'));
+                    if(Array.isArray(parsedData)) {
+                        tape = parsedData; 
+                    } else {
+                        tape = [];
+                    }
+                } catch(e){ 
+                    tape=[]; 
+                } 
             } 
             render(); 
             renderList(); 
@@ -475,20 +492,4 @@
                 setTimeout(() => { overlay.style.display = 'none'; }, 300);
             } else {
                 overlay.style.display = 'block';
-                setTimeout(() => { overlay.classList.add('show'); }, 10);
-                drawer.classList.add('open');
-            }
-        }
-        
-        function save(){ localStorage.setItem('casio_data',JSON.stringify(tape)); }
-
-        function render(){ 
-            let dV=input, dO=""; let stepNum=0; 
-            
-            if(edit){ 
-                dV=input; dO="EDIT"; 
-                document.getElementById('mode').innerText = "CRT"; 
-                document.getElementById('mode').style.display="block"; 
-                stepNum=idx+1; 
-            } else if(idx!==-1){ 
-                let item=chain[idx]; 
+  
