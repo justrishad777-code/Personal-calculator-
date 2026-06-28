@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,8 +13,26 @@
 
     <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
     
+    <script>
+        (function() {
+            try {
+                let themeData = localStorage.getItem('app_theme');
+                if (themeData) {
+                    let theme = JSON.parse(themeData);
+                    let root = document.documentElement;
+                    if(theme.primary) root.style.setProperty('--primary', theme.primary);
+                    if(theme.secondary) root.style.setProperty('--secondary', theme.secondary);
+                    if(theme.bg) root.style.setProperty('--bg-color', theme.bg);
+                    if(theme.card) root.style.setProperty('--btn-bg', theme.card);
+                    if(theme.text) root.style.setProperty('--text-main', theme.text);
+                }
+            } catch(e) { console.log('Error loading theme'); }
+        })();
+    </script>
+
     <style>
         :root { 
+            /* Default Colors (Jodi settings theke kono color set na kora thake) */
             --primary: #ffaf40;   
             --secondary: #48dbfb; 
             --bg-color: #222831;  
@@ -34,56 +51,57 @@
             background: var(--bg-color); 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; flex-direction: column; 
+            color: var(--text-main);
         }
         
         .safe-area-top {
             height: env(safe-area-inset-top);
-            background: #1a1d24;
+            background: var(--bg-color);
             flex-shrink: 0;
         }
 
         /* TOP BAR */
         .top-bar { 
             height: 50px; 
-            background: #1a1d24; display: flex; align-items: center; 
-            padding: 0 15px; border-bottom: 1px solid #333; color: white; 
+            background: var(--bg-color); display: flex; align-items: center; 
+            padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); 
             justify-content: space-between; flex-shrink: 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             z-index: 10;
         }
-        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
-        .app-title { font-size: 17px; font-weight: 600; letter-spacing: 1.5px; color: #fff; }
+        .menu-icon { font-size: 24px; cursor: pointer; color: var(--text-main); width: 40px; }
+        .app-title { font-size: 17px; font-weight: 600; letter-spacing: 1.5px; color: var(--text-main); }
         
         /* MENU */
         #menuPopup { 
             display: none; position: absolute; top: 55px; left: 10px; width: 220px; 
-            background: #2a2f38; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
-            z-index: 2000; flex-direction: column; border: 1px solid #444; 
+            background: var(--btn-bg); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
+            z-index: 2000; flex-direction: column; border: 1px solid rgba(255,255,255,0.1); 
             overflow: hidden;
         }
         .menu-item { 
-            padding: 15px 20px; text-decoration: none; color: #eee; 
-            border-bottom: 1px solid #3d434d; font-weight: 500; 
+            padding: 15px 20px; text-decoration: none; color: var(--text-main); 
+            border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 500; 
             display: flex; align-items: center; transition: background 0.2s;
         }
-        .menu-item:hover { background: #393e46; }
+        .menu-item:hover { filter: brightness(1.2); }
         .menu-icon-span { margin-right: 12px; font-size: 18px; }
         
-        /* SCREEN - Updated for Realism */
+        /* SCREEN */
         .screen { 
             flex: 0 0 22%; 
-            background: #181b22; 
+            background: rgba(0,0,0,0.4); 
             padding: 8px 20px; 
             display: flex; flex-direction: column; 
             border-bottom: 2px solid #111; 
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.6); 
         }
-        .indicators { display: flex; justify-content: space-between; color: #777; height: 18px; font-size: 13px; font-weight: bold; }
+        .indicators { display: flex; justify-content: space-between; color: var(--text-main); opacity: 0.6; height: 18px; font-size: 13px; font-weight: bold; }
         .op-display { text-align: right; color: var(--primary); font-size: 18px; height: 25px; font-family: monospace; margin-top: 2px; }
         .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
         .main-text { 
             font-family: 'Digital-7 Mono', monospace; 
-            color: #fff; 
+            color: var(--text-main); 
             font-size: 55px; 
             line-height: 1; 
             letter-spacing: 2px; 
@@ -96,10 +114,10 @@
             padding: 10px 12px; background: var(--bg-color); flex-shrink: 0; 
         }
         .c-btn { 
-            background: var(--btn-bg); border: 1px solid #444; 
+            background: var(--btn-bg); border: 1px solid rgba(255,255,255,0.1); 
             padding: 12px 0; 
             border-radius: 8px; font-weight: 600; font-size: 12px; 
-            box-shadow: 0 3px 0 var(--btn-shadow); color: #eee; cursor: pointer;
+            box-shadow: 0 3px 0 var(--btn-shadow); color: var(--text-main); cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s;
         }
         .c-btn:active { transform: translateY(3px); box-shadow: 0 0px 0 var(--btn-shadow); }
@@ -117,19 +135,19 @@
         }
         .k-btn { 
             width: 100%; height: 100%; border-radius: 10px; 
-            border: 1px solid #444; background: var(--btn-bg); 
+            border: 1px solid rgba(255,255,255,0.05); background: var(--btn-bg); 
             font-size: 22px; 
             font-weight: bold; color: var(--text-main); 
             box-shadow: 0 4px 0 var(--btn-shadow); cursor: pointer; 
             display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
+            transition: transform 0.1s, box-shadow 0.1s, filter 0.2s;
         }
-        .k-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 var(--btn-shadow); background: #4a515a; }
+        .k-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 var(--btn-shadow); filter: brightness(0.8); }
         
         .ac { color: #ff6b6b; } 
         .op { color: var(--primary); } 
-        .eq { background: var(--primary); color: #222; border: none; box-shadow: 0 4px 0 #cc8c33; }
-        .eq:active { background: #e69d39; }
+        .eq { background: var(--primary); color: #111; border: none; box-shadow: 0 4px 0 rgba(0,0,0,0.5); }
+        .eq:active { filter: brightness(0.9); }
         
         /* DRAWER OVERLAY */
         .drawer-overlay {
@@ -141,15 +159,15 @@
         /* DRAWER */
         .drawer { 
             position: absolute; bottom: -100%; left: 0; width: 100%; height: 65%; 
-            background: #2a2f38; z-index: 3000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); 
-            color: #fff; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; 
+            background: var(--btn-bg); z-index: 3000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); 
+            color: var(--text-main); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; 
             border-top: 3px solid var(--primary); 
             box-shadow: 0 -10px 50px rgba(0,0,0,0.7);
         }
         .drawer.open { bottom: 0; }
-        .d-head { padding: 18px 20px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
+        .d-head { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         .d-body { flex: 1; overflow-y: auto; padding: 15px 20px; padding-bottom: 50px; }
-        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #444; font-family: monospace; font-size: 15px; }
+        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; font-size: 15px; }
         
         .btn-clear-hist { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-clear-hist:active { transform: scale(0.95); }
@@ -168,7 +186,7 @@
         <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
         <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
         <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
-        <a href="casio.html" class="menu-item" style="background:#3d434d; border-left: 4px solid var(--primary);"><span class="menu-icon-span">🔢</span> Casio Calc</a>
+        <a href="casio.html" class="menu-item" style="filter: brightness(1.3); border-left: 4px solid var(--primary);"><span class="menu-icon-span">🔢</span> Casio Calc</a>
         <a href="settings.html" class="menu-item" style="border-bottom:none;"><span class="menu-icon-span">⚙️</span> Settings</a>
     </div>
     
@@ -184,10 +202,10 @@
     </div>
     
     <div class="controls"> 
-        <button class="c-btn" style="color:#48dbfb" onclick="prev()">◀ PREV</button> 
-        <button class="c-btn" style="color:#48dbfb" onclick="next()">NEXT ▶</button> 
+        <button class="c-btn" style="color:var(--secondary)" onclick="prev()">◀ PREV</button> 
+        <button class="c-btn" style="color:var(--secondary)" onclick="next()">NEXT ▶</button> 
         <button class="c-btn" onclick="toggleDrawer()">📜 List</button> 
-        <button class="c-btn" style="color:#ffaf40" onclick="correct()">CORR</button> 
+        <button class="c-btn" style="color:var(--primary)" onclick="correct()">CORR</button> 
     </div>
     
     <div class="keypad"> 
@@ -221,10 +239,10 @@
 
     <div class="drawer" id="drawer"> 
         <div class="d-head"> 
-            <span style="color:#fff; font-weight:bold; font-size: 18px;">History Tape</span> 
+            <span style="font-weight:bold; font-size: 18px;">History Tape</span> 
             <div>
                 <button class="btn-clear-hist" onclick="clearHistory()">🗑️ Clear</button>
-                <span onclick="toggleDrawer()" style="cursor:pointer; color:#aaa; font-weight:bold; margin-left:20px; font-size: 20px;">✕</span> 
+                <span onclick="toggleDrawer()" style="cursor:pointer; opacity:0.6; font-weight:bold; margin-left:20px; font-size: 20px;">✕</span> 
             </div>
         </div> 
         <div class="d-body" id="list"></div> 
@@ -274,6 +292,12 @@
                 render(); 
                 return; 
             } 
+            
+            if (idx !== -1) {
+                if (chain.length > 0 && chain[chain.length - 1].o === '?') chain.pop();
+                idx = -1;
+            }
+
             if(isNewStep){ 
                 input = n === "." ? "0." : n; 
                 isNewStep = false; 
@@ -300,16 +324,21 @@
 
         function op(o){ 
             if(edit) return; 
+            
+            if (idx !== -1) { 
+                if (chain.length > 0 && chain[chain.length - 1].o === '?') {
+                    input = chain.pop().v;
+                }
+                idx = -1; 
+            } 
+
             let val = parseFloat(input) || 0; 
             if (chain.length === 0) { 
                 currentTotal = val; 
             } else if (!isNewStep) { 
                 executePrev(val); 
             } 
-            if (idx !== -1) { 
-                idx = -1; 
-                chain = []; 
-            } 
+            
             if (!isNewStep || o !== lastOp) { 
                 chain.push({ v: input, o: o }); 
                 lastOp = o; 
@@ -324,6 +353,14 @@
 
         function eq(){ 
             if(edit){ finishCorr(); return; } 
+            
+            if (idx !== -1) {
+                if (chain.length > 0 && chain[chain.length - 1].o === '?') {
+                    input = chain.pop().v;
+                }
+                idx = -1;
+            }
+
             if(input==="" || (isNewStep && chain.length === 0)) return; 
             let val = parseFloat(input) || 0; 
             executePrev(val); 
@@ -345,19 +382,21 @@
         }
         
         function del(){ 
-            if(resShown||isNewStep) return; 
+            if(resShown||isNewStep || idx !== -1) return; 
             input=input.toString().slice(0,-1) || "0"; 
             render(); 
         }
 
-        // Updated PREV functionality
         function prev() { 
             if (idx === -1) {
-                if (chain.length > 0) {
+                if (chain.length > 0 || (input !== "0" && !resShown)) {
+                    if (!isNewStep) {
+                        chain.push({ v: input, o: '?' }); 
+                    }
                     idx = chain.length - 1;
                 } 
-                else if (tape.length > 0) {
-                    chain = [...tape[tape.length - 1]]; 
+                else if (tape.length > 0 && input === "0") {
+                    chain = tape[tape.length - 1].map(item => ({...item})); 
                     idx = chain.length - 1;
                 }
             } else if (idx > 0) {
@@ -366,12 +405,14 @@
             render(); 
         }
 
-        // Updated NEXT functionality
         function next() { 
             if (idx !== -1) {
                 if (idx < chain.length - 1) {
                     idx++; 
-                } else if (chain.length > 0 && chain[chain.length - 1].o !== 'ANS') {
+                } else {
+                    if (chain.length > 0 && chain[chain.length - 1].o === '?') {
+                        input = chain.pop().v; 
+                    }
                     idx = -1; 
                 }
             }
@@ -379,7 +420,7 @@
         }
 
         function correct(){ 
-            if(idx!==-1 && chain[idx].o!=='ANS'){ 
+            if(idx!==-1 && chain[idx].o!=='ANS' && chain[idx].o!=='?'){ 
                 edit=true; 
                 input=chain[idx].v; 
                 isNewStep=false; 
@@ -402,13 +443,14 @@
                     else if(pOp === '/') tempTotal /= v; 
                 } 
             }); 
+            
             newChain.push({v:String(tempTotal),o:'ANS'}); 
             chain = newChain; 
             tape[tape.length-1] = chain; 
             save(); 
-            edit = false; 
             input = String(tempTotal); 
             resShown = true; 
+            edit = false; 
             idx = -1; 
             render(); 
             renderList(); 
@@ -442,51 +484,11 @@
 
         function render(){ 
             let dV=input, dO=""; let stepNum=0; 
+            
             if(edit){ 
                 dV=input; dO="EDIT"; 
                 document.getElementById('mode').innerText = "CRT"; 
                 document.getElementById('mode').style.display="block"; 
                 stepNum=idx+1; 
             } else if(idx!==-1){ 
-                let item=chain[idx]; dV=item.v; dO=item.o==='ANS'?'=':item.o; 
-                document.getElementById('mode').innerText = "REV"; 
-                document.getElementById('mode').style.display="block"; 
-                stepNum=idx+1; 
-            } else{ 
-                document.getElementById('mode').style.display="none"; 
-                if(chain.length>0 && !resShown) dO=chain[chain.length-1].o; 
-                stepNum=chain.length+(isNewStep?0:1); 
-            } 
-            
-            if(idx === -1 && !resShown && !isNewStep) { 
-                ui.main.innerText = dV; 
-            } else { 
-                ui.main.innerText = parseFloat(dV).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-            } 
-            
-            ui.op.innerText = dO.replace('*','×').replace('/','÷'); 
-            ui.step.innerText = String(stepNum).padStart(2,'0'); 
-            
-            let s=55; ui.main.style.fontSize=s+"px"; 
-            while(ui.main.scrollWidth > ui.main.parentElement.clientWidth && s>30){ 
-                s-=5; ui.main.style.fontSize=s+"px"; 
-            } 
-        }
-
-        function renderList(){ 
-            if(!tape.length) { 
-                ui.list.innerHTML = "<div style='text-align:center; margin-top: 20px; color:#666;'>No history found</div>"; 
-                return; 
-            } 
-            ui.list.innerHTML = tape.map(t => { 
-                let resObj = t.find(x => x.o==='ANS'); 
-                let result = resObj ? resObj.v : "0"; 
-                let expr = t.reduce((a,c) => { 
-                    if(c.o==='ANS') return a; 
-                    let sym = c.o.replace('*','×').replace('/','÷'); 
-                    return a + c.v + (sym==='=' ? '' : ' '+sym+' '); 
-                },""); 
-                let formattedRes = parseFloat(result).toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-                return `<div class="d-row"> 
-                    <span style="color:#aaa; font-size:14px;">${expr}=</span> 
-          
+                let item=chain[idx]; 
