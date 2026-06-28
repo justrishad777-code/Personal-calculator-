@@ -1,12 +1,12 @@
-// ভার্সন আপডেট করা হয়েছে (v27)
-const CACHE_NAME = 'gold-app-v27';
+// Version Update (v28 - Force Cache Clear)
+const CACHE_NAME = 'gold-app-v28';
 
 const ASSETS = [
   './',
   './index.html',
-  './rate.html',       // আমরা ফাইলের নাম rate.html ঠিক করেছি
+  './rate.html',       
   './converter.html',
-  './price.html',      // <-- নতুন Price Calc পেজ যোগ করা হয়েছে
+  './price.html',      
   './casio.html',
   './settings.html',
   './manifest.json',
@@ -16,18 +16,20 @@ const ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 
-// Install Event
+// Install Event (Force Download Fresh Files)
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // নতুন ভার্সন সাথে সাথে অ্যাক্টিভ হবে
+  self.skipWaiting(); // Activate new version immediately
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Caching assets including price.html...');
-      return cache.addAll(ASSETS);
+      console.log('Caching fresh assets for v28...');
+      // cache: 'no-cache' ensures it fetches from the network, not the browser's old cache
+      let requests = ASSETS.map(url => new Request(url, { cache: 'no-cache' }));
+      return cache.addAll(requests);
     })
   );
 });
 
-// Activate Event (পুরনো ক্যাশ ডিলিট করা)
+// Activate Event (Delete old cache)
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keyList) => {
@@ -39,27 +41,42 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // Take control immediately
   );
-  return self.clients.claim();
 });
 
-// Fetch Event (অফলাইন সাপোর্ট)
+// Fetch Event (Network-First for HTML, Cache-First for others)
 self.addEventListener('fetch', (e) => {
   if (!e.request.url.startsWith('http')) return;
 
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request).then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(e.request, networkResponse.clone());
-          return networkResponse;
+  // Network-First for HTML files to ensure the latest code is loaded
+  if (e.request.mode === 'navigate' || e.request.url.endsWith('.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then((networkResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => {
+          // Fallback to cache if network fails
+          return caches.match(e.request).then((cachedResponse) => {
+             return cachedResponse || caches.match('./index.html');
+          });
+        })
+    );
+  } else {
+    // Cache-First for assets (images, fonts, etc.) for better performance
+    e.respondWith(
+      caches.match(e.request).then((cachedResponse) => {
+        return cachedResponse || fetch(e.request).then((networkResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, networkResponse.clone());
+            return networkResponse;
+          });
         });
-      });
-    }).catch(() => {
-      if (e.request.mode === 'navigate') {
-        return caches.match('./index.html');
-      }
-    })
-  );
+      })
+    );
+  }
 });
