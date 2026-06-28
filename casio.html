@@ -122,7 +122,7 @@
         .btn-clear-hist:active { transform: scale(0.95); }
     </style>
 </head>
-<body>
+<body onload="init()">
     
     <div class="safe-area-top"></div>
     <div class="top-bar"> 
@@ -208,38 +208,28 @@
             if (e.target !== m && e.target !== btn && !m.contains(e.target)) { m.style.display = 'none'; }
         });
 
+        // 100% Solid Simple Logic (No over-engineered '?' operator)
         let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
         let currentTotal = 0; let lastOp = ""; const MAX_DIGITS = 12;
 
         function init(){ 
             try { 
                 let data = localStorage.getItem('casio_data');
-                if(data) {
-                    let parsed = JSON.parse(data);
-                    if(Array.isArray(parsed)) tape = parsed.filter(Array.isArray);
-                    else tape = [];
-                }
-            } catch(e) { tape = []; localStorage.removeItem('casio_data'); } 
+                if(data) { tape = JSON.parse(data) || []; }
+            } catch(e) { tape = []; } 
             render(); renderList(); 
         }
 
         function num(n){ 
-            try {
-                input = String(input); 
-                if(resShown){ AC(); input = n === "." ? "0." : String(n); render(); return; } 
-                if (idx !== -1) {
-                    if (chain.length > 0 && chain[chain.length - 1].o === '?') chain.pop();
-                    idx = -1;
-                }
-                if(isNewStep){ input = n === "." ? "0." : String(n); isNewStep = false; } 
-                else { 
-                    if(input.replace('.','').length >= MAX_DIGITS) return; 
-                    if(input === "0" && n !== ".") input = String(n); 
-                    else if(n === "." && input.includes(".")) return; 
-                    else input += String(n); 
-                } 
-                render();
-            } catch(e) { console.error("Num error", e); AC(); }
+            if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } 
+            if(isNewStep){ input = n === "." ? "0." : n; isNewStep = false; } 
+            else { 
+                if(input.replace('.','').length >= MAX_DIGITS) return; 
+                if(input === "0" && n !== ".") input = n; 
+                else if(n === "." && input.includes(".")) return; 
+                else input += n; 
+            } 
+            render();
         }
 
         function executePrev(val) { 
@@ -255,100 +245,84 @@
         }
 
         function op(o){ 
-            try {
-                if(edit) return; 
-                input = String(input);
-                if (idx !== -1) { 
-                    if (chain.length > 0 && chain[chain.length - 1].o === '?') input = String(chain.pop().v);
-                    idx = -1; 
-                } 
-                let val = parseFloat(input) || 0; 
-                if (chain.length === 0) currentTotal = val; 
-                else if (!isNewStep) executePrev(val); 
-                
-                if (!isNewStep || o !== lastOp) { chain.push({ v: input, o: o }); lastOp = o; } 
-                else chain[chain.length - 1].o = o; 
-                
-                input = String(currentTotal); isNewStep = true; resShown = false; render(); 
-            } catch(e) { console.error("Op error", e); AC(); }
+            if(edit) return; 
+            
+            let val = parseFloat(input) || 0; 
+            if (chain.length === 0) currentTotal = val; 
+            else if (!isNewStep) executePrev(val); 
+            
+            if (idx !== -1) { idx = -1; chain = []; } 
+            
+            if (!isNewStep || o !== lastOp) { chain.push({ v: input, o: o }); lastOp = o; } 
+            else chain[chain.length - 1].o = o; 
+            
+            input = String(currentTotal); isNewStep = true; resShown = false; render(); 
         }
 
         function eq(){ 
-            try {
-                if(edit){ finishCorr(); return; } 
-                input = String(input);
-                if (idx !== -1) {
-                    if (chain.length > 0 && chain[chain.length - 1].o === '?') input = String(chain.pop().v);
-                    idx = -1;
-                }
-                if(input==="" || (isNewStep && chain.length === 0)) return; 
-                let val = parseFloat(input) || 0; executePrev(val); 
-                chain.push({v: input, o: '='}); chain.push({v: String(currentTotal), o: 'ANS'}); 
-                tape.push([...chain]); save(); 
-                input = String(currentTotal); resShown = true; isNewStep = true; chain = []; currentTotal = 0; 
-                render(); renderList(); 
-            } catch(e) { console.error("Eq error", e); AC(); }
+            if(edit){ finishCorr(); return; } 
+            if(input==="" || (isNewStep && chain.length === 0)) return; 
+            
+            let val = parseFloat(input) || 0; executePrev(val); 
+            chain.push({v: input, o: '='}); chain.push({v: String(currentTotal), o: 'ANS'}); 
+            
+            tape.push(JSON.parse(JSON.stringify(chain))); save(); 
+            
+            input = String(currentTotal); resShown = true; isNewStep = true; chain = []; currentTotal = 0; 
+            render(); renderList(); 
         }
 
         function AC(){ chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; currentTotal=0; lastOp=""; render(); }
         
         function del(){ 
-            try {
-                if(resShown || isNewStep || idx !== -1) return; 
-                input = String(input).slice(0,-1) || "0"; render(); 
-            } catch(e) { console.error("Del error", e); }
+            if(resShown || isNewStep) return; 
+            input = input.toString().slice(0,-1) || "0"; render(); 
         }
 
         function prev() { 
-            try {
-                input = String(input);
-                if (idx === -1) {
-                    if (chain.length > 0 || (input !== "0" && !resShown)) {
-                        if (!isNewStep) chain.push({ v: input, o: '?' }); 
-                        idx = chain.length - 1;
-                    } 
-                    else if (tape.length > 0 && input === "0") {
-                        chain = tape[tape.length - 1].map(item => ({...item})); idx = chain.length - 1;
-                    }
-                } else if (idx > 0) idx--; 
-                render(); 
-            } catch(e) { console.error("Prev error", e); AC(); }
+            if (idx === -1) {
+                // Majh pothe running hishab thakle sheta check korbe
+                if (chain.length > 0) {
+                    idx = chain.length - 1; 
+                } 
+                // Jodi kono running hishab NA thake, tobe old history (tape) load korbe
+                else if (tape.length > 0) {
+                    chain = JSON.parse(JSON.stringify(tape[tape.length - 1])); 
+                    idx = chain.length - 1;
+                }
+            } else if (idx > 0) {
+                idx--; 
+            }
+            render(); 
         }
 
         function next() { 
-            try {
-                if (idx !== -1) {
-                    if (idx < chain.length - 1) idx++; 
-                    else {
-                        if (chain.length > 0 && chain[chain.length - 1].o === '?') input = String(chain.pop().v); 
-                        idx = -1; 
-                    }
-                }
-                render(); 
-            } catch(e) { console.error("Next error", e); AC(); }
+            if (idx !== -1) {
+                if (idx < chain.length - 1) idx++; 
+                else idx = -1; // Review theke ber hoye asha
+            }
+            render(); 
         }
 
         function correct(){ 
-            if(idx !== -1 && chain[idx].o !== 'ANS' && chain[idx].o !== '?'){ 
-                edit = true; input = String(chain[idx].v); isNewStep = false; render(); 
+            if(idx !== -1 && chain[idx].o !== 'ANS'){ 
+                edit = true; input = chain[idx].v; isNewStep = false; render(); 
             } 
         }
         
         function finishCorr(){ 
-            try {
-                chain[idx].v = String(input); 
-                let newChain = chain.slice(0, chain.length - 1); let tempTotal = 0; 
-                newChain.forEach((item, i) => { 
-                    let v = parseFloat(item.v); 
-                    if (i === 0) tempTotal = v; 
-                    else { 
-                        let pOp = newChain[i-1].o; 
-                        if(pOp === '+') tempTotal += v; else if(pOp === '-') tempTotal -= v; else if(pOp === '*') tempTotal *= v; else if(pOp === '/') tempTotal /= v; 
-                    } 
-                }); 
-                newChain.push({v: String(tempTotal), o: 'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); 
-                input = String(tempTotal); resShown = true; edit = false; idx = -1; render(); renderList(); 
-            } catch(e) { console.error("Corr error", e); AC(); }
+            chain[idx].v = input; 
+            let newChain = chain.slice(0, chain.length - 1); let tempTotal = 0; 
+            newChain.forEach((item, i) => { 
+                let v = parseFloat(item.v); 
+                if (i === 0) tempTotal = v; 
+                else { 
+                    let pOp = newChain[i-1].o; 
+                    if(pOp === '+') tempTotal += v; else if(pOp === '-') tempTotal -= v; else if(pOp === '*') tempTotal *= v; else if(pOp === '/') tempTotal /= v; 
+                } 
+            }); 
+            newChain.push({v: String(tempTotal), o: 'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); 
+            input = String(tempTotal); resShown = true; edit = false; idx = -1; render(); renderList(); 
         }
 
         function clearHistory() { 
@@ -367,29 +341,59 @@
         function save(){ try { localStorage.setItem('casio_data', JSON.stringify(tape)); } catch(e){} }
 
         function render(){ 
-            try {
-                let mainEl = document.getElementById('mainDisp');
-                if(!mainEl) return;
-                
-                let dV = String(input), dO = ""; let stepNum = 0; 
-                let modeEl = document.getElementById('mode');
-                
-                if(edit){ 
-                    dV = input; dO = "EDIT"; modeEl.innerText = "CRT"; modeEl.style.display = "block"; stepNum = idx + 1; 
-                } else if(idx !== -1){ 
-                    let item = chain[idx]; dV = item.v; 
-                    if(item.o === 'ANS') dO = '='; else if(item.o === '?') dO = ''; else dO = item.o;
-                    modeEl.innerText = "REV"; modeEl.style.display = "block"; stepNum = idx + 1; 
-                } else { 
-                    modeEl.style.display = "none"; 
-                    if(chain.length > 0 && !resShown) dO = chain[chain.length-1].o; 
-                    stepNum = chain.length + (isNewStep ? 0 : 1); 
-                } 
-                
-                if(idx === -1 && !resShown && !isNewStep) { 
-                    mainEl.innerText = dV; 
-                } else { 
-                    let numVal = parseFloat(dV); if(isNaN(numVal)) numVal = 0;
-                    mainEl.innerText = numVal.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-                } 
-       
+            let mainEl = document.getElementById('mainDisp');
+            let opEl = document.getElementById('opDisp');
+            let stepEl = document.getElementById('step');
+            let modeEl = document.getElementById('mode');
+
+            if(!mainEl || !opEl || !stepEl || !modeEl) return;
+
+            let dV = input, dO = ""; let stepNum = 0; 
+            
+            if(edit){ 
+                dV = input; dO = "EDIT"; modeEl.innerText = "CRT"; modeEl.style.display = "block"; stepNum = idx + 1; 
+            } else if(idx !== -1){ 
+                let item = chain[idx]; dV = item.v; 
+                if(item.o === 'ANS') dO = '='; else dO = item.o;
+                modeEl.innerText = "REV"; modeEl.style.display = "block"; stepNum = idx + 1; 
+            } else { 
+                modeEl.style.display = "none"; 
+                if(chain.length > 0 && !resShown) dO = chain[chain.length-1].o; 
+                stepNum = chain.length + (isNewStep ? 0 : 1); 
+            } 
+            
+            if(idx === -1 && !resShown && !isNewStep) { 
+                mainEl.innerText = dV; 
+            } else { 
+                let numVal = parseFloat(dV); if(isNaN(numVal)) numVal = 0;
+                mainEl.innerText = numVal.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
+            } 
+            
+            opEl.innerText = dO.replace('*','×').replace('/','÷'); 
+            stepEl.innerText = String(stepNum).padStart(2,'0'); 
+            
+            let s = 55; mainEl.style.fontSize = s + "px"; 
+            while(mainEl.scrollWidth > mainEl.parentElement.clientWidth && s > 30){ s -= 5; mainEl.style.fontSize = s + "px"; } 
+        }
+
+        function renderList(){ 
+            let listEl = document.getElementById('list');
+            if(!listEl) return;
+
+            if(!tape || !tape.length) { 
+                listEl.innerHTML = "<div style='text-align:center; margin-top: 20px; opacity:0.6;'>No history found</div>"; return; 
+            } 
+            listEl.innerHTML = tape.map(t => { 
+                let resObj = t.find(x => x.o === 'ANS'); let result = resObj ? resObj.v : "0"; 
+                let expr = t.reduce((a,c) => { 
+                    if(c.o === 'ANS') return a; 
+                    let sym = c.o.replace('*','×').replace('/','÷'); return a + c.v + (sym === '=' ? '' : ' ' + sym + ' '); 
+                }, ""); 
+                let numRes = parseFloat(result); if(isNaN(numRes)) numRes = 0;
+                let formattedRes = numRes.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
+                return `<div class="d-row"> <span style="opacity:0.6; font-size:14px;">${expr}=</span> <span style="font-weight:bold; font-size:16px;">${formattedRes}</span> </div>`; 
+            }).reverse().join(''); 
+        }
+    </script>
+</body>
+</html>
