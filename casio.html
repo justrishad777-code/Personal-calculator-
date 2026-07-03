@@ -120,6 +120,12 @@
         
         .btn-clear-hist { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-clear-hist:active { transform: scale(0.95); }
+
+        .d-row { flex-direction: column; align-items: stretch; cursor: pointer; transition: background 0.2s; border-radius: 8px; padding: 10px 8px; }
+        .d-row:active { background: rgba(255,255,255,0.08); }
+        .d-row-top { display: flex; justify-content: space-between; align-items: center; }
+        .d-time { font-size: 11px; opacity: 0.45; margin-top: 3px; }
+        .d-empty { text-align:center; margin-top: 20px; opacity:0.6; }
     </style>
 </head>
 <body onload="init()">
@@ -266,7 +272,7 @@
             let val = parseFloat(input) || 0; executePrev(val); 
             chain.push({v: input, o: '='}); chain.push({v: String(currentTotal), o: 'ANS'}); 
             
-            tape.push(JSON.parse(JSON.stringify(chain))); save(); 
+            tape.push({ chain: JSON.parse(JSON.stringify(chain)), ts: Date.now() }); save(); 
             
             input = String(currentTotal); resShown = true; isNewStep = true; chain = []; currentTotal = 0; 
             render(); renderList(); 
@@ -287,7 +293,7 @@
                 } 
                 // Jodi kono running hishab NA thake, tobe old history (tape) load korbe
                 else if (tape.length > 0) {
-                    chain = JSON.parse(JSON.stringify(tape[tape.length - 1])); 
+                    chain = JSON.parse(JSON.stringify(getChain(tape[tape.length - 1]))); 
                     idx = chain.length - 1;
                 }
             } else if (idx > 0) {
@@ -321,7 +327,7 @@
                     if(pOp === '+') tempTotal += v; else if(pOp === '-') tempTotal -= v; else if(pOp === '*') tempTotal *= v; else if(pOp === '/') tempTotal /= v; 
                 } 
             }); 
-            newChain.push({v: String(tempTotal), o: 'ANS'}); chain = newChain; tape[tape.length-1] = chain; save(); 
+            newChain.push({v: String(tempTotal), o: 'ANS'}); chain = newChain; tape[tape.length-1] = { chain: chain, ts: Date.now() }; save(); 
             input = String(tempTotal); resShown = true; edit = false; idx = -1; render(); renderList(); 
         }
 
@@ -339,6 +345,25 @@
         }
         
         function save(){ try { localStorage.setItem('casio_data', JSON.stringify(tape)); } catch(e){} }
+
+        function getChain(t){ return Array.isArray(t) ? t : t.chain; }
+        function getTs(t){ return Array.isArray(t) ? null : t.ts; }
+
+        function formatTs(ts){
+            if(!ts) return "";
+            let d = new Date(ts);
+            let today = new Date();
+            let sameDay = d.toDateString() === today.toDateString();
+            let time = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if(sameDay) return time;
+            return d.toLocaleDateString([], {day:'2-digit', month:'short'}) + ' ' + time;
+        }
+
+        function reuseHistory(result){
+            AC();
+            input = String(result); resShown = true; isNewStep = true;
+            render(); toggleDrawer();
+        }
 
         function render(){ 
             let mainEl = document.getElementById('mainDisp');
@@ -383,7 +408,8 @@
             if(!tape || !tape.length) { 
                 listEl.innerHTML = "<div style='text-align:center; margin-top: 20px; opacity:0.6;'>No history found</div>"; return; 
             } 
-            listEl.innerHTML = tape.map(t => { 
+            listEl.innerHTML = tape.map((entry, i) => { 
+                let t = getChain(entry); let ts = getTs(entry);
                 let resObj = t.find(x => x.o === 'ANS'); let result = resObj ? resObj.v : "0"; 
                 let expr = t.reduce((a,c) => { 
                     if(c.o === 'ANS') return a; 
@@ -391,7 +417,14 @@
                 }, ""); 
                 let numRes = parseFloat(result); if(isNaN(numRes)) numRes = 0;
                 let formattedRes = numRes.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-                return `<div class="d-row"> <span style="opacity:0.6; font-size:14px;">${expr}=</span> <span style="font-weight:bold; font-size:16px;">${formattedRes}</span> </div>`; 
+                let timeStr = formatTs(ts);
+                return `<div class="d-row" onclick="reuseHistory(${numRes})">
+                    <div class="d-row-top">
+                        <span style="opacity:0.6; font-size:14px;">${expr}=</span>
+                        <span style="font-weight:bold; font-size:16px;">${formattedRes}</span>
+                    </div>
+                    ${timeStr ? `<span class="d-time">${timeStr}</span>` : ''}
+                </div>`; 
             }).reverse().join(''); 
         }
     </script>

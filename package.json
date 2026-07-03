@@ -1,0 +1,7 @@
+{
+  "name": "gold-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx --yes serve -l 5000 ."
+  }
+}
