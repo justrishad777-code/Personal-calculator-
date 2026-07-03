@@ -9,90 +9,109 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#1a1d24">
+    <meta name="theme-color" content="#0b0e14">
 
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --primary: #ffaf40; 
-            --secondary: #48dbfb; 
-            --bg-color: #222831; 
-            --card-bg: #393e46;
-            --text-main: #eeeeee;
+            --primary: #f0b90b; 
+            --primary-dark: #c99400;
+            --secondary: #3ecbe0; 
+            --bg-color: #0b0e14; 
+            --bg-color-2: #10141c;
+            --card-bg: #151a24;
+            --card-bg-soft: rgba(255,255,255,0.03);
+            --text-main: #f1f3f7;
+            --text-muted: #8992a3;
+            --border: rgba(255,255,255,0.08);
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.45);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-color);
+            font-family: 'Manrope', sans-serif; 
+            background: radial-gradient(circle at top, var(--bg-color-2) 0%, var(--bg-color) 55%);
             display: flex; flex-direction: column; height: 100vh;
             color: var(--text-main);
             padding-top: env(safe-area-inset-top);
+            -webkit-font-smoothing: antialiased;
         }
 
         /* HEADER */
         .top-bar { 
-            height: 60px; background: #1a1d24; 
-            display: flex; align-items: center; padding: 0 15px; 
+            height: 60px; background: rgba(11,14,20,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            display: flex; align-items: center; padding: 0 16px; 
             color: white; justify-content: space-between; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100; border-bottom: 1px solid #333;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.4); z-index: 100; border-bottom: 1px solid var(--border);
         }
-        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; }
+        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; transition: transform 0.2s, opacity 0.2s; }
+        .menu-icon:active { transform: scale(0.88); opacity: 0.7; }
         .app-title { 
-            font-size: 20px; font-weight: bold; letter-spacing: 0.5px; 
+            font-size: 19px; font-weight: 800; letter-spacing: 0.4px; 
             color: #fff;
         }
 
         /* MENU */
         #menuPopup {
             display: none; position: absolute; top: 60px; left: 10px; width: 220px;
-            background: #393e46; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 2000; flex-direction: column; border: 1px solid #555;
+            background: var(--card-bg); border-radius: 14px; box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+            z-index: 2000; flex-direction: column; border: 1px solid var(--border); overflow: hidden;
         }
         .menu-item { 
-            padding: 15px; text-decoration: none; color: #eee; 
-            border-bottom: 1px solid #555; font-weight: 600; display: flex; align-items: center; 
+            padding: 14px 15px; text-decoration: none; color: #eee; 
+            border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; 
+            transition: background 0.2s, padding-left 0.2s;
         }
-        .menu-item:hover { background: #444; }
+        .menu-item:hover, .menu-item:active { background: rgba(255,255,255,0.06); padding-left: 20px; }
         .menu-icon-span { margin-right: 12px; font-size: 18px; }
 
-        .content { flex: 1; padding: 20px; overflow-y: auto; background: #222831; }
+        .content { flex: 1; padding: 20px; overflow-y: auto; max-width: 520px; margin: 0 auto; width: 100%; }
 
         /* CARDS */
         .card {
-            background: var(--card-bg); border-radius: 15px; padding: 20px;
-            margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 22px;
+            margin-bottom: 22px; box-shadow: var(--shadow-card);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .card-orange { border-top: 5px solid var(--primary); background: linear-gradient(to bottom, #393e46, #403a35); }
-        .card-header-orange { color: var(--primary); font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .card-orange { border-top: 3px solid var(--primary); background: linear-gradient(160deg, rgba(240,185,11,0.08), var(--card-bg) 55%); }
+        .card-header-orange { color: var(--primary); font-size: 17px; font-weight: 800; margin-bottom: 16px; letter-spacing: 0.2px; }
 
-        .card-blue { border-top: 5px solid var(--secondary); background: linear-gradient(to bottom, #393e46, #353d42); }
-        .card-header-blue { color: var(--secondary); font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .card-blue { border-top: 3px solid var(--secondary); background: linear-gradient(160deg, rgba(62,203,224,0.08), var(--card-bg) 55%); }
+        .card-header-blue { color: var(--secondary); font-size: 17px; font-weight: 800; margin-bottom: 16px; letter-spacing: 0.2px; }
 
         /* INPUTS */
-        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
         .c-input {
-            width: 100%; padding: 12px; border: 1px solid #555; border-radius: 8px;
-            font-size: 16px; font-weight: bold; text-align: center; outline: none;
-            background: #222831; color: #fff;
+            width: 100%; padding: 13px; border: 1.5px solid var(--border); border-radius: 12px;
+            font-size: 16px; font-weight: 700; text-align: center; outline: none;
+            background: #0c0f16; color: #fff; min-height: 50px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Manrope', sans-serif;
         }
-        .c-input:focus { border-color: #888; background: #2a3038; }
+        .c-input::placeholder { color: #495066; font-weight: 500; }
+        .c-input:focus { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(62,203,224,0.15); background: #0e1219; }
+        .card-orange .c-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(240,185,11,0.15); }
 
-        .unit-label { font-size: 10px; text-transform: uppercase; color: #aaa; text-align: center; margin-bottom: 2px; font-weight: bold; }
+        .unit-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.4px; }
 
         /* RESULT AREA */
         .result-box {
-            background: #2a3038; border-radius: 10px; padding: 15px;
-            text-align: center; margin-top: 15px; border: 1px solid #444;
+            background: var(--card-bg-soft); border-radius: 14px; padding: 16px;
+            text-align: center; margin-top: 16px; border: 1px solid var(--border);
         }
-        .res-val { font-size: 32px; font-weight: 900; line-height: 1; }
-        .res-unit { font-size: 14px; color: #888; font-weight: 600; margin-top: 5px; }
+        .res-val { font-size: 30px; font-weight: 900; line-height: 1; }
+        .res-unit { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-        .text-orange { color: var(--primary); }
-        .text-blue { color: var(--secondary); }
+        .text-orange { color: var(--primary); text-shadow: 0 0 20px rgba(240,185,11,0.3); }
+        .text-blue { color: var(--secondary); text-shadow: 0 0 20px rgba(62,203,224,0.3); }
+
+        @media (min-width: 600px) {
+            .content { padding-top: 28px; }
+        }
     </style>
 </head>
 <body>
