@@ -1,448 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Casio RS-120D</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#0b0e14">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
-    
-    <script>
-        (function() {
-            try {
-                let themeData = localStorage.getItem('app_theme');
-                if (themeData) {
-                    let theme = JSON.parse(themeData);
-                    let root = document.documentElement;
-                    if(theme.primary) root.style.setProperty('--primary', theme.primary);
-                    if(theme.secondary) root.style.setProperty('--secondary', theme.secondary);
-                    if(theme.bg) root.style.setProperty('--bg-color', theme.bg);
-                    if(theme.card) root.style.setProperty('--btn-bg', theme.card);
-                    if(theme.text) root.style.setProperty('--text-main', theme.text);
-                }
-            } catch(e) {}
-        })();
-    </script>
-
-    <style>
-        :root { 
-            --primary: #f0b90b;    
-            --secondary: #3ecbe0; 
-            --accent: #6366f1;
-            --bg-color: #0b0e14;  
-            --bg-color-2: #10141c;
-            --btn-bg: #1a2029;    
-            --btn-shadow: #04060a; 
-            --text-main: #f1f3f7; 
-            --border: rgba(255,255,255,0.07);
-        }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        html, body { 
-            height: 100%; width: 100%; 
-            margin: 0; padding: 0;
-            overflow: hidden; 
-            position: fixed; 
-            background: radial-gradient(circle at top, var(--bg-color-2) 0%, var(--bg-color) 55%); 
-            font-family: 'Manrope', sans-serif; 
-            display: flex; flex-direction: column; 
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .safe-area-top { height: env(safe-area-inset-top); background: var(--bg-color); flex-shrink: 0; }
-
-        .top-bar { 
-            height: 54px; background: rgba(11,14,20,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: flex; align-items: center; 
-            padding: 0 15px; border-bottom: 1px solid var(--border); 
-            justify-content: space-between; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 10;
-        }
-        .menu-icon { font-size: 24px; cursor: pointer; color: var(--text-main); width: 40px; transition: transform 0.2s, opacity 0.2s; }
-        .menu-icon:active { transform: scale(0.88); opacity: 0.7; }
-        .app-title { font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); }
-        
-        #menuPopup { 
-            display: none; position: absolute; top: 58px; left: 10px; width: 225px; 
-            background: #151a24; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); 
-            z-index: 2000; flex-direction: column; border: 1px solid var(--border); overflow: hidden;
-        }
-        .menu-item { 
-            padding: 15px 18px; text-decoration: none; color: var(--text-main); 
-            border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; transition: background 0.2s, padding-left 0.2s;
-        }
-        .menu-item:hover, .menu-item:active { background: rgba(255,255,255,0.06); padding-left: 22px; }
-        .menu-icon-span { margin-right: 12px; font-size: 18px; }
-        
-        .screen { 
-            flex: 0 0 22%; background: rgba(0,0,0,0.35); padding: 8px 22px; 
-            display: flex; flex-direction: column; border-bottom: 1px solid var(--border); box-shadow: inset 0 5px 20px rgba(0,0,0,0.5); 
-        }
-        .indicators { display: flex; justify-content: space-between; color: var(--text-main); opacity: 0.55; height: 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
-        .op-display { text-align: right; color: var(--primary); font-size: 18px; height: 25px; font-family: monospace; margin-top: 2px; }
-        .main-display { flex: 1; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
-        .main-text { 
-            font-family: 'Digital-7 Mono', monospace; color: var(--text-main); font-size: 55px; line-height: 1; letter-spacing: 2px; text-shadow: 0 0 12px rgba(240,185,11,0.15); 
-        }
-        
-        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px 12px; background: transparent; flex-shrink: 0; }
-        .c-btn { 
-            background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 12px 0; 
-            border-radius: 12px; font-weight: 700; font-size: 12px; color: var(--text-main); cursor: pointer; transition: transform 0.1s, background 0.15s;
-        }
-        .c-btn:active { transform: scale(0.94); background: rgba(255,255,255,0.09); }
-        
-        .keypad { 
-            flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); 
-            gap: 10px; padding: 6px 12px; background: transparent; padding-bottom: calc(15px + env(safe-area-inset-bottom));
-        }
-        /* NUMBER KEYS — sleek standard native look */
-        .k-btn { 
-            width: 100%; height: 100%; border-radius: 16px; border: 1px solid var(--border); background: var(--btn-bg); 
-            font-size: 22px; font-weight: 700; color: var(--text-main); box-shadow: 0 3px 0 var(--btn-shadow), 0 6px 14px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, box-shadow 0.1s, filter 0.2s;
-        }
-        .k-btn:active { transform: translateY(3px); box-shadow: 0 0px 0 var(--btn-shadow); filter: brightness(0.85); }
-        
-        /* NON-NUMBER KEYS — premium accent bg, pure white text/icons */
-        .ac, .op, .eq { 
-            background: linear-gradient(155deg, var(--accent), #4338ca); 
-            color: #ffffff; 
-            border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 3px 0 #2c249e, 0 6px 16px rgba(99,102,241,0.35);
-        }
-        .ac { background: linear-gradient(155deg, #f87171, #dc2626); box-shadow: 0 3px 0 #991b1b, 0 6px 16px rgba(220,38,38,0.35); }
-        .eq { background: linear-gradient(155deg, var(--primary), #c99400); box-shadow: 0 3px 0 #8a6a00, 0 6px 16px rgba(240,185,11,0.4); }
-        .ac:active, .op:active, .eq:active { filter: brightness(0.92); }
-        
-        .drawer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; opacity: 0; transition: opacity 0.3s; }
-        .drawer-overlay.show { display: block; opacity: 1; }
-
-        .drawer { 
-            position: absolute; bottom: -100%; left: 0; width: 100%; height: 65%; background: #151a24; z-index: 3000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); 
-            color: var(--text-main); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; border-top: 2px solid var(--primary); box-shadow: 0 -10px 50px rgba(0,0,0,0.7);
-        }
-        .drawer.open { bottom: 0; }
-        .d-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .d-body { flex: 1; overflow-y: auto; padding: 15px 20px; padding-bottom: 50px; }
-        .d-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-family: monospace; font-size: 15px; }
-        
-        .btn-clear-hist { background: linear-gradient(135deg, #f87171, #dc2626); color: white; border: none; padding: 7px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-clear-hist:active { transform: scale(0.95); }
-
-        .d-row { flex-direction: column; align-items: stretch; cursor: pointer; transition: background 0.2s; border-radius: 10px; padding: 10px 8px; }
-        .d-row:active { background: rgba(255,255,255,0.08); }
-        .d-row-top { display: flex; justify-content: space-between; align-items: center; }
-        .d-time { font-size: 11px; opacity: 0.45; margin-top: 3px; }
-        .d-empty { text-align:center; margin-top: 20px; opacity:0.6; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Casio RS-120D</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#0b0e14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
+<script>
+(function(){try{let d=localStorage.getItem('gold_theme')||localStorage.getItem('app_theme');if(d){let t=JSON.parse(d),r=document.documentElement;if(t.primary)r.style.setProperty('--primary',t.primary);if(t.secondary)r.style.setProperty('--secondary',t.secondary);if(t.bg)r.style.setProperty('--bg-color',t.bg);if(t.card)r.style.setProperty('--btn-bg',t.card);if(t.text)r.style.setProperty('--text-main',t.text);}}catch(e){}})();
+</script>
+<style>
+:root { --primary:#f0b90b; --secondary:#3ecbe0; --accent:#6366f1; --bg-color:#0b0e14; --bg-color-2:#10141c; --btn-bg:#1a2029; --btn-shadow:rgba(0,0,0,0.55); --text-main:#f1f3f7; --border:rgba(255,255,255,0.12); --glass-hi:rgba(255,255,255,0.22); }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; width:100%; margin:0; padding:0; overflow:hidden; position:fixed; background:radial-gradient(circle at 50% 0%, var(--bg-color-2) 0%, var(--bg-color) 70%); font-family:'Manrope',sans-serif; display:flex; flex-direction:column; color:var(--text-main); -webkit-font-smoothing:antialiased; }
+body::before, body::after { content:""; position:fixed; border-radius:50%; filter:blur(75px); z-index:0; pointer-events:none; opacity:0.26; }
+body::before { width:260px; height:260px; background:var(--primary); top:-50px; right:-60px; }
+body::after { width:300px; height:300px; background:var(--accent); bottom:-80px; left:-80px; opacity:0.2; }
+.safe-area-top { height:env(safe-area-inset-top); background:transparent; flex-shrink:0; z-index:10; }
+.top-bar { height:54px; background:rgba(15,20,28,0.45); backdrop-filter:blur(20px) saturate(160%); -webkit-backdrop-filter:blur(20px) saturate(160%); display:flex; align-items:center; padding:0 16px; border-bottom:1px solid var(--border); justify-content:space-between; flex-shrink:0; box-shadow:0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08); z-index:10; }
+.menu-icon { font-size:22px; cursor:pointer; color:var(--text-main); width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); transition:0.2s; }
+.menu-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.14); }
+.app-title { font-size:15px; font-weight:800; letter-spacing:2px; color:var(--text-main); text-shadow:0 2px 10px rgba(0,0,0,0.5); }
+#menuPopup { display:none; position:absolute; top:62px; left:12px; width:230px; background:rgba(18,24,34,0.68); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); border-radius:20px; box-shadow:0 24px 48px rgba(0,0,0,0.65), inset 0 1px 1px var(--glass-hi); z-index:2000; flex-direction:column; border:1px solid rgba(255,255,255,0.16); overflow:hidden; }
+.menu-item { padding:15px 18px; text-decoration:none; color:var(--text-main); border-bottom:1px solid rgba(255,255,255,0.07); font-weight:600; font-size:14.5px; display:flex; align-items:center; transition:0.2s; }
+.menu-item:hover, .menu-item:active { background:rgba(255,255,255,0.1); padding-left:24px; }
+.menu-icon-span { margin-right:12px; font-size:18px; }
+.screen { flex:0 0 21%; margin:10px 12px 2px; border-radius:22px; background:linear-gradient(165deg, rgba(255,255,255,0.06) 0%, rgba(5,8,14,0.58) 100%); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); padding:10px 20px; display:flex; flex-direction:column; border:1px solid rgba(255,255,255,0.14); border-top-color:rgba(255,255,255,0.24); box-shadow:inset 0 6px 24px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.3); z-index:2; }
+.indicators { display:flex; justify-content:space-between; align-items:center; color:var(--text-main); opacity:0.75; height:22px; font-size:12px; font-weight:800; letter-spacing:1px; }
+.step { background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); }
+.op-display { text-align:right; color:var(--primary); font-size:19px; font-weight:700; height:24px; font-family:monospace; margin-top:2px; text-shadow:0 0 10px rgba(240,185,11,0.35); }
+.main-display { flex:1; display:flex; align-items:flex-end; justify-content:flex-end; overflow:hidden; }
+.main-text { font-family:'Digital-7 Mono',monospace; color:var(--text-main); font-size:55px; line-height:1; letter-spacing:2px; text-shadow:0 0 18px rgba(240,185,11,0.22), 0 4px 8px rgba(0,0,0,0.5); }
+.controls { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:10px 12px; background:transparent; flex-shrink:0; z-index:2; }
+.c-btn { background:linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.12); border-top-color:rgba(255,255,255,0.22); padding:12px 0; border-radius:14px; font-weight:800; font-size:12px; letter-spacing:0.4px; color:var(--text-main); cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12); transition:0.12s; }
+.c-btn:active { transform:scale(0.93); background:rgba(255,255,255,0.14); }
+.keypad { flex:1; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(5,1fr); gap:10px; padding:4px 12px; background:transparent; padding-bottom:calc(16px + env(safe-area-inset-bottom)); z-index:2; }
+.k-btn { width:100%; height:100%; border-radius:18px; background:linear-gradient(145deg, rgba(255,255,255,0.11) 0%, color-mix(in srgb, var(--btn-bg) 55%, transparent) 100%); backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%); border:1px solid rgba(255,255,255,0.12); border-top-color:var(--glass-hi); border-bottom-color:rgba(0,0,0,0.35); font-size:23px; font-weight:700; color:var(--text-main); box-shadow:0 4px 0 var(--btn-shadow), 0 8px 18px rgba(0,0,0,0.28), inset 0 1px 1px rgba(255,255,255,0.15); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.1s; }
+.k-btn:active { transform:translateY(3px); box-shadow:0 1px 0 var(--btn-shadow), 0 4px 10px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.25); filter:brightness(1.12); }
+.op { background:linear-gradient(145deg, rgba(129,140,248,0.42), rgba(67,56,202,0.52)); color:#fff; border:1px solid rgba(165,180,252,0.28); border-top-color:rgba(255,255,255,0.4); box-shadow:0 4px 0 rgba(30,27,75,0.7), 0 8px 20px rgba(99,102,241,0.28), inset 0 1px 1px rgba(255,255,255,0.3); }
+.ac { background:linear-gradient(145deg, rgba(248,113,113,0.48), rgba(185,28,28,0.58)); color:#fff; border:1px solid rgba(252,165,165,0.3); border-top-color:rgba(255,255,255,0.42); box-shadow:0 4px 0 rgba(105,15,15,0.75), 0 8px 20px rgba(220,38,38,0.3), inset 0 1px 1px rgba(255,255,255,0.32); }
+.eq { background:linear-gradient(145deg, color-mix(in srgb, var(--primary) 72%, rgba(255,255,255,0.2)), color-mix(in srgb, var(--primary) 48%, rgba(0,0,0,0.3))); color:#fff; border:1px solid rgba(255,255,255,0.32); border-top-color:rgba(255,255,255,0.5); box-shadow:0 4px 0 rgba(95,70,0,0.75), 0 8px 22px rgba(240,185,11,0.32), inset 0 1px 2px rgba(255,255,255,0.4); text-shadow:0 1px 3px rgba(0,0,0,0.4); }
+.ac:active, .op:active, .eq:active { filter:brightness(1.1); }
+.drawer-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(4,6,10,0.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:2500; opacity:0; transition:opacity 0.3s; }
+.drawer-overlay.show { display:block; opacity:1; }
+.drawer { position:absolute; bottom:-100%; left:0; width:100%; height:65%; background:rgba(18,23,33,0.72); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%); z-index:3000; transition:0.4s cubic-bezier(0.175,0.885,0.32,1); color:var(--text-main); border-radius:28px 28px 0 0; display:flex; flex-direction:column; border-top:1px solid rgba(255,255,255,0.24); box-shadow:0 -12px 50px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15); }
+.drawer.open { bottom:0; }
+.d-head { padding:18px 22px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.d-body { flex:1; overflow-y:auto; padding:15px 20px 50px; }
+.btn-clear-hist { background:linear-gradient(135deg, rgba(248,113,113,0.65), rgba(220,38,38,0.75)); color:#fff; border:1px solid rgba(255,255,255,0.25); padding:7px 14px; border-radius:10px; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 12px rgba(220,38,38,0.25); }
+.btn-clear-hist:active { transform:scale(0.95); }
+.d-row { display:flex; flex-direction:column; align-items:stretch; cursor:pointer; transition:0.2s; border-radius:14px; padding:12px 14px; margin-bottom:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); font-family:monospace; font-size:15px; }
+.d-row:active { background:rgba(255,255,255,0.1); transform:scale(0.98); }
+.d-row-top { display:flex; justify-content:space-between; align-items:center; }
+.d-time { font-size:11px; opacity:0.45; margin-top:4px; }
+</style>
 </head>
 <body onload="init()">
-    
-    <div class="safe-area-top"></div>
-    <div class="top-bar"> 
-        <div class="menu-icon" onclick="toggleMenu()">☰</div> 
-        <span class="app-title">CASIO RS-120D</span> 
-        <div style="width: 40px;"></div> 
-    </div>
-    
-    <div id="menuPopup">
-        <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
-        <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
-        <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
-        <a href="casio.html" class="menu-item" style="filter: brightness(1.3); border-left: 4px solid var(--primary);"><span class="menu-icon-span">🔢</span> Casio Calc</a>
-        <a href="settings.html" class="menu-item" style="border-bottom:none;"><span class="menu-icon-span">⚙️</span> Settings</a>
-    </div>
-    
-    <div class="screen"> 
-        <div class="indicators"> 
-            <span class="step" id="step">00</span> 
-            <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> 
-        </div> 
-        <div class="op-display" id="opDisp"></div> 
-        <div class="main-display"> 
-            <span class="main-text" id="mainDisp">0</span> 
-        </div> 
-    </div>
-    
-    <div class="controls"> 
-        <button class="c-btn" style="color:var(--secondary)" onclick="prev()">◀ PREV</button> 
-        <button class="c-btn" style="color:var(--secondary)" onclick="next()">NEXT ▶</button> 
-        <button class="c-btn" onclick="toggleDrawer()">📜 List</button> 
-        <button class="c-btn" style="color:var(--primary)" onclick="correct()">CORR</button> 
-    </div>
-    
-    <div class="keypad"> 
-        <button class="k-btn ac" onclick="AC()">AC</button> 
-        <button class="k-btn op" onclick="del()">⌫</button> 
-        <button class="k-btn op" onclick="op('%')">%</button> 
-        <button class="k-btn op" onclick="op('/')">÷</button> 
-        
-        <button class="k-btn" onclick="num('7')">7</button> 
-        <button class="k-btn" onclick="num('8')">8</button> 
-        <button class="k-btn" onclick="num('9')">9</button> 
-        <button class="k-btn op" onclick="op('*')">×</button> 
-        
-        <button class="k-btn" onclick="num('4')">4</button> 
-        <button class="k-btn" onclick="num('5')">5</button> 
-        <button class="k-btn" onclick="num('6')">6</button> 
-        <button class="k-btn op" onclick="op('-')">−</button> 
-        
-        <button class="k-btn" onclick="num('1')">1</button> 
-        <button class="k-btn" onclick="num('2')">2</button> 
-        <button class="k-btn" onclick="num('3')">3</button> 
-        <button class="k-btn op" onclick="op('+')">+</button> 
-        
-        <button class="k-btn" onclick="num('00')">00</button> 
-        <button class="k-btn" onclick="num('0')">0</button> 
-        <button class="k-btn" onclick="num('.')">.</button> 
-        <button class="k-btn eq" onclick="eq()">=</button> 
-    </div>
-    
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="safe-area-top"></div>
+<div class="top-bar"> 
+    <div class="menu-icon" onclick="toggleMenu()">☰</div> 
+    <span class="app-title">CASIO RS-120D</span> 
+    <div style="width:38px;"></div> 
+</div>
+<div id="menuPopup">
+    <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
+    <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
+    <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
+    <a href="price.html" class="menu-item"><span class="menu-icon-span">💰</span> Price Calc</a>
+    <a href="casio.html" class="menu-item" style="background:rgba(255,255,255,0.08); border-left:4px solid var(--primary);"><span class="menu-icon-span">🔢</span> Casio Calc</a>
+    <a href="settings.html" class="menu-item" style="border-bottom:none;"><span class="menu-icon-span">⚙️</span> Settings</a>
+</div>
+<div class="screen"> 
+    <div class="indicators"> 
+        <span class="step" id="step">00</span> 
+        <span style="color:var(--primary); font-weight:bold; display:none;" id="mode">REV</span> 
+    </div> 
+    <div class="op-display" id="opDisp"></div> 
+    <div class="main-display"><span class="main-text" id="mainDisp">0</span></div> 
+</div>
+<div class="controls"> 
+    <button class="c-btn" style="color:var(--secondary)" onclick="prev()">◀ PREV</button> 
+    <button class="c-btn" style="color:var(--secondary)" onclick="next()">NEXT ▶</button> 
+    <button class="c-btn" onclick="toggleDrawer()">📜 List</button> 
+    <button class="c-btn" style="color:var(--primary)" onclick="correct()">CORR</button> 
+</div>
+<div class="keypad"> 
+    <button class="k-btn ac" onclick="AC()">AC</button> 
+    <button class="k-btn op" onclick="del()">⌫</button> 
+    <button class="k-btn op" onclick="op('%')">%</button> 
+    <button class="k-btn op" onclick="op('/')">÷</button> 
+    <button class="k-btn" onclick="num('7')">7</button> 
+    <button class="k-btn" onclick="num('8')">8</button> 
+    <button class="k-btn" onclick="num('9')">9</button> 
+    <button class="k-btn op" onclick="op('*')">×</button> 
+    <button class="k-btn" onclick="num('4')">4</button> 
+    <button class="k-btn" onclick="num('5')">5</button> 
+    <button class="k-btn" onclick="num('6')">6</button> 
+    <button class="k-btn op" onclick="op('-')">−</button> 
+    <button class="k-btn" onclick="num('1')">1</button> 
+    <button class="k-btn" onclick="num('2')">2</button> 
+    <button class="k-btn" onclick="num('3')">3</button> 
+    <button class="k-btn op" onclick="op('+')">+</button> 
+    <button class="k-btn" onclick="num('00')">00</button> 
+    <button class="k-btn" onclick="num('0')">0</button> 
+    <button class="k-btn" onclick="num('.')">.</button> 
+    <button class="k-btn eq" onclick="eq()">=</button> 
+</div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer"> 
+    <div class="d-head"> 
+        <span style="font-weight:bold; font-size:18px;">History Tape</span> 
+        <div>
+            <button class="btn-clear-hist" onclick="clearHistory()">🗑️ Clear</button>
+            <span onclick="toggleDrawer()" style="cursor:pointer; opacity:0.6; font-weight:bold; margin-left:20px; font-size:20px;">✕</span> 
+        </div>
+    </div> 
+    <div class="d-body" id="list"></div> 
+</div>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js');});}
+function toggleMenu(){const m=document.getElementById('menuPopup');m.style.display=(m.style.display==='flex')?'none':'flex';}
+window.addEventListener('click',function(e){const m=document.getElementById('menuPopup'),btn=document.querySelector('.menu-icon');if(e.target!==m&&e.target!==btn&&!m.contains(e.target))m.style.display='none';});
 
-    <div class="drawer" id="drawer"> 
-        <div class="d-head"> 
-            <span style="font-weight:bold; font-size: 18px;">History Tape</span> 
-            <div>
-                <button class="btn-clear-hist" onclick="clearHistory()">🗑️ Clear</button>
-                <span onclick="toggleDrawer()" style="cursor:pointer; opacity:0.6; font-weight:bold; margin-left:20px; font-size: 20px;">✕</span> 
-            </div>
-        </div> 
-        <div class="d-body" id="list"></div> 
-    </div>
-    
-    <script>
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); }); }
+let tape=[],chain=[],input="0",idx=-1,edit=false,resShown=false,isNewStep=false,currentTotal=0,lastOp="";
+const MAX_DIGITS=12;
 
-        function toggleMenu() { 
-            const m = document.getElementById('menuPopup'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
-        }
-        window.addEventListener('click', function(e) {
-            const m = document.getElementById('menuPopup'); const btn = document.querySelector('.menu-icon');
-            if (e.target !== m && e.target !== btn && !m.contains(e.target)) { m.style.display = 'none'; }
-        });
-
-        // 100% Solid Simple Logic (No over-engineered '?' operator)
-        let tape=[], chain=[], input="0", idx=-1, edit=false, resShown=false, isNewStep=false; 
-        let currentTotal = 0; let lastOp = ""; const MAX_DIGITS = 12;
-
-        function init(){ 
-            try { 
-                let data = localStorage.getItem('casio_data');
-                if(data) { tape = JSON.parse(data) || []; }
-            } catch(e) { tape = []; } 
-            render(); renderList(); 
-        }
-
-        function num(n){ 
-            if(resShown){ AC(); input = n === "." ? "0." : n; render(); return; } 
-            if(isNewStep){ input = n === "." ? "0." : n; isNewStep = false; } 
-            else { 
-                if(input.replace('.','').length >= MAX_DIGITS) return; 
-                if(input === "0" && n !== ".") input = n; 
-                else if(n === "." && input.includes(".")) return; 
-                else input += n; 
-            } 
-            render();
-        }
-
-        function executePrev(val) { 
-            if (chain.length === 0) return; 
-            let prevOp = chain[chain.length - 1].o; 
-            switch (prevOp) { 
-                case '+': currentTotal += val; break; 
-                case '-': currentTotal -= val; break; 
-                case '*': currentTotal *= val; break; 
-                case '/': currentTotal /= val; break; 
-                case '%': currentTotal = (currentTotal * val) / 100; break; 
-            } 
-        }
-
-        function op(o){ 
-            if(edit) return; 
-            
-            let val = parseFloat(input) || 0; 
-            if (chain.length === 0) currentTotal = val; 
-            else if (!isNewStep) executePrev(val); 
-            
-            if (idx !== -1) { idx = -1; chain = []; } 
-            
-            if (!isNewStep || o !== lastOp) { chain.push({ v: input, o: o }); lastOp = o; } 
-            else chain[chain.length - 1].o = o; 
-            
-            input = String(currentTotal); isNewStep = true; resShown = false; render(); 
-        }
-
-        function eq(){ 
-            if(edit){ finishCorr(); return; } 
-            if(input==="" || (isNewStep && chain.length === 0)) return; 
-            
-            let val = parseFloat(input) || 0; executePrev(val); 
-            chain.push({v: input, o: '='}); chain.push({v: String(currentTotal), o: 'ANS'}); 
-            
-            tape.push({ chain: JSON.parse(JSON.stringify(chain)), ts: Date.now() }); save(); 
-            
-            input = String(currentTotal); resShown = true; isNewStep = true; chain = []; currentTotal = 0; 
-            render(); renderList(); 
-        }
-
-        function AC(){ chain=[]; input="0"; idx=-1; edit=false; resShown=false; isNewStep=false; currentTotal=0; lastOp=""; render(); }
-        
-        function del(){ 
-            if(resShown || isNewStep) return; 
-            input = input.toString().slice(0,-1) || "0"; render(); 
-        }
-
-        function prev() { 
-            if (idx === -1) {
-                // Majh pothe running hishab thakle sheta check korbe
-                if (chain.length > 0) {
-                    idx = chain.length - 1; 
-                } 
-                // Jodi kono running hishab NA thake, tobe old history (tape) load korbe
-                else if (tape.length > 0) {
-                    chain = JSON.parse(JSON.stringify(getChain(tape[tape.length - 1]))); 
-                    idx = chain.length - 1;
-                }
-            } else if (idx > 0) {
-                idx--; 
-            }
-            render(); 
-        }
-
-        function next() { 
-            if (idx !== -1) {
-                if (idx < chain.length - 1) idx++; 
-                else idx = -1; // Review theke ber hoye asha
-            }
-            render(); 
-        }
-
-        function correct(){ 
-            if(idx !== -1 && chain[idx].o !== 'ANS'){ 
-                edit = true; input = chain[idx].v; isNewStep = false; render(); 
-            } 
-        }
-        
-        function finishCorr(){ 
-            chain[idx].v = input; 
-            let newChain = chain.slice(0, chain.length - 1); let tempTotal = 0; 
-            newChain.forEach((item, i) => { 
-                let v = parseFloat(item.v); 
-                if (i === 0) tempTotal = v; 
-                else { 
-                    let pOp = newChain[i-1].o; 
-                    if(pOp === '+') tempTotal += v; else if(pOp === '-') tempTotal -= v; else if(pOp === '*') tempTotal *= v; else if(pOp === '/') tempTotal /= v; 
-                } 
-            }); 
-            newChain.push({v: String(tempTotal), o: 'ANS'}); chain = newChain; tape[tape.length-1] = { chain: chain, ts: Date.now() }; save(); 
-            input = String(tempTotal); resShown = true; edit = false; idx = -1; render(); renderList(); 
-        }
-
-        function clearHistory() { 
-            if(confirm("Clear calculation history?")) { tape = []; save(); renderList(); toggleDrawer(); } 
-        }
-        
-        function toggleDrawer(){ 
-            const drawer = document.getElementById('drawer'); const overlay = document.getElementById('drawerOverlay');
-            if (drawer.classList.contains('open')) {
-                drawer.classList.remove('open'); overlay.classList.remove('show'); setTimeout(() => { overlay.style.display = 'none'; }, 300);
-            } else {
-                overlay.style.display = 'block'; setTimeout(() => { overlay.classList.add('show'); }, 10); drawer.classList.add('open');
-            }
-        }
-        
-        function save(){ try { localStorage.setItem('casio_data', JSON.stringify(tape)); } catch(e){} }
-
-        function getChain(t){ return Array.isArray(t) ? t : t.chain; }
-        function getTs(t){ return Array.isArray(t) ? null : t.ts; }
-
-        function formatTs(ts){
-            if(!ts) return "";
-            let d = new Date(ts);
-            let today = new Date();
-            let sameDay = d.toDateString() === today.toDateString();
-            let time = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(sameDay) return time;
-            return d.toLocaleDateString([], {day:'2-digit', month:'short'}) + ' ' + time;
-        }
-
-        function reuseHistory(result){
-            AC();
-            input = String(result); resShown = true; isNewStep = true;
-            render(); toggleDrawer();
-        }
-
-        function render(){ 
-            let mainEl = document.getElementById('mainDisp');
-            let opEl = document.getElementById('opDisp');
-            let stepEl = document.getElementById('step');
-            let modeEl = document.getElementById('mode');
-
-            if(!mainEl || !opEl || !stepEl || !modeEl) return;
-
-            let dV = input, dO = ""; let stepNum = 0; 
-            
-            if(edit){ 
-                dV = input; dO = "EDIT"; modeEl.innerText = "CRT"; modeEl.style.display = "block"; stepNum = idx + 1; 
-            } else if(idx !== -1){ 
-                let item = chain[idx]; dV = item.v; 
-                if(item.o === 'ANS') dO = '='; else dO = item.o;
-                modeEl.innerText = "REV"; modeEl.style.display = "block"; stepNum = idx + 1; 
-            } else { 
-                modeEl.style.display = "none"; 
-                if(chain.length > 0 && !resShown) dO = chain[chain.length-1].o; 
-                stepNum = chain.length + (isNewStep ? 0 : 1); 
-            } 
-            
-            if(idx === -1 && !resShown && !isNewStep) { 
-                mainEl.innerText = dV; 
-            } else { 
-                let numVal = parseFloat(dV); if(isNaN(numVal)) numVal = 0;
-                mainEl.innerText = numVal.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-            } 
-            
-            opEl.innerText = dO.replace('*','×').replace('/','÷'); 
-            stepEl.innerText = String(stepNum).padStart(2,'0'); 
-            
-            let s = 55; mainEl.style.fontSize = s + "px"; 
-            while(mainEl.scrollWidth > mainEl.parentElement.clientWidth && s > 30){ s -= 5; mainEl.style.fontSize = s + "px"; } 
-        }
-
-        function renderList(){ 
-            let listEl = document.getElementById('list');
-            if(!listEl) return;
-
-            if(!tape || !tape.length) { 
-                listEl.innerHTML = "<div style='text-align:center; margin-top: 20px; opacity:0.6;'>No history found</div>"; return; 
-            } 
-            listEl.innerHTML = tape.map((entry, i) => { 
-                let t = getChain(entry); let ts = getTs(entry);
-                let resObj = t.find(x => x.o === 'ANS'); let result = resObj ? resObj.v : "0"; 
-                let expr = t.reduce((a,c) => { 
-                    if(c.o === 'ANS') return a; 
-                    let sym = c.o.replace('*','×').replace('/','÷'); return a + c.v + (sym === '=' ? '' : ' ' + sym + ' '); 
-                }, ""); 
-                let numRes = parseFloat(result); if(isNaN(numRes)) numRes = 0;
-                let formattedRes = numRes.toLocaleString('en-IN', {maximumFractionDigits: 10}); 
-                let timeStr = formatTs(ts);
-                return `<div class="d-row" onclick="reuseHistory(${numRes})">
-                    <div class="d-row-top">
-                        <span style="opacity:0.6; font-size:14px;">${expr}=</span>
-                        <span style="font-weight:bold; font-size:16px;">${formattedRes}</span>
-                    </div>
-                    ${timeStr ? `<span class="d-time">${timeStr}</span>` : ''}
-                </div>`; 
-            }).reverse().join(''); 
-        }
-    </script>
+function init(){try{let d=localStorage.getItem('casio_data');if(d)tape=JSON.parse(d)||[];}catch(e){tape=[];}render();renderList();}
+function num(n){
+    if(resShown){AC();input=n==="."?"0.":n;render();return;}
+    if(isNewStep){input=n==="."?"0.":n;isNewStep=false;}
+    else{if(input.replace('.','').length>=MAX_DIGITS)return;if(input==="0"&&n!==".")input=n;else if(n==="."&&input.includes("."))return;else input+=n;}
+    render();
+}
+function executePrev(val){
+    if(chain.length===0)return;
+    let p=chain[chain.length-1].o;
+    if(p==='+')currentTotal+=val;else if(p==='-')currentTotal-=val;else if(p==='*')currentTotal*=val;else if(p==='/')currentTotal/=val;else if(p==='%')currentTotal=(currentTotal*val)/100;
+}
+function op(o){
+    if(edit)return;
+    let val=parseFloat(input)||0;
+    if(chain.length===0)currentTotal=val;else if(!isNewStep)executePrev(val);
+    if(idx!==-1){idx=-1;chain=[];}
+    if(!isNewStep||o!==lastOp){chain.push({v:input,o:o});lastOp=o;}else chain[chain.length-1].o=o;
+    input=String(currentTotal);isNewStep=true;resShown=false;render();
+}
+function eq(){
+    if(edit){finishCorr();return;}
+    if(input===""||(isNewStep&&chain.length===0))return;
+    let val=parseFloat(input)||0;executePrev(val);
+    chain.push({v:input,o:'='});chain.push({v:String(currentTotal),o:'ANS'});
+    tape.push({chain:JSON.parse(JSON.stringify(chain)),ts:Date.now()});save();
+    input=String(currentTotal);resShown=true;isNewStep=true;chain=[];currentTotal=0;render();renderList();
+}
+function AC(){chain=[];input="0";idx=-1;edit=false;resShown=false;isNewStep=false;currentTotal=0;lastOp="";render();}
+function del(){if(resShown||isNewStep)return;input=input.toString().slice(0,-1)||"0";render();}
+function prev(){
+    if(idx===-1){if(chain.length>0)idx=chain.length-1;else if(tape.length>0){chain=JSON.parse(JSON.stringify(getChain(tape[tape.length-1])));idx=chain.length-1;}}
+    else if(idx>0)idx--;
+    render();
+}
+function next(){if(idx!==-1){if(idx<chain.length-1)idx++;else idx=-1;}render();}
+function correct(){if(idx!==-1&&chain[idx].o!=='ANS'){edit=true;input=chain[idx].v;isNewStep=false;render();}}
+function finishCorr(){
+    chain[idx].v=input;let nc=chain.slice(0,chain.length-1),tt=0;
+    nc.forEach((item,i)=>{let v=parseFloat(item.v);if(i===0)tt=v;else{let p=nc[i-1].o;if(p==='+')tt+=v;else if(p==='-')tt-=v;else if(p==='*')tt*=v;else if(p==='/')tt/=v;}});
+    nc.push({v:String(tt),o:'ANS'});chain=nc;tape[tape.length-1]={chain:chain,ts:Date.now()};save();
+    input=String(tt);resShown=true;edit=false;idx=-1;render();renderList();
+}
+function clearHistory(){if(confirm("Clear calculation history?")){tape=[];save();renderList();toggleDrawer();}}
+function toggleDrawer(){
+    const d=document.getElementById('drawer'),o=document.getElementById('drawerOverlay');
+    if(d.classList.contains('open')){d.classList.remove('open');o.classList.remove('show');setTimeout(()=>{o.style.display='none';},300);}
+    else{o.style.display='block';setTimeout(()=>{o.classList.add('show');},10);d.classList.add('open');}
+}
+function save(){try{localStorage.setItem('casio_data',JSON.stringify(tape));}catch(e){}}
+function getChain(t){return Array.isArray(t)?t:t.chain;}
+function getTs(t){return Array.isArray(t)?null:t.ts;}
+function formatTs(ts){
+    if(!ts)return "";let d=new Date(ts),t=new Date(),tm=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return (d.toDateString()===t.toDateString())?tm:d.toLocaleDateString([],{day:'2-digit',month:'short'})+' '+tm;
+}
+function reuseHistory(res){AC();input=String(res);resShown=true;isNewStep=true;render();toggleDrawer();}
+function render(){
+    let mainEl=document.getElementById('mainDisp'),opEl=document.getElementById('opDisp'),stepEl=document.getElementById('step'),modeEl=document.getElementById('mode');
+    if(!mainEl||!opEl||!stepEl||!modeEl)return;
+    let dV=input,dO="",stepNum=0;
+    if(edit){dV=input;dO="EDIT";modeEl.innerText="CRT";modeEl.style.display="block";stepNum=idx+1;}
+    else if(idx!==-1){let item=chain[idx];dV=item.v;dO=(item.o==='ANS')?'=':item.o;modeEl.innerText="REV";modeEl.style.display="block";stepNum=idx+1;}
+    else{modeEl.style.display="none";if(chain.length>0&&!resShown)dO=chain[chain.length-1].o;stepNum=chain.length+(isNewStep?0:1);}
+    if(idx===-1&&!resShown&&!isNewStep)mainEl.innerText=dV;
+    else{let nv=parseFloat(dV);if(isNaN(nv))nv=0;mainEl.innerText=nv.toLocaleString('en-IN',{maximumFractionDigits:10});}
+    opEl.innerText=dO.replace('*','×').replace('/','÷');
+    stepEl.innerText=String(stepNum).padStart(2,'0');
+    let s=55;mainEl.style.fontSize=s+"px";
+    while(mainEl.scrollWidth>mainEl.parentElement.clientWidth&&s>30){s-=5;mainEl.style.fontSize=s+"px";}
+}
+function renderList(){
+    let listEl=document.getElementById('list');if(!listEl)return;
+    if(!tape||!tape.length){listEl.innerHTML="<div style='text-align:center; margin-top:20px; opacity:0.6;'>No history found</div>";return;}
+    listEl.innerHTML=tape.map((entry)=>{
+        let t=getChain(entry),ts=getTs(entry),ro=t.find(x=>x.o==='ANS'),res=ro?ro.v:"0";
+        let expr=t.reduce((a,c)=>{if(c.o==='ANS')return a;let sym=c.o.replace('*','×').replace('/','÷');return a+c.v+(sym==='='?'':' '+sym+' ');},"");
+        let nr=parseFloat(res);if(isNaN(nr))nr=0;
+        let fr=nr.toLocaleString('en-IN',{maximumFractionDigits:10}),tsStr=formatTs(ts);
+        return `<div class="d-row" onclick="reuseHistory(${nr})"><div class="d-row-top"><span style="opacity:0.6; font-size:14px;">${expr}=</span><span style="font-weight:bold; font-size:16px;">${fr}</span></div>${tsStr?`<span class="d-time">${tsStr}</span>`:''}</div>`;
+    }).reverse().join('');
+}
+</script>
 </body>
 </html>
