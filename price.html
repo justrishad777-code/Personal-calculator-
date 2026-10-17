@@ -1,171 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold App - Price Calc</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b0e14">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        /* --- THEME --- */
-        :root { 
-            --primary: #f0b90b;
-            --primary-dark: #c99400;
-            --secondary: #3ecbe0;
-            --bg-color: #0b0e14;
-            --bg-color-2: #10141c;
-            --card-bg: #151a24;
-            --card-bg-soft: rgba(255,255,255,0.03);
-            --text-main: #f1f3f7;
-            --text-muted: #8992a3;
-            --input-bg: #0c0f16;
-            --border: rgba(255,255,255,0.08);
-            --shadow-card: 0 10px 30px rgba(0,0,0,0.45);
-        }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; padding: 0;
-            background: radial-gradient(circle at top, var(--bg-color-2) 0%, var(--bg-color) 55%);
-            color: var(--text-main);
-            font-family: 'Manrope', sans-serif;
-            min-height: 100vh;
-            overflow-y: auto;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- HEADER --- */
-        .header {
-            background: rgba(11,14,20,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            padding: 16px 18px; 
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
-        }
-        .menu-icon { font-size: 26px; cursor: pointer; color: #fff; padding: 5px; transition: transform 0.2s, opacity 0.2s; }
-        .menu-icon:active { transform: scale(0.88); opacity: 0.7; }
-        .header h3 { font-weight: 800; letter-spacing: 0.5px; }
-
-        /* --- MENU --- */
-        #menu-box {
-            display: none; background: var(--card-bg); border-bottom: 1px solid var(--border);
-            padding: 8px; box-shadow: 0 12px 24px rgba(0,0,0,0.4);
-        }
-        .menu-link {
-            display: block; padding: 14px 12px; color: #fff; text-decoration: none;
-            font-weight: 600; border-bottom: 1px solid var(--border); border-radius: 10px;
-            transition: background 0.2s, padding-left 0.2s;
-        }
-        .menu-link:active { background: rgba(255,255,255,0.06); padding-left: 18px; }
-
-        /* --- CONTAINER --- */
-        .container { padding: 16px; padding-bottom: 50px; max-width: 520px; margin: 0 auto; }
-        .card { 
-            background: linear-gradient(180deg, var(--card-bg) 0%, var(--bg-color-2) 100%);
-            border: 1px solid var(--border);
-            border-radius: 20px; padding: 24px; 
-            box-shadow: var(--shadow-card); margin-bottom: 20px;
-        }
-
-        /* --- INPUTS --- */
-        label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
-        input { 
-            width: 100%; padding: 15px; 
-            background: var(--input-bg); border: 1.5px solid var(--border); 
-            color: #fff; border-radius: 12px; font-size: 22px; 
-            font-weight: 700; text-align: center; margin-bottom: 16px;
-            min-height: 54px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: 'Manrope', sans-serif;
-        }
-        input::placeholder { color: #495066; font-weight: 500; }
-        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(240,185,11,0.15); }
-
-        /* --- RESULT --- */
-        .result-box {
-            text-align: center; padding: 24px; 
-            background: linear-gradient(160deg, rgba(240,185,11,0.12), var(--bg-color-2) 65%);
-            border-radius: 16px; border: 1px solid rgba(240,185,11,0.25);
-            box-shadow: 0 12px 30px rgba(240,185,11,0.08);
-        }
-        .result-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .result-val { font-size: 32px; font-weight: 900; color: var(--primary); word-break: break-all; text-shadow: 0 0 24px rgba(240,185,11,0.35); }
-        .sub-res { font-size: 14px; color: var(--text-muted); margin-top: 8px; font-weight: 600; }
-
-        @media (min-width: 600px) {
-            .container { padding-top: 24px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Gold App - Price Calc</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#0b0e14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+(function(){try{let d=localStorage.getItem('gold_theme')||localStorage.getItem('app_theme');if(d){let t=JSON.parse(d),r=document.documentElement;if(t.primary)r.style.setProperty('--primary',t.primary);if(t.secondary)r.style.setProperty('--secondary',t.secondary);if(t.bg)r.style.setProperty('--bg-color',t.bg);if(t.card)r.style.setProperty('--card-bg',t.card);if(t.text)r.style.setProperty('--text-main',t.text);}}catch(e){}})();
+</script>
+<style>
+:root { --primary:#f0b90b; --primary-dark:#c99400; --secondary:#3ecbe0; --bg-color:#0b0e14; --bg-color-2:#10141c; --card-bg:#151a24; --text-main:#f1f3f7; --text-muted:#94a3b8; --input-bg:rgba(8,11,18,0.55); --border:rgba(255,255,255,0.12); --glass-hi:rgba(255,255,255,0.22); --shadow-card:0 16px 36px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.14); }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; padding:0; background:radial-gradient(circle at 50% 0%, var(--bg-color-2) 0%, var(--bg-color) 70%); color:var(--text-main); font-family:'Manrope',sans-serif; min-height:100vh; overflow-y:auto; padding-top:env(safe-area-inset-top); -webkit-font-smoothing:antialiased; position:relative; }
+body::before, body::after { content:""; position:fixed; border-radius:50%; filter:blur(80px); z-index:0; pointer-events:none; }
+body::before { width:270px; height:270px; background:var(--primary); top:-50px; right:-60px; opacity:0.24; }
+body::after { width:310px; height:310px; background:var(--secondary); bottom:-80px; left:-80px; opacity:0.18; }
+.header { height:60px; background:rgba(15,20,28,0.45); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); padding:0 18px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08); }
+.menu-icon { font-size:22px; cursor:pointer; color:#fff; width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); transition:0.2s; }
+.menu-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.14); }
+.header h3 { font-weight:800; letter-spacing:0.6px; margin:0; color:var(--primary); text-shadow:0 2px 10px rgba(0,0,0,0.4); }
+#menu-box { display:none; position:fixed; top:calc(66px + env(safe-area-inset-top)); left:14px; width:235px; background:rgba(18,24,34,0.72); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); border-radius:20px; border:1px solid rgba(255,255,255,0.16); box-shadow:0 24px 48px rgba(0,0,0,0.65), inset 0 1px 1px var(--glass-hi); z-index:2000; overflow:hidden; }
+.menu-link { display:flex; align-items:center; padding:15px 18px; color:var(--text-main); text-decoration:none; font-weight:600; font-size:14.5px; border-bottom:1px solid rgba(255,255,255,0.07); transition:0.2s; }
+.menu-link:hover, .menu-link:active { background:rgba(255,255,255,0.1); padding-left:24px; }
+.container { padding:20px 16px 50px; max-width:520px; margin:0 auto; position:relative; z-index:2; }
+.card { background:linear-gradient(145deg, rgba(255,255,255,0.09) 0%, color-mix(in srgb, var(--card-bg) 55%, transparent) 100%); backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%); border:1px solid var(--border); border-top-color:var(--glass-hi); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); margin-bottom:20px; }
+label { font-size:11.5px; color:var(--text-muted); margin-bottom:8px; display:block; text-transform:uppercase; font-weight:800; letter-spacing:0.6px; }
+input { width:100%; padding:15px; background:var(--input-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1.5px solid var(--border); color:#fff; border-radius:16px; font-size:22px; font-weight:700; text-align:center; margin-bottom:18px; min-height:54px; box-shadow:inset 0 2px 8px rgba(0,0,0,0.35); transition:0.2s; font-family:'Manrope',sans-serif; }
+input::placeholder { color:#56617a; font-weight:600; }
+input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(240,185,11,0.15), inset 0 2px 8px rgba(0,0,0,0.35); background:rgba(12,16,26,0.75); }
+.result-box { text-align:center; padding:24px; background:linear-gradient(160deg, rgba(240,185,11,0.16), rgba(15,20,28,0.6) 70%); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-radius:20px; border:1px solid rgba(240,185,11,0.32); border-top-color:rgba(255,255,255,0.28); box-shadow:0 14px 32px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.15); margin-top:6px; }
+.result-label { font-size:11px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:800; letter-spacing:0.8px; }
+.result-val { font-size:34px; font-weight:900; color:var(--primary); word-break:break-all; text-shadow:0 0 24px rgba(240,185,11,0.35); }
+.sub-res { font-size:14px; color:var(--text-muted); margin-top:10px; font-weight:700; }
+@media (min-width:600px) { .container { padding-top:28px; } }
+</style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <h3 style="margin:0; color:var(--primary);">Price Calc</h3>
-        <div style="width:40px;"></div>
-    </div>
-
-    <div id="menu-box">
-        <a href="index.html" class="menu-link">🏠 Home</a>
-        <a href="rate.html" class="menu-link">📝 Rate F</a>
-        <a href="converter.html" class="menu-link">⚖️ Converter (Unit)</a>
-        <a href="price.html" class="menu-link" style="color:var(--primary);">💰 Price Calc</a>
-        <a href="casio.html" class="menu-link">🔢 Calculator</a>
-        <a href="settings.html" class="menu-link">⚙️ Settings</a>
-    </div>
-
-    <div class="container">
-        
-        <div class="card">
-            <label style="color:var(--secondary);">1. Price Per Vori (Tk)</label>
-            <input type="number" id="priceVori" placeholder="e.g. 200000" oninput="calc()">
-
-            <label style="color:#ffaf40;">2. Weight (Grams)</label>
-            <input type="number" id="weightGm" placeholder="e.g. 50" oninput="calc()">
-
-            <div class="result-box">
-                <div class="result-label">TOTAL PRICE</div>
-                <div class="result-val" id="totalPrice">0.00</div>
-                <div class="sub-res">Weight: <span id="totalVori">0.0000</span> Vori</div>
-            </div>
+<div class="header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <h3>Price Calc</h3>
+    <div style="width:38px;"></div>
+</div>
+<div id="menu-box">
+    <a href="index.html" class="menu-link">🏠&nbsp;&nbsp;Dashboard</a>
+    <a href="rate.html" class="menu-link">📝&nbsp;&nbsp;Rate F</a>
+    <a href="converter.html" class="menu-link">⚖️&nbsp;&nbsp;Converter</a>
+    <a href="price.html" class="menu-link" style="background:rgba(255,255,255,0.08); border-left:4px solid var(--primary); color:var(--primary);">💰&nbsp;&nbsp;Price Calc</a>
+    <a href="casio.html" class="menu-link">🔢&nbsp;&nbsp;Casio Calc</a>
+    <a href="settings.html" class="menu-link" style="border-bottom:none;">⚙️&nbsp;&nbsp;Settings</a>
+</div>
+<div class="container">
+    <div class="card">
+        <label style="color:var(--secondary);">1. Price Per Vori (Tk)</label>
+        <input type="number" id="priceVori" placeholder="e.g. 200000" oninput="calc()">
+        <label style="color:var(--primary);">2. Weight (Grams)</label>
+        <input type="number" id="weightGm" placeholder="e.g. 50" oninput="calc()">
+        <div class="result-box">
+            <div class="result-label">TOTAL PRICE</div>
+            <div class="result-val" id="totalPrice">0.00</div>
+            <div class="sub-res">Weight: <span id="totalVori" style="color:#fff;">0.0000</span> Vori</div>
         </div>
-
     </div>
-
-    <script>
-        // SW
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); });
-        }
-
-        function toggleMenu() {
-            const m = document.getElementById('menu-box');
-            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function calc() {
-            let price = parseFloat(document.getElementById('priceVori').value);
-            let gm = parseFloat(document.getElementById('weightGm').value);
-
-            if (!price || !gm) {
-                document.getElementById('totalPrice').innerText = "0.00";
-                document.getElementById('totalVori').innerText = "0.0000";
-                return;
-            }
-
-            // Formula: (Gram / 11.664) * Price
-            let vori = gm / 11.664;
-            let total = vori * price;
-
-            document.getElementById('totalPrice').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('totalVori').innerText = vori.toFixed(4);
-        }
-    </script>
-
+</div>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js');});}
+function toggleMenu(){const m=document.getElementById('menu-box');m.style.display=(m.style.display==='block')?'none':'block';}
+window.addEventListener('click',function(e){const m=document.getElementById('menu-box'),btn=document.querySelector('.menu-icon');if(m&&btn&&e.target!==m&&e.target!==btn&&!m.contains(e.target))m.style.display='none';});
+function calc(){
+    let price=parseFloat(document.getElementById('priceVori').value);
+    let gm=parseFloat(document.getElementById('weightGm').value);
+    if(!price||!gm){
+        document.getElementById('totalPrice').innerText="0.00";
+        document.getElementById('totalVori').innerText="0.0000";
+        return;
+    }
+    let vori=gm/11.664;
+    let total=vori*price;
+    document.getElementById('totalPrice').innerText=total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById('totalVori').innerText=vori.toFixed(4);
+}
+</script>
 </body>
 </html>
