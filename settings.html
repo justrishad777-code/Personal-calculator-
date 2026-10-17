@@ -1,253 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Settings</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#0b0e14">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- PREMIUM DARK FINANCE THEME DEFAULTS --- */
-        :root { 
-            --primary: #ffaf40;    
-            --secondary: #48dbfb;  
-            --bg-color: #0b0e14;   
-            --card-bg: #151a24;    
-            --text-main: #f1f3f7;  
-            --text-muted: #8992a3;
-            --border: rgba(255,255,255,0.08);
-        }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; padding: 0; 
-            font-family: 'Manrope', sans-serif; 
-            background: radial-gradient(circle at top, #10141c 0%, var(--bg-color) 55%); 
-            color: var(--text-main);
-            display: flex; flex-direction: column; height: 100vh;
-            padding-top: env(safe-area-inset-top);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* HEADER */
-        .header {
-            height: 64px; background: rgba(11,14,20,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            display: flex; align-items: center; padding: 0 20px;
-            border-bottom: 1px solid var(--border); justify-content: space-between;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.4); z-index: 100; flex-shrink: 0;
-        }
-        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; transition: transform 0.2s, opacity 0.2s; }
-        .menu-icon:active { transform: scale(0.88); opacity: 0.7; }
-        .logo-img { height: 32px; border-radius: 8px; }
-
-        /* MENU POPUP */
-        #menuPopup {
-            display: none; position: absolute; top: 64px; left: 10px; width: 230px;
-            background: var(--card-bg); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.55);
-            z-index: 2000; flex-direction: column; border: 1px solid var(--border); overflow: hidden;
-        }
-        .menu-item { 
-            padding: 15px 16px; text-decoration: none; color: #eee; 
-            border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; cursor: pointer; transition: background 0.2s, padding-left 0.2s;
-        }
-        .menu-item:hover, .menu-item:active { background: rgba(255,255,255,0.06); padding-left: 22px; }
-        .menu-icon-span { margin-right: 12px; font-size: 18px; }
-
-        /* CONTENT */
-        .content { flex: 1; padding: 24px 20px 40px; overflow-y: auto; max-width: 560px; margin: 0 auto; width: 100%; }
-        .card {
-            background: linear-gradient(180deg, var(--card-bg) 0%, #10141c 100%); border-radius: 20px; padding: 22px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.45); margin-bottom: 20px; border: 1px solid var(--border);
-        }
-
-        /* COLOR PICKER ROWS */
-        .color-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 0; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14.5px;
-        }
-        .color-row:last-of-type { border-bottom: none; }
-        .color-inp {
-            border: 1px solid var(--border); border-radius: 10px; width: 42px; height: 42px; cursor: pointer; background: transparent; padding: 0;
-        }
-        
-        /* BUTTONS */
-        .btn-action {
-            width: 100%; padding: 15px; background: #fff; color: #1a1a1a;
-            border: none; border-radius: 12px; font-size: 15.5px; font-weight: 800;
-            margin-top: 10px; cursor: pointer; transition: transform 0.15s, filter 0.15s;
-        }
-        .btn-action:active { transform: scale(0.97); filter: brightness(0.94); }
-        .btn-danger { background: linear-gradient(135deg, #f87171, #dc2626); color: #fff; }
-
-        /* INSTALL BUTTON (Hidden by default) */
-        #installBtn { display: none; background: linear-gradient(135deg, var(--primary), #c9860a); color: #1a1200; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Settings</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#0b0e14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root { --primary:#f0b90b; --secondary:#3ecbe0; --bg-color:#0b0e14; --bg-color-2:#10141c; --card-bg:#151a24; --text-main:#f1f3f7; --text-muted:#94a3b8; --border:rgba(255,255,255,0.12); --glass-hi:rgba(255,255,255,0.22); --shadow-card:0 16px 36px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.14); }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; padding:0; font-family:'Manrope',sans-serif; background:radial-gradient(circle at 50% 0%, var(--bg-color-2) 0%, var(--bg-color) 70%); color:var(--text-main); display:flex; flex-direction:column; height:100vh; padding-top:env(safe-area-inset-top); -webkit-font-smoothing:antialiased; position:relative; overflow:hidden; }
+body::before, body::after { content:""; position:fixed; border-radius:50%; filter:blur(80px); z-index:0; pointer-events:none; }
+body::before { width:270px; height:270px; background:var(--primary); top:-50px; right:-60px; opacity:0.24; }
+body::after { width:310px; height:310px; background:var(--secondary); bottom:-80px; left:-80px; opacity:0.18; }
+.header { height:64px; background:rgba(15,20,28,0.45); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); display:flex; align-items:center; padding:0 20px; border-bottom:1px solid var(--border); justify-content:space-between; box-shadow:0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08); z-index:100; flex-shrink:0; }
+.menu-icon { font-size:22px; cursor:pointer; color:#fff; width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); transition:0.2s; }
+.menu-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.14); }
+.logo-img { height:34px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+#menuPopup { display:none; position:absolute; top:calc(70px + env(safe-area-inset-top)); left:14px; width:235px; background:rgba(18,24,34,0.72); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); border-radius:20px; box-shadow:0 24px 48px rgba(0,0,0,0.65), inset 0 1px 1px var(--glass-hi); z-index:2000; flex-direction:column; border:1px solid rgba(255,255,255,0.16); overflow:hidden; }
+.menu-item { padding:15px 18px; text-decoration:none; color:var(--text-main); border-bottom:1px solid rgba(255,255,255,0.07); font-weight:600; font-size:14.5px; display:flex; align-items:center; cursor:pointer; transition:0.2s; }
+.menu-item:hover, .menu-item:active { background:rgba(255,255,255,0.1); padding-left:24px; }
+.menu-icon-span { margin-right:12px; font-size:18px; }
+.content { flex:1; padding:22px 18px 40px; overflow-y:auto; max-width:560px; margin:0 auto; width:100%; z-index:2; }
+.card { background:linear-gradient(145deg, rgba(255,255,255,0.09) 0%, color-mix(in srgb, var(--card-bg) 55%, transparent) 100%); backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%); border-radius:24px; padding:22px; box-shadow:var(--shadow-card); margin-bottom:20px; border:1px solid var(--border); border-top-color:var(--glass-hi); }
+.color-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-weight:700; font-size:14.5px; }
+.color-row:last-of-type { border-bottom:none; }
+.color-inp { border:2px solid rgba(255,255,255,0.22); border-radius:12px; width:44px; height:44px; cursor:pointer; background:rgba(0,0,0,0.3); padding:2px; box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+.btn-action { width:100%; padding:15px; background:linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); backdrop-filter:blur(14px); color:#fff; border:1px solid rgba(255,255,255,0.18); border-top-color:rgba(255,255,255,0.3); border-radius:14px; font-size:15px; font-weight:800; margin-top:14px; cursor:pointer; transition:0.15s; box-shadow:0 8px 20px rgba(0,0,0,0.28); }
+.btn-action:active { transform:scale(0.97); filter:brightness(1.1); }
+.btn-danger { background:linear-gradient(135deg, rgba(248,113,113,0.75), rgba(220,38,38,0.85)); border-color:rgba(252,165,165,0.35); box-shadow:0 8px 22px rgba(220,38,38,0.3); }
+#installBtn { display:none; background:linear-gradient(135deg, var(--primary), #c9860a); color:#1a1200; border:none; font-weight:800; }
+</style>
 </head>
 <body onload="loadSettings()">
-
-    <div class="header">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <span style="font-size:20px; font-weight:bold;">Settings</span>
-        <img src="logo.png" alt="Logo" class="logo-img">
+<div class="header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <span style="font-size:19px; font-weight:800; letter-spacing:0.6px;">Settings</span>
+    <img src="logo.png" alt="Logo" class="logo-img">
+</div>
+<div id="menuPopup">
+    <button id="installBtn" class="menu-item"><span class="menu-icon-span">⬇️</span> Install App</button>
+    <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
+    <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
+    <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
+    <a href="price.html" class="menu-item"><span class="menu-icon-span">💰</span> Price Calc</a>
+    <a href="casio.html" class="menu-item"><span class="menu-icon-span">🔢</span> Casio Calc</a>
+    <a href="settings.html" class="menu-item" style="background:rgba(255,255,255,0.08); border-left:4px solid var(--primary); border-bottom:none;"><span class="menu-icon-span">⚙️</span> Settings</a>
+</div>
+<div class="content">
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:12px; font-size:16px; font-weight:800;">🎨 App Theme</h3>
+        <div class="color-row"><span>Primary Color</span><input type="color" class="color-inp" id="clr-primary" value="#f0b90b" onchange="updateVar('--primary', this.value)"></div>
+        <div class="color-row"><span>Secondary Color</span><input type="color" class="color-inp" id="clr-secondary" value="#3ecbe0" onchange="updateVar('--secondary', this.value)"></div>
+        <div class="color-row"><span>Background</span><input type="color" class="color-inp" id="clr-bg" value="#0b0e14" onchange="updateVar('--bg-color', this.value)"></div>
+        <div class="color-row"><span>Card Background</span><input type="color" class="color-inp" id="clr-card" value="#151a24" onchange="updateVar('--card-bg', this.value)"></div>
+        <div class="color-row"><span>Text Color</span><input type="color" class="color-inp" id="clr-text" value="#f1f3f7" onchange="updateVar('--text-main', this.value)"></div>
+        <button class="btn-action" onclick="resetTheme()">↺ Reset Default Theme</button>
     </div>
-
-    <div id="menuPopup">
-        <button id="installBtn" class="menu-item"><span class="menu-icon-span">⬇️</span> Install App</button>
-        
-        <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
-        <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
-        <a href="converter.html" class="menu-item"><span class="menu-icon-span">⚖️</span> Converter</a>
-        <a href="casio.html" class="menu-item"><span class="menu-icon-span">🔢</span> Casio Calc</a>
-        <a href="settings.html" class="menu-item" style="background:rgba(255,255,255,0.06);"><span class="menu-icon-span">⚙️</span> Settings</a>
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--secondary); border-bottom:1px solid var(--border); padding-bottom:12px; font-size:16px; font-weight:800;">🛠️ Maintenance</h3>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">If the app feels slow or doesn't update, try clearing the cache.</p>
+        <button class="btn-action btn-danger" onclick="clearCache()">Clear App Cache & Reload</button>
+        <div style="margin-top:16px; text-align:center; color:var(--text-muted); opacity:0.65; font-size:12px; font-weight:600;">App Version 2.0 (Glass Edition • PWA)</div>
     </div>
+</div>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js');});}
+function toggleMenu(){const m=document.getElementById('menuPopup');m.style.display=(m.style.display==='flex')?'none':'flex';}
+window.addEventListener('click',function(e){const m=document.getElementById('menuPopup'),btn=document.querySelector('.menu-icon');if(e.target!==m&&e.target!==btn&&!m.contains(e.target))m.style.display='none';});
 
-    <div class="content">
-        <div class="card">
-            <h3 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:12px; font-size:16px;">🎨 App Theme</h3>
-            
-            <div class="color-row">
-                <span>Primary Color</span>
-                <input type="color" class="color-inp" id="clr-primary" value="#ffaf40" onchange="updateVar('--primary', this.value)">
-            </div>
-            <div class="color-row">
-                <span>Secondary Color</span>
-                <input type="color" class="color-inp" id="clr-secondary" value="#48dbfb" onchange="updateVar('--secondary', this.value)">
-            </div>
-            <div class="color-row">
-                <span>Background</span>
-                <input type="color" class="color-inp" id="clr-bg" value="#222831" onchange="updateVar('--bg-color', this.value)">
-            </div>
-            <div class="color-row">
-                <span>Card Background</span>
-                <input type="color" class="color-inp" id="clr-card" value="#393e46" onchange="updateVar('--card-bg', this.value)">
-            </div>
-            <div class="color-row">
-                <span>Text Color</span>
-                <input type="color" class="color-inp" id="clr-text" value="#eeeeee" onchange="updateVar('--text-main', this.value)">
-            </div>
-
-            <button class="btn-action" style="background:#555; color:#fff; margin-top:20px;" onclick="resetTheme()">Rest Default Theme</button>
-        </div>
-
-        <div class="card">
-            <h3 style="margin-top:0; color:var(--secondary); border-bottom:1px solid var(--border); padding-bottom:12px; font-size:16px;">🛠️ Maintenance</h3>
-            <p style="font-size:13px; color:var(--text-muted);">If the app feels slow or doesn't update, try clearing the cache.</p>
-            <button class="btn-action btn-danger" onclick="clearCache()">Clear App Cache & Reload</button>
-            <div style="margin-top:15px; text-align:center; color:#666; font-size:12px;">App Version 2.0 (PWA Enabled)</div>
-        </div>
-    </div>
-
-    <script>
-        // 1. SERVICE WORKER REGISTRATION
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js');
-            });
-        }
-
-        // 2. MENU LOGIC
-        function toggleMenu() {
-            const m = document.getElementById('menuPopup');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-        window.addEventListener('click', function(e) {
-            const m = document.getElementById('menuPopup');
-            const btn = document.querySelector('.menu-icon');
-            if (e.target !== m && e.target !== btn && !m.contains(e.target)) {
-                m.style.display = 'none';
-            }
-        });
-
-        // 3. THEME LOGIC
-        function updateVar(variable, value) {
-            document.documentElement.style.setProperty(variable, value);
-            saveTheme();
-        }
-
-        function saveTheme() {
-            const theme = {
-                primary: document.documentElement.style.getPropertyValue('--primary'),
-                secondary: document.documentElement.style.getPropertyValue('--secondary'),
-                bg: document.documentElement.style.getPropertyValue('--bg-color'),
-                card: document.documentElement.style.getPropertyValue('--card-bg'),
-                text: document.documentElement.style.getPropertyValue('--text-main')
-            };
-            localStorage.setItem('gold_theme', JSON.stringify(theme));
-        }
-
-        function loadSettings() {
-            const t = JSON.parse(localStorage.getItem('gold_theme') || '{}');
-            if (t.primary) {
-                document.documentElement.style.setProperty('--primary', t.primary);
-                document.getElementById('clr-primary').value = t.primary.trim();
-            }
-            if (t.secondary) {
-                document.documentElement.style.setProperty('--secondary', t.secondary);
-                document.getElementById('clr-secondary').value = t.secondary.trim();
-            }
-            if (t.bg) {
-                document.documentElement.style.setProperty('--bg-color', t.bg);
-                document.getElementById('clr-bg').value = t.bg.trim();
-            }
-            if (t.card) {
-                document.documentElement.style.setProperty('--card-bg', t.card);
-                document.getElementById('clr-card').value = t.card.trim();
-            }
-            if (t.text) {
-                document.documentElement.style.setProperty('--text-main', t.text);
-                document.getElementById('clr-text').value = t.text.trim();
-            }
-        }
-
-        function resetTheme() {
-            localStorage.removeItem('gold_theme');
-            location.reload();
-        }
-
-        // 4. CLEAR CACHE LOGIC
-        function clearCache() {
-            if ('caches' in window) {
-                caches.keys().then((names) => {
-                    names.forEach(name => {
-                        caches.delete(name);
-                    });
-                }).then(() => {
-                    alert('Cache Cleared! Reloading...');
-                    window.location.reload(true);
-                });
-            } else {
-                alert('Cache not supported in this browser.');
-            }
-        }
-
-        // 5. INSTALL LOGIC
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'flex'; // Show in menu
-        });
-
-        installBtn.addEventListener('click', (e) => {
-            installBtn.style.display = 'none';
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                });
-            }
-        });
-    </script>
+function updateVar(variable,value){document.documentElement.style.setProperty(variable,value);saveTheme();}
+function saveTheme(){
+    const theme={
+        primary:document.getElementById('clr-primary').value,
+        secondary:document.getElementById('clr-secondary').value,
+        bg:document.getElementById('clr-bg').value,
+        card:document.getElementById('clr-card').value,
+        text:document.getElementById('clr-text').value
+    };
+    localStorage.setItem('gold_theme',JSON.stringify(theme));
+    localStorage.setItem('app_theme',JSON.stringify(theme));
+}
+function loadSettings(){
+    const t=JSON.parse(localStorage.getItem('gold_theme')||localStorage.getItem('app_theme')||'{}');
+    if(t.primary){document.documentElement.style.setProperty('--primary',t.primary);document.getElementById('clr-primary').value=t.primary.trim();}
+    if(t.secondary){document.documentElement.style.setProperty('--secondary',t.secondary);document.getElementById('clr-secondary').value=t.secondary.trim();}
+    if(t.bg){document.documentElement.style.setProperty('--bg-color',t.bg);document.getElementById('clr-bg').value=t.bg.trim();}
+    if(t.card){document.documentElement.style.setProperty('--card-bg',t.card);document.getElementById('clr-card').value=t.card.trim();}
+    if(t.text){document.documentElement.style.setProperty('--text-main',t.text);document.getElementById('clr-text').value=t.text.trim();}
+}
+function resetTheme(){localStorage.removeItem('gold_theme');localStorage.removeItem('app_theme');location.reload();}
+function clearCache(){
+    if('caches' in window){
+        caches.keys().then((names)=>{names.forEach(name=>{caches.delete(name);});}).then(()=>{alert('Cache Cleared! Reloading...');window.location.reload(true);});
+    }else{alert('Cache not supported in this browser.');}
+}
+let deferredPrompt;
+const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='flex';});
+installBtn.addEventListener('click',()=>{installBtn.style.display='none';if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});}});
+</script>
 </body>
 </html>
