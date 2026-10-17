@@ -1,226 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Converter</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#0b0e14">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        :root { 
-            --primary: #f0b90b; 
-            --primary-dark: #c99400;
-            --secondary: #3ecbe0; 
-            --bg-color: #0b0e14; 
-            --bg-color-2: #10141c;
-            --card-bg: #151a24;
-            --card-bg-soft: rgba(255,255,255,0.03);
-            --text-main: #f1f3f7;
-            --text-muted: #8992a3;
-            --border: rgba(255,255,255,0.08);
-            --shadow-card: 0 10px 30px rgba(0,0,0,0.45);
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; padding: 0; 
-            font-family: 'Manrope', sans-serif; 
-            background: radial-gradient(circle at top, var(--bg-color-2) 0%, var(--bg-color) 55%);
-            display: flex; flex-direction: column; height: 100vh;
-            color: var(--text-main);
-            padding-top: env(safe-area-inset-top);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* HEADER */
-        .top-bar { 
-            height: 60px; background: rgba(11,14,20,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            display: flex; align-items: center; padding: 0 16px; 
-            color: white; justify-content: space-between; 
-            box-shadow: 0 2px 16px rgba(0,0,0,0.4); z-index: 100; border-bottom: 1px solid var(--border);
-        }
-        .menu-icon { font-size: 24px; cursor: pointer; color: #fff; width: 40px; transition: transform 0.2s, opacity 0.2s; }
-        .menu-icon:active { transform: scale(0.88); opacity: 0.7; }
-        .app-title { 
-            font-size: 19px; font-weight: 800; letter-spacing: 0.4px; 
-            color: #fff;
-        }
-
-        /* MENU */
-        #menuPopup {
-            display: none; position: absolute; top: 60px; left: 10px; width: 220px;
-            background: var(--card-bg); border-radius: 14px; box-shadow: 0 16px 32px rgba(0,0,0,0.5);
-            z-index: 2000; flex-direction: column; border: 1px solid var(--border); overflow: hidden;
-        }
-        .menu-item { 
-            padding: 14px 15px; text-decoration: none; color: #eee; 
-            border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; 
-            transition: background 0.2s, padding-left 0.2s;
-        }
-        .menu-item:hover, .menu-item:active { background: rgba(255,255,255,0.06); padding-left: 20px; }
-        .menu-icon-span { margin-right: 12px; font-size: 18px; }
-
-        .content { flex: 1; padding: 20px; overflow-y: auto; max-width: 520px; margin: 0 auto; width: 100%; }
-
-        /* CARDS */
-        .card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 22px;
-            margin-bottom: 22px; box-shadow: var(--shadow-card);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card-orange { border-top: 3px solid var(--primary); background: linear-gradient(160deg, rgba(240,185,11,0.08), var(--card-bg) 55%); }
-        .card-header-orange { color: var(--primary); font-size: 17px; font-weight: 800; margin-bottom: 16px; letter-spacing: 0.2px; }
-
-        .card-blue { border-top: 3px solid var(--secondary); background: linear-gradient(160deg, rgba(62,203,224,0.08), var(--card-bg) 55%); }
-        .card-header-blue { color: var(--secondary); font-size: 17px; font-weight: 800; margin-bottom: 16px; letter-spacing: 0.2px; }
-
-        /* INPUTS */
-        .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
-        .c-input {
-            width: 100%; padding: 13px; border: 1.5px solid var(--border); border-radius: 12px;
-            font-size: 16px; font-weight: 700; text-align: center; outline: none;
-            background: #0c0f16; color: #fff; min-height: 50px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: 'Manrope', sans-serif;
-        }
-        .c-input::placeholder { color: #495066; font-weight: 500; }
-        .c-input:focus { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(62,203,224,0.15); background: #0e1219; }
-        .card-orange .c-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(240,185,11,0.15); }
-
-        .unit-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.4px; }
-
-        /* RESULT AREA */
-        .result-box {
-            background: var(--card-bg-soft); border-radius: 14px; padding: 16px;
-            text-align: center; margin-top: 16px; border: 1px solid var(--border);
-        }
-        .res-val { font-size: 30px; font-weight: 900; line-height: 1; }
-        .res-unit { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-
-        .text-orange { color: var(--primary); text-shadow: 0 0 20px rgba(240,185,11,0.3); }
-        .text-blue { color: var(--secondary); text-shadow: 0 0 20px rgba(62,203,224,0.3); }
-
-        @media (min-width: 600px) {
-            .content { padding-top: 28px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Gold App - Rate F</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#0b0e14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+(function(){try{let d=localStorage.getItem('gold_theme')||localStorage.getItem('app_theme');if(d){let t=JSON.parse(d),r=document.documentElement;if(t.primary)r.style.setProperty('--primary',t.primary);if(t.secondary)r.style.setProperty('--secondary',t.secondary);if(t.bg)r.style.setProperty('--bg-color',t.bg);if(t.card)r.style.setProperty('--card-bg',t.card);if(t.text)r.style.setProperty('--text-main',t.text);}}catch(e){}})();
+</script>
+<style>
+:root { --primary:#f0b90b; --primary-dark:#c99400; --secondary:#3ecbe0; --bg-color:#0b0e14; --bg-color-2:#10141c; --card-bg:#151a24; --card-bg-soft:rgba(255,255,255,0.05); --text-main:#f1f3f7; --text-muted:#94a3b8; --input-bg:rgba(8,11,18,0.55); --border:rgba(255,255,255,0.12); --glass-hi:rgba(255,255,255,0.22); --shadow-card:0 16px 36px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.14); }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; padding:0; background:radial-gradient(circle at 50% 0%, var(--bg-color-2) 0%, var(--bg-color) 70%); color:var(--text-main); font-family:'Manrope',sans-serif; min-height:100vh; overflow-y:auto; padding-top:env(safe-area-inset-top); -webkit-font-smoothing:antialiased; position:relative; }
+body::before, body::after { content:""; position:fixed; border-radius:50%; filter:blur(80px); z-index:0; pointer-events:none; }
+body::before { width:270px; height:270px; background:var(--primary); top:-50px; right:-60px; opacity:0.24; }
+body::after { width:310px; height:310px; background:var(--secondary); bottom:-80px; left:-80px; opacity:0.18; }
+.header { height:60px; background:rgba(15,20,28,0.45); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); padding:0 18px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08); }
+.menu-icon { font-size:22px; cursor:pointer; color:#fff; width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); transition:0.2s; }
+.menu-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.14); }
+.header h3 { letter-spacing:0.8px; font-weight:800; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.4); }
+#menu-box { display:none; position:fixed; top:calc(66px + env(safe-area-inset-top)); left:14px; width:235px; background:rgba(18,24,34,0.72); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); border-radius:20px; border:1px solid rgba(255,255,255,0.16); box-shadow:0 24px 48px rgba(0,0,0,0.65), inset 0 1px 1px var(--glass-hi); z-index:2000; overflow:hidden; }
+.menu-link { display:flex; align-items:center; padding:15px 18px; color:var(--text-main); text-decoration:none; font-weight:600; font-size:14.5px; border-bottom:1px solid rgba(255,255,255,0.07); transition:0.2s; }
+.menu-link:hover, .menu-link:active { background:rgba(255,255,255,0.1); padding-left:24px; }
+.container { padding:18px 16px 100px; max-width:520px; margin:0 auto; position:relative; z-index:2; }
+.card { background:linear-gradient(145deg, rgba(255,255,255,0.09) 0%, color-mix(in srgb, var(--card-bg) 55%, transparent) 100%); backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%); border:1px solid var(--border); border-top-color:var(--glass-hi); border-radius:24px; padding:22px; box-shadow:var(--shadow-card); margin-bottom:16px; }
+label { font-size:11.5px; color:var(--text-muted); margin-bottom:6px; display:block; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; }
+input { width:100%; padding:14px; background:var(--input-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1.5px solid var(--border); color:#fff; border-radius:14px; font-size:18px; font-weight:700; text-align:center; margin-bottom:12px; min-height:50px; box-shadow:inset 0 2px 8px rgba(0,0,0,0.35); transition:0.2s; font-family:'Manrope',sans-serif; }
+input::placeholder { color:#56617a; font-weight:600; }
+input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(240,185,11,0.15), inset 0 2px 8px rgba(0,0,0,0.35); background:rgba(12,16,26,0.75); }
+.tab-box { display:flex; gap:8px; margin-bottom:18px; background:rgba(0,0,0,0.28); padding:6px; border-radius:16px; border:1px solid var(--border); box-shadow:inset 0 2px 6px rgba(0,0,0,0.35); }
+.t-btn { flex:1; padding:12px; border:1px solid transparent; border-radius:12px; background:transparent; color:var(--text-muted); font-weight:800; cursor:pointer; font-size:13px; transition:0.2s; font-family:'Manrope',sans-serif; }
+.t-btn:active { transform:scale(0.96); }
+.active-22 { background:linear-gradient(135deg, color-mix(in srgb, var(--primary) 85%, #fff), var(--primary-dark)); color:#1a1200; border-top-color:rgba(255,255,255,0.45); box-shadow:0 6px 16px rgba(240,185,11,0.35); }
+.active-21 { background:linear-gradient(135deg, color-mix(in srgb, var(--secondary) 85%, #fff), #1f8fa3); color:#00232a; border-top-color:rgba(255,255,255,0.45); box-shadow:0 6px 16px rgba(62,203,224,0.3); }
+.active-both { background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(215,219,228,0.85)); color:#12151c; box-shadow:0 6px 16px rgba(255,255,255,0.2); }
+.purity-box { display:flex; justify-content:center; gap:10px; margin-bottom:18px; }
+.purity-box label { padding:9px 20px; border-radius:30px; border:1px solid var(--border); background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); color:var(--text-muted); font-weight:800; font-size:13px; cursor:pointer; display:inline-block; transition:0.2s; margin:0; }
+.purity-box label:active { transform:scale(0.94); }
+.purity-box input { display:none; }
+.purity-box .active-radio { background:rgba(255,255,255,0.92); color:#0b0e14; border-color:#fff; box-shadow:0 4px 14px rgba(255,255,255,0.22); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.hidden { display:none; }
+.rate-box { background:linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)); backdrop-filter:blur(14px); padding:12px 14px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border); border-top-color:rgba(255,255,255,0.18); margin-top:6px; box-shadow:0 4px 14px rgba(0,0,0,0.2); }
+.dynamic-input { border:none; background:transparent; text-align:right; font-size:20px; font-weight:800; color:inherit; width:125px; margin:0; padding:0; min-height:unset; letter-spacing:0.3px; box-shadow:none; backdrop-filter:none; }
+.dynamic-input:focus { box-shadow:none; background:transparent; }
+.edit-btn { background:rgba(255,255,255,0.09); color:#fff; border:1px solid rgba(255,255,255,0.16); padding:7px 14px; border-radius:10px; font-weight:700; font-size:11px; cursor:pointer; margin-left:10px; text-transform:uppercase; letter-spacing:0.4px; transition:0.15s; }
+.edit-btn:active { transform:scale(0.92); background:rgba(255,255,255,0.18); }
+.grand-box { background:linear-gradient(160deg, rgba(240,185,11,0.16), rgba(15,20,28,0.65) 70%); backdrop-filter:blur(20px); padding:22px; border-radius:20px; text-align:center; border:1px solid rgba(240,185,11,0.32); border-top-color:rgba(255,255,255,0.28); margin-top:22px; box-shadow:0 14px 32px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.15); }
+.grand-input { width:100%; border:none; background:transparent; font-size:38px; font-weight:900; color:var(--primary); text-align:center; min-height:unset; margin-bottom:0; text-shadow:0 0 24px rgba(240,185,11,0.35); letter-spacing:0.5px; box-shadow:none; backdrop-filter:none; }
+.grand-input:focus { box-shadow:none; background:transparent; }
+.btn-action { width:100%; padding:16px; background:linear-gradient(135deg, color-mix(in srgb, var(--primary) 88%, #fff), var(--primary-dark)); color:#1a1200; border:1px solid rgba(255,255,255,0.35); border-radius:16px; font-size:15px; font-weight:900; margin-top:22px; cursor:pointer; letter-spacing:0.6px; text-transform:uppercase; box-shadow:0 10px 24px rgba(240,185,11,0.32), inset 0 1px 1px rgba(255,255,255,0.4); transition:0.15s; }
+.btn-action:active { transform:translateY(2px) scale(0.99); filter:brightness(0.95); }
+#invoice-view { display:none; background:#fbfbfa; color:#14161b; min-height:100vh; padding:0 0 30px; font-family:'Manrope',sans-serif; position:relative; z-index:10; }
+.inv-header { background:linear-gradient(135deg, #14161b, #262a33); color:#fff; padding:34px 20px; text-align:center; margin-bottom:24px; border-bottom:3px solid var(--primary); }
+.inv-header h1 { font-weight:800; }
+.inv-table { width:calc(100% - 40px); margin:20px auto 0; border-collapse:collapse; }
+.inv-table th { background:#f1f1ee; padding:10px; text-align:left; border-bottom:2px solid #14161b; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }
+.inv-table td { padding:12px 10px; border-bottom:1px solid #e4e4e0; font-weight:700; font-size:14px; color:#14161b; }
+.inv-table tfoot td { color:#fff; font-size:15px; letter-spacing:0.3px; }
+.close-btn { display:block; width:calc(100% - 40px); margin:30px auto 0; background:#e6493f; color:#fff; padding:16px; border-radius:12px; border:none; font-weight:800; font-size:15px; cursor:pointer; letter-spacing:0.4px; text-transform:uppercase; transition:0.15s; }
+.close-btn:active { transform:scale(0.98); filter:brightness(0.92); }
+</style>
 </head>
-<body>
-    <div class="top-bar">
+<body onload="appInit()">
+<div id="main-view">
+    <div class="header">
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <span class="app-title">Weight Converter</span>
-        <div style="width: 40px;"></div>
+        <h3>Rate F</h3>
+        <div style="width:38px;"></div>
     </div>
-
-    <div id="menuPopup">
-        <a href="index.html" class="menu-item"><span class="menu-icon-span">🏠</span> Dashboard</a>
-        <a href="rate.html" class="menu-item"><span class="menu-icon-span">📝</span> Rate F</a>
-        <a href="converter.html" class="menu-item" style="background:#444;"><span class="menu-icon-span">⚖️</span> Converter</a>
-        <a href="casio.html" class="menu-item"><span class="menu-icon-span">🔢</span> Casio Calc</a>
-        <a href="settings.html" class="menu-item"><span class="menu-icon-span">⚙️</span> Settings</a>
+    <div id="menu-box">
+        <a href="index.html" class="menu-link">🏠&nbsp;&nbsp;Dashboard</a>
+        <a href="rate.html" class="menu-link" style="background:rgba(255,255,255,0.08); border-left:4px solid var(--primary); color:var(--primary);">📝&nbsp;&nbsp;Rate F</a>
+        <a href="converter.html" class="menu-link">⚖️&nbsp;&nbsp;Converter</a>
+        <a href="price.html" class="menu-link">💰&nbsp;&nbsp;Price Calc</a>
+        <a href="casio.html" class="menu-link">🔢&nbsp;&nbsp;Casio Calc</a>
+        <a href="settings.html" class="menu-link" style="border-bottom:none;">⚙️&nbsp;&nbsp;Settings</a>
     </div>
-
-    <div class="content">
-        <div class="card card-blue">
-            <div class="card-header-blue"><span>🔷 Gram to Traditional</span></div>
-            <div>
-                <div class="unit-label">Enter Weight in Grams</div>
-                <input type="number" id="gramInput" class="c-input" placeholder="0.000" style="font-size: 24px;" oninput="calcToVori()">
+    <div class="container">
+        <div class="card">
+            <label>Screen Rate (Oz)</label>
+            <input type="number" id="screenRate" placeholder="0000" oninput="calc()">
+            <div class="tab-box">
+                <button class="t-btn" id="b22" onclick="setTab('22')">22K Only</button>
+                <button class="t-btn" id="b21" onclick="setTab('21')">21K Only</button>
+                <button class="t-btn" id="bBoth" onclick="setTab('both')">Both</button>
             </div>
-            
-            <div class="result-box" style="display:flex; justify-content:space-around; align-items:center; padding: 10px;">
-                <div><div class="res-val text-blue" id="resVori" style="font-size:24px;">0</div><div class="res-unit">Vori</div></div>
-                <div style="font-size:20px; color:#555;">|</div>
-                <div><div class="res-val text-blue" id="resAna" style="font-size:24px;">0</div><div class="res-unit">Ana</div></div>
-                <div style="font-size:20px; color:#555;">|</div>
-                <div><div class="res-val text-blue" id="resRoti" style="font-size:24px;">0</div><div class="res-unit">Roti</div></div>
-                <div style="font-size:20px; color:#555;">|</div>
-                <div><div class="res-val text-blue" id="resPoint" style="font-size:24px;">0</div><div class="res-unit">Point</div></div>
+            <div id="sec22">
+                <div style="text-align:center; color:var(--primary); font-weight:800; margin-bottom:8px; letter-spacing:0.5px;">22 Karat</div>
+                <div class="purity-box">
+                    <label id="lbl22_1" onclick="setPurity('22', '0.926')" class="active-radio">92.6%</label>
+                    <label id="lbl22_2" onclick="setPurity('22', '0.920')">92.0%</label>
+                    <input type="hidden" id="p22" value="0.926">
+                </div>
+                <div class="grid-2">
+                    <div><input type="number" id="mc22" placeholder="MC" oninput="calc()"></div>
+                    <div><input type="number" id="dh22" placeholder="Dh" oninput="calc()"></div>
+                    <div><input type="number" id="cr22" placeholder="CR" oninput="calc()"></div>
+                    <div><input type="number" id="mg22" placeholder="MG" oninput="calc()"></div>
+                </div>
+                <div class="rate-box">
+                    <span style="color:var(--text-muted); font-size:12px; font-weight:700;">1 Bhori =</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="number" id="rate22" class="dynamic-input" style="color:var(--primary);" value="0.00" readonly>
+                        <button class="edit-btn" onclick="toggleEdit('rate22')">Edit</button>
+                    </div>
+                </div>
+                <input type="number" id="w22" placeholder="Weight (gm)" style="margin-top:12px; font-size:22px;" oninput="calc()">
+                <div class="rate-box" style="background:transparent; border:none; padding:4px 2px; box-shadow:none;">
+                    <span style="color:var(--text-muted); font-size:12px; font-weight:700;">Total</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="number" id="total22" class="dynamic-input" style="color:var(--primary); font-size:24px; width:150px;" value="0.00" readonly>
+                        <button class="edit-btn" onclick="toggleEdit('total22')">Edit</button>
+                    </div>
+                </div>
             </div>
-            <div style="text-align:center; margin-top:10px; font-size:12px; color:#666;">1 Vori = 11.664 Grams</div>
+            <div id="sec21" class="hidden">
+                <div style="text-align:center; color:var(--secondary); font-weight:800; margin-bottom:8px; margin-top:20px; letter-spacing:0.5px;">21 Karat</div>
+                <div class="purity-box">
+                    <label id="lbl21_1" onclick="setPurity('21', '0.885')" class="active-radio">88.5%</label>
+                    <label id="lbl21_2" onclick="setPurity('21', '0.880')">88.0%</label>
+                    <input type="hidden" id="p21" value="0.885">
+                </div>
+                <div class="grid-2">
+                    <div><input type="number" id="mc21" placeholder="MC" oninput="calc()"></div>
+                    <div><input type="number" id="dh21" placeholder="Dh" oninput="calc()"></div>
+                    <div><input type="number" id="cr21" placeholder="CR" oninput="calc()"></div>
+                    <div><input type="number" id="mg21" placeholder="MG" oninput="calc()"></div>
+                </div>
+                <div class="rate-box">
+                    <span style="color:var(--text-muted); font-size:12px; font-weight:700;">1 Bhori =</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="number" id="rate21" class="dynamic-input" style="color:var(--secondary);" value="0.00" readonly>
+                        <button class="edit-btn" onclick="toggleEdit('rate21')">Edit</button>
+                    </div>
+                </div>
+                <input type="number" id="w21" placeholder="Weight (gm)" style="margin-top:12px; font-size:22px;" oninput="calc()">
+                <div class="rate-box" style="background:transparent; border:none; padding:4px 2px; box-shadow:none;">
+                    <span style="color:var(--text-muted); font-size:12px; font-weight:700;">Total</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="number" id="total21" class="dynamic-input" style="color:var(--secondary); font-size:24px; width:150px;" value="0.00" readonly>
+                        <button class="edit-btn" onclick="toggleEdit('total21')">Edit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grand-box">
+                <div style="font-size:11.5px; color:var(--text-muted); font-weight:800; letter-spacing:0.6px; margin-bottom:4px;">GRAND TOTAL</div>
+                <input type="number" id="grandTotal" class="grand-input" value="0.00" readonly>
+                <button class="edit-btn" style="margin-top:8px;" onclick="toggleEdit('grandTotal')">Edit Amount</button>
+            </div>
+            <div style="margin-top:20px;">
+                <input type="text" id="cName" placeholder="Customer Name" style="text-align:left;">
+                <input type="text" id="authName" placeholder="Authorized By" style="text-align:left;">
+            </div>
+            <button class="btn-action" onclick="showInvoice()">SHOW INVOICE</button>
         </div>
-
-        <div class="card card-orange">
-            <div class="card-header-orange"><span>🔶 Traditional to Gram</span></div>
-            <div class="input-group">
-                <div style="flex:1;"><div class="unit-label">Vori</div><input type="number" id="vori" class="c-input" placeholder="0" oninput="calcToGram()"></div>
-                <div style="flex:1;"><div class="unit-label">Ana</div><input type="number" id="ana" class="c-input" placeholder="0" oninput="calcToGram()"></div>
-            </div>
-            <div class="input-group">
-                <div style="flex:1;"><div class="unit-label">Roti</div><input type="number" id="roti" class="c-input" placeholder="0" oninput="calcToGram()"></div>
-                <div style="flex:1;"><div class="unit-label">Point</div><input type="number" id="point" class="c-input" placeholder="0" oninput="calcToGram()"></div>
-            </div>
-            <div class="result-box">
-                <div class="res-val text-orange" id="resGram">0.000</div>
-                <div class="res-unit">Total Grams</div>
-            </div>
-        </div>
     </div>
+</div>
+<div id="invoice-view">
+    <div class="inv-header">
+        <h1 style="margin:0; letter-spacing:2px;">INVOICE</h1>
+        <small>Computer Generated Receipt</small>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin:0 20px 20px; font-size:14px; font-weight:bold;">
+        <div>CUSTOMER: <span id="inv-name" style="font-weight:normal">Guest</span><br>DATE: <span id="inv-date" style="font-weight:normal">--</span></div>
+        <div style="text-align:right;">AUTH BY: <span id="inv-auth" style="font-weight:normal">Admin</span></div>
+    </div>
+    <table class="inv-table">
+        <thead><tr><th style="width:40%">ITEM</th><th>RATE</th><th>WT(g)</th><th style="text-align:right;">TOTAL</th></tr></thead>
+        <tbody id="inv-body"></tbody>
+        <tfoot>
+            <tr style="background:#000; color:#fff;">
+                <td colspan="3" style="text-align:right; padding:15px;">GRAND TOTAL</td>
+                <td style="text-align:right; padding:15px;" id="inv-grand">0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+    <div style="text-align:center; margin-top:50px; font-weight:bold; font-size:12px;">THANK YOU FOR YOUR BUSINESS</div>
+    <button class="close-btn" onclick="closeInvoice()">CLOSE & BACK</button>
+</div>
+<script>
+let currentTab='22';
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js');});}
+function appInit(){setTab('22');}
+function toggleMenu(){const m=document.getElementById('menu-box');m.style.display=(m.style.display==='block')?'none':'block';}
+window.addEventListener('click',function(e){const m=document.getElementById('menu-box'),btn=document.querySelector('.menu-icon');if(m&&btn&&e.target!==m&&e.target!==btn&&!m.contains(e.target))m.style.display='none';});
 
-    <script>
-        // SERVICE WORKER REGISTRATION
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js');
-            });
-        }
+function setPurity(karat,val){
+    document.getElementById('p'+karat).value=val;
+    document.getElementById('lbl'+karat+'_1').className=(val.endsWith('6')||val.endsWith('5'))?'active-radio':'';
+    document.getElementById('lbl'+karat+'_2').className=(val.endsWith('0'))?'active-radio':'';
+    calc();
+}
+function toggleEdit(id){
+    let el=document.getElementById(id);
+    if(el.hasAttribute('readonly')){el.removeAttribute('readonly');el.focus();el.style.borderBottom="2px solid #f87171";}
+    else{el.setAttribute('readonly',true);el.style.borderBottom="none";}
+}
+function setTab(tab){
+    currentTab=tab;
+    document.getElementById('sec22').classList.add('hidden');
+    document.getElementById('sec21').classList.add('hidden');
+    document.getElementById('b22').className='t-btn';
+    document.getElementById('b21').className='t-btn';
+    document.getElementById('bBoth').className='t-btn';
+    if(tab==='22'){document.getElementById('sec22').classList.remove('hidden');document.getElementById('b22').classList.add('active-22');}
+    else if(tab==='21'){document.getElementById('sec21').classList.remove('hidden');document.getElementById('b21').classList.add('active-21');}
+    else{document.getElementById('sec22').classList.remove('hidden');document.getElementById('sec21').classList.remove('hidden');document.getElementById('bBoth').classList.add('active-both');}
+    calc();
+}
+function calc(){
+    let b=parseFloat(document.getElementById('screenRate').value)||0;
+    let p22=parseFloat(document.getElementById('p22').value),mc22=parseFloat(document.getElementById('mc22').value)||0,dh22=parseFloat(document.getElementById('dh22').value)||0,cr22=parseFloat(document.getElementById('cr22').value)||0,mg22=parseFloat(document.getElementById('mg22').value)||0,w22=parseFloat(document.getElementById('w22').value)||0;
+    let rate22=(((b*3.674/31.1035*p22)+mc22)*11.664*(dh22||1))+cr22+mg22;
+    let total22=rate22*(w22/11.664);
+    if(document.getElementById('rate22').hasAttribute('readonly'))document.getElementById('rate22').value=rate22.toFixed(2);
+    if(document.getElementById('total22').hasAttribute('readonly'))document.getElementById('total22').value=total22.toFixed(2);
 
-        // MENU LOGIC
-        function toggleMenu() { 
-            const m = document.getElementById('menuPopup'); 
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
-        }
+    let p21=parseFloat(document.getElementById('p21').value),mc21=parseFloat(document.getElementById('mc21').value)||0,dh21=parseFloat(document.getElementById('dh21').value)||0,cr21=parseFloat(document.getElementById('cr21').value)||0,mg21=parseFloat(document.getElementById('mg21').value)||0,w21=parseFloat(document.getElementById('w21').value)||0;
+    let rate21=(((b*3.674/31.1035*p21)+mc21)*11.664*(dh21||1))+cr21+mg21;
+    let total21=rate21*(w21/11.664);
+    if(document.getElementById('rate21').hasAttribute('readonly'))document.getElementById('rate21').value=rate21.toFixed(2);
+    if(document.getElementById('total21').hasAttribute('readonly'))document.getElementById('total21').value=total21.toFixed(2);
 
-        // Close menu on outside click
-        window.addEventListener('click', function(e) {
-            const m = document.getElementById('menuPopup');
-            const btn = document.querySelector('.menu-icon');
-            if (e.target !== m && e.target !== btn && !m.contains(e.target)) {
-                m.style.display = 'none';
-            }
-        });
-
-        // CALCULATION LOGIC
-        function calcToGram() { 
-            let v = parseFloat(document.getElementById('vori').value)||0;
-            let a = parseFloat(document.getElementById('ana').value)||0;
-            let r = parseFloat(document.getElementById('roti').value)||0;
-            let p = parseFloat(document.getElementById('point').value)||0;
-            
-            // Formula: Vori*11.664 + Ana*0.729 + Roti*0.1215 + Point*0.01215
-            let total = (v*11.664) + (a*0.729) + (r*0.1215) + (p*0.01215);
-            
-            document.getElementById('resGram').innerText = total.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3}); 
-        }
-
-        function calcToVori() { 
-            let g = parseFloat(document.getElementById('gramInput').value)||0;
-            
-            let totalVori = g / 11.664;
-            
-            let v = Math.floor(totalVori);
-            let rem1 = (totalVori - v) * 16;
-            
-            let a = Math.floor(rem1);
-            let rem2 = (rem1 - a) * 6;
-            
-            let r = Math.floor(rem2);
-            let p = (rem2 - r) * 10;
-            
-            document.getElementById('resVori').innerText = v;
-            document.getElementById('resAna').innerText = a;
-            document.getElementById('resRoti').innerText = r;
-            document.getElementById('resPoint').innerText = p.toFixed(1); 
-        }
-    </script>
+    let grand=0,t22_val=parseFloat(document.getElementById('total22').value)||0,t21_val=parseFloat(document.getElementById('total21').value)||0;
+    if(currentTab==='22')grand=t22_val;else if(currentTab==='21')grand=t21_val;else grand=t22_val+t21_val;
+    if(document.getElementById('grandTotal').hasAttribute('readonly'))document.getElementById('grandTotal').value=grand.toFixed(2);
+}
+function showInvoice(){
+    document.getElementById('inv-name').innerText=document.getElementById('cName').value||'Guest';
+    document.getElementById('inv-auth').innerText=document.getElementById('authName').value||'Admin';
+    document.getElementById('inv-date').innerText=new Date().toLocaleDateString();
+    let tbody=document.getElementById('inv-body');tbody.innerHTML='';
+    let t22=parseFloat(document.getElementById('total22').value)||0,t21=parseFloat(document.getElementById('total21').value)||0;
+    if((currentTab==='22'||currentTab==='both')&&t22>0)tbody.innerHTML+=`<tr><td>22K GOLD</td><td>${document.getElementById('rate22').value}</td><td>${document.getElementById('w22').value}</td><td style="text-align:right;">${document.getElementById('total22').value}</td></tr>`;
+    if((currentTab==='21'||currentTab==='both')&&t21>0)tbody.innerHTML+=`<tr><td>21K GOLD</td><td>${document.getElementById('rate21').value}</td><td>${document.getElementById('w21').value}</td><td style="text-align:right;">${document.getElementById('total21').value}</td></tr>`;
+    document.getElementById('inv-grand').innerText=document.getElementById('grandTotal').value;
+    document.getElementById('main-view').style.display='none';
+    document.getElementById('invoice-view').style.display='block';
+}
+function closeInvoice(){
+    document.getElementById('invoice-view').style.display='none';
+    document.getElementById('main-view').style.display='block';
+}
+</script>
 </body>
 </html>
